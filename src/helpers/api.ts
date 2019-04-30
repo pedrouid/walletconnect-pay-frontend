@@ -31,7 +31,7 @@ export const apiGetGasLimit = async (
 ): Promise<number> => {
   const chainId = 1;
   const response = await api.get(
-    `/gas-limit?address=${contractAddress}&data=${data}&chainId=${chainId}`
+    `/gas-limit?contractAddress=${contractAddress}&data=${data}&chainId=${chainId}`
   );
   const { result } = response.data;
   return result;

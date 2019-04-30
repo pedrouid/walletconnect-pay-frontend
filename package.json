@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "3box": "^1.7.1",
+    "@walletconnect/browser": "^1.0.0-beta.18",
     "axios": "^0.18.0",
     "bignumber.js": "^8.1.1",
     "ethjs": "^0.4.0",
@@ -17,8 +18,7 @@
     "react-scripts-ts": "^4.0.8",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "styled-components": "4.2.0",
-    "walletconnect": "^0.7.28"
+    "styled-components": "4.2.0"
   },
   "scripts": {
     "start": "react-scripts-ts start",

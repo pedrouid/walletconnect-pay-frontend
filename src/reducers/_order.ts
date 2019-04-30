@@ -1,7 +1,7 @@
 import { IMenuItem, IOrderItem } from "../helpers/types";
+import { IJsonRpcRequest } from "@walletconnect/types";
 import {
   initWalletConnect,
-  getAccount,
   sendTransaction,
   killSession
 } from "../helpers/walletconnect";
@@ -20,7 +20,7 @@ import {
   sanitizeHex
 } from "../helpers/utilities";
 import { keccak256 } from "../helpers/eth";
-import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
+// import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -114,15 +114,31 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
   const orderHash = keccak256(JSON.stringify(orderJson));
 
   try {
-    const uri = await initWalletConnect();
+    const connector = await initWalletConnect();
 
-    await setSpacePrivate(orderHash, JSON.stringify(orderJson));
+    dispatch({ type: ORDER_SUBMIT_SUCCESS, payload: connector.uri });
 
-    dispatch({ type: ORDER_SUBMIT_SUCCESS, payload: uri });
+    connector.on("connect", async (error: Error, payload: IJsonRpcRequest) => {
+      if (error) {
+        throw error;
+      }
+      // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
 
-    const account = await getAccount();
+      const account = connector.accounts[0];
 
-    dispatch(orderRequestPayment(account, orderHash));
+      dispatch(orderRequestPayment(account, orderHash));
+    });
+
+    connector.on(
+      "disconnect",
+      async (error: Error, payload: IJsonRpcRequest) => {
+        if (error) {
+          throw error;
+        }
+
+        dispatch(orderUnsubmit());
+      }
+    );
   } catch (error) {
     console.error(error); // tslint:disable-line
     dispatch({ type: ORDER_SUBMIT_FAILURE });
@@ -147,20 +163,31 @@ export const orderRequestPayment = (
     from: sanitizeHex(account),
     to: sanitizeHex(DAI_TOKEN.contractAddress),
     nonce: sanitizeHex(convertStringToHex(nonce)),
-    gasLimit: sanitizeHex(`${gasLimit}`),
-    gasPrice: sanitizeHex(convertStringToHex(gasPrice)),
+    gasLimit: gasLimit ? sanitizeHex(`${gasLimit}`) : "0x",
+    gasPrice: gasPrice ? sanitizeHex(convertStringToHex(gasPrice)) : "0x",
     value: "0x00",
-    data: sanitizeHex(data)
+    data: data ? sanitizeHex(data) : "0x"
   };
   const txhash = await sendTransaction(tx);
 
-  const order = await getSpacePrivate(orderHash);
+  if (txhash) {
+    killSession();
+  }
+
+  // const order = await getSpacePrivate(orderHash);
+  const order = `{
+    "name": '',
+    "description": '',
+    "price": '',
+    "quantity": '',
+    "receipt": ''
+  }`;
 
   const orderJson = JSON.parse(order);
 
   orderJson.receipt = txhash;
 
-  await setSpacePrivate(orderHash, JSON.stringify(orderJson));
+  // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
 };
 
 export const orderUnsubmit = () => (dispatch: any) => {

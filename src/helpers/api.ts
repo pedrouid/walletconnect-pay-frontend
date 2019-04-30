@@ -1,7 +1,5 @@
 import axios, { AxiosInstance } from "axios";
 import { IGasPrices } from "./types";
-import { payloadId } from "./utilities";
-import { convertHexToString } from "./bignumber";
 
 const api: AxiosInstance = axios.create({
   baseURL: "https://ethereum-api.xyz",
@@ -13,8 +11,10 @@ const api: AxiosInstance = axios.create({
 });
 
 export const apiGetAccountNonce = async (address: string): Promise<number> => {
-  const chainId = 1
-  const response = await api.get(`/account-nonce?address=${address}&chainId=${chainId}`);
+  const chainId = 1;
+  const response = await api.get(
+    `/account-nonce?address=${address}&chainId=${chainId}`
+  );
   const { result } = response.data;
   return result;
 };
@@ -29,8 +29,10 @@ export const apiGetGasLimit = async (
   contractAddress: string,
   data: string
 ): Promise<number> => {
-  const chainId = 1
-  const response = await api.get(`/gas-limit?address=${contractAddress}&data=${data}&chainId=${chainId}`);
+  const chainId = 1;
+  const response = await api.get(
+    `/gas-limit?address=${contractAddress}&data=${data}&chainId=${chainId}`
+  );
   const { result } = response.data;
   return result;
 };

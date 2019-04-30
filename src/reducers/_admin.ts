@@ -1,4 +1,4 @@
-import { apiAuthAdmin } from "../helpers/api";
+// import { apiAuthAdmin } from "../helpers/api";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_AUTHENTICATE_REQUEST = "admin/ADMIN_AUTHENTICATE_REQUEST";
@@ -8,6 +8,10 @@ const ADMIN_AUTHENTICATE_FAILURE = "admin/ADMIN_AUTHENTICATE_FAILURE";
 const ADMIN_CLEAR_STATE = "admin/ADMIN_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
+
+async function apiAuthAdmin(credentials: any) {
+  return true;
+}
 
 export const adminAuthenticate = (credentials: any) => async (
   dispatch: any

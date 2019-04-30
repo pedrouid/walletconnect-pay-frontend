@@ -147,7 +147,7 @@ export const orderRequestPayment = (
     from: sanitizeHex(account),
     to: sanitizeHex(DAI_TOKEN.contractAddress),
     nonce: sanitizeHex(convertStringToHex(nonce)),
-    gasLimit: sanitizeHex(gasLimit),
+    gasLimit: sanitizeHex(`${gasLimit}`),
     gasPrice: sanitizeHex(convertStringToHex(gasPrice)),
     value: "0x00",
     data: sanitizeHex(data)

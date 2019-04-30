@@ -47,3 +47,4 @@ jspm_packages
 */**/build
 
 .DS_Store
+build

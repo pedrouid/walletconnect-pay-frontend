@@ -2,6 +2,7 @@ export interface IMenuItem {
   name: string;
   description: string;
   price: number;
+  image: string;
 }
 
 export interface IOrderItem extends IMenuItem {

@@ -14,6 +14,7 @@ import {
 import { toFixed } from "../helpers/bignumber";
 import QRCodeDisplay from "../components/QRCodeDisplay";
 import arrow from "../assets/arrow.png";
+import menu from "../data/menu";
 
 const SPageWrapper = styled.div`
   position: relative;
@@ -153,8 +154,30 @@ const SListItemButton = styled.div`
   }
 `;
 
-const SListItemDetails = styled.div`
+interface IListItemDetailsStyleProps {
+  alignRight?: boolean;
+}
+
+const SListItemDetails = styled.div<IListItemDetailsStyleProps>`
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: ${({ alignRight }) =>
+    alignRight ? "flex-end" : "flex-state"};
+`;
+
+const SListItemImage = styled.div`
+  width: 120px;
+  height: 120px;
+  margin-right: 20px;
+  & img {
+    width: 100%;
+  }
+`;
+
+const SListItemText = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const SListItemName = styled.div`
@@ -170,6 +193,9 @@ const SListItemPrice = styled.div`
   width: 100%;
   text-align: right;
   font-size: ${fonts.size.large};
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 const SListItemQuantity = styled(SListItemPrice)``;
@@ -247,64 +273,6 @@ const SBackButton = styled.div`
   }
 `;
 
-const menu = [
-  {
-    name: "Expresso",
-    description: "Small cup with 1 shot",
-    price: 2.5
-  },
-  {
-    name: "Double Expresso",
-    description: "Small cup with 2 shots",
-    price: 3.0
-  },
-  {
-    name: "Americano",
-    description: "Large cup with 1 shot and hot water",
-    price: 3.0
-  },
-  {
-    name: "Latte",
-    description: "Large cup with 1 shot and milk",
-    price: 3.5
-  },
-  {
-    name: "Cappuccino",
-    description: "Large cup with 1 shot and foam",
-    price: 3.5
-  },
-  {
-    name: "Tea",
-    description: "Large cup with loose leaf tea",
-    price: 2.5
-  },
-  {
-    name: "Blueberry Muffin",
-    description: "Muffin with blueberries",
-    price: 2.5
-  },
-  {
-    name: "Chocolate Muffin",
-    description: "Muffin with chocolate chips",
-    price: 2.5
-  },
-  {
-    name: "Scone",
-    description: "Plain scope with jam",
-    price: 2.5
-  },
-  {
-    name: "Croissant",
-    description: "Plain croissant",
-    price: 2.5
-  },
-  {
-    name: "Almond Croissant",
-    description: "Croissant with almond filling",
-    price: 2.5
-  }
-];
-
 class Home extends React.Component<any, any> {
   public render() {
     const {
@@ -330,10 +298,15 @@ class Home extends React.Component<any, any> {
               >
                 <SListItemContainer>
                   <SListItemDetails>
-                    <SListItemName>{item.name}</SListItemName>
-                    <SListItemDescription>
-                      {item.description}
-                    </SListItemDescription>
+                    <SListItemImage>
+                      <img src={item.image} alt={item.name} />
+                    </SListItemImage>
+                    <SListItemText>
+                      <SListItemName>{item.name}</SListItemName>
+                      <SListItemDescription>
+                        {item.description}
+                      </SListItemDescription>
+                    </SListItemText>
                   </SListItemDetails>
                   <SListItemPrice>{`$ ${toFixed(
                     item.price,
@@ -353,19 +326,23 @@ class Home extends React.Component<any, any> {
               <SListItem key={item.name}>
                 <SListItemContainer>
                   <SListItemDetails>
-                    <SListItemName>{item.name}</SListItemName>
-                    <SListItemDescription>
-                      {item.description}
-                    </SListItemDescription>
+                    <SListItemText>
+                      <SListItemName>{item.name}</SListItemName>
+                      <SListItemDescription>
+                        {item.description}
+                      </SListItemDescription>
+                    </SListItemText>
                   </SListItemDetails>
-                  <SListItemDetails>
-                    <SListItemQuantity>{`x ${
-                      item.quantity
-                    }`}</SListItemQuantity>
-                    <SListItemSubtotal>{`$ ${toFixed(
-                      item.price * item.quantity,
-                      2
-                    )}`}</SListItemSubtotal>
+                  <SListItemDetails alignRight>
+                    <SListItemText>
+                      <SListItemQuantity>{`x ${
+                        item.quantity
+                      }`}</SListItemQuantity>
+                      <SListItemSubtotal>{`$ ${toFixed(
+                        item.price * item.quantity,
+                        2
+                      )}`}</SListItemSubtotal>
+                    </SListItemText>
                   </SListItemDetails>
                 </SListItemContainer>
                 <SListItemActions>

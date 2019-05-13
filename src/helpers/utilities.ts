@@ -1,5 +1,6 @@
 import { IChainData } from "./types";
 import supportedChains from "./chains";
+import { convertHexToNumber } from "./bignumber";
 
 export function capitalize(string: string): string {
   return string
@@ -55,9 +56,6 @@ export const getDataString = (func: string, arrVals: any[]): string => {
   return data;
 };
 
-export const removeHexPrefix = (hex: string): string =>
-  hex.toLowerCase().replace("0x", "");
-
 export const sanitizeHex = (hex: string): string => {
   hex = hex.substring(0, 2) === "0x" ? hex.substring(2) : hex;
   if (hex === "") {
@@ -66,6 +64,20 @@ export const sanitizeHex = (hex: string): string => {
   hex = hex.length % 2 !== 0 ? "0" + hex : hex;
   return "0x" + hex;
 };
+
+export function addHexPrefix(hex: string): string {
+  if (hex.toLowerCase().substring(0, 2) === "0x") {
+    return hex;
+  }
+  return "0x" + hex;
+}
+
+export function removeHexPrefix(hex: string): string {
+  if (hex.toLowerCase().substring(0, 2) === "0x") {
+    return hex.substring(2);
+  }
+  return hex;
+}
 
 export function payloadId(): number {
   const datePart: number = new Date().getTime() * Math.pow(10, 3);
@@ -84,4 +96,41 @@ export function getChainData(chainId: number): IChainData {
   }
 
   return chainData;
+}
+
+export function getChainIdFromNetworkId(networkId: number): number | null {
+  let result = null;
+
+  const chainData = supportedChains.filter(
+    (chain: any) => chain.network_id === networkId
+  )[0];
+
+  if (chainData) {
+    result = chainData.chain_id;
+  }
+
+  return result;
+}
+
+export async function queryChainId(web3: any) {
+  const chainIdRes = await web3.currentProvider.send("eth_chainId", []);
+
+  let chainId = convertHexToNumber(sanitizeHex(addHexPrefix(`${chainIdRes}`)));
+
+  if (!chainId) {
+    const networkIdRes = await web3.currentProvider.send("net_version", []);
+
+    const networkId = convertHexToNumber(
+      sanitizeHex(addHexPrefix(`${networkIdRes}`))
+    );
+
+    if (networkId) {
+      const _chainId = getChainIdFromNetworkId(networkId);
+
+      if (_chainId) {
+        chainId = _chainId;
+      }
+    }
+  }
+  return chainId;
 }

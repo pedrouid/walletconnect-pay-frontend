@@ -2,7 +2,21 @@ import Box from "3box";
 import { createHttpProvider } from "./eth";
 import { getChainData } from "./utilities";
 
+const spaceSchema = {
+  businessName: "BUSINESS_NAME"
+};
+
 let box: any | null = null;
+
+export async function init3Box(address: string, chainId: number) {
+  await openBox(address, chainId);
+
+  await openSpace();
+
+  const businessName = await getSpacePrivate(spaceSchema.businessName);
+
+  return businessName;
+}
 
 export async function getProfile(address: string) {
   const profile = await Box.getProfile(address);
@@ -60,9 +74,10 @@ export async function removePrivate(key: string) {
 }
 
 const SPACE_ID: string = "WALLETCONNECT_PAY_V1";
+
 let space: any = null;
 
-export async function openSpace(key: string) {
+export async function openSpace() {
   if (!box) {
     throw new Error("Box is not open yet");
   }

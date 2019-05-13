@@ -1,5 +1,34 @@
 import BigNumber from "bignumber.js";
 
+export function toFixed(value: string | number, decimals: number): string {
+  return new BigNumber(`${value}`).toFixed(decimals).toString();
+}
+
+export function isNaN(value: string | number): boolean {
+  return new BigNumber(`${value}`).isNaN();
+}
+
+export function isNumber(value: string | number): boolean {
+  const isNaNResult = isNaN(value);
+  return !isNaNResult;
+}
+
+export function isInteger(value: string | number): boolean {
+  return new BigNumber(`${value}`).isInteger();
+}
+
+export function isPositive(value: string | number): boolean {
+  return new BigNumber(`${value}`).isPositive();
+}
+
+export function isNegative(value: string | number): boolean {
+  return new BigNumber(`${value}`).isNegative();
+}
+
+export function isZero(value: string | number): boolean {
+  return new BigNumber(`${value}`).isZero();
+}
+
 export function countDecimalPlaces(value: string | number): number {
   return new BigNumber(`${value}`).dp();
 }
@@ -18,6 +47,10 @@ export function convertHexToString(hex: string): string {
 
 export function convertStringToHex(value: string | number): string {
   return new BigNumber(`${value}`).toString(16);
+}
+
+export function convertHexToNumber(hex: string): number {
+  return convertStringToNumber(convertHexToString(hex));
 }
 
 export function greaterThan(
@@ -130,12 +163,8 @@ export function convertAmountFromRawNumber(
     .toString();
 }
 
-export function toFixed(value: string | number, decimals: number): string {
-  return new BigNumber(`${value}`).toFixed(decimals).toString();
-}
-
 export function handleSignificantDecimals(
-  value: string | number,
+  value: string,
   decimals: number,
   buffer?: number
 ): string | null {
@@ -145,7 +174,6 @@ export function handleSignificantDecimals(
   ) {
     return null;
   }
-  value = new BigNumber(`${value}`).toString();
   buffer = buffer ? convertStringToNumber(buffer) : 3;
   decimals = convertStringToNumber(decimals);
   const absolute = new BigNumber(`${value}`).abs().toNumber();

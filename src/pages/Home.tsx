@@ -163,7 +163,7 @@ const SListItemDetails = styled.div<IListItemDetailsStyleProps>`
   display: flex;
   align-items: center;
   justify-content: ${({ alignRight }) =>
-    alignRight ? "flex-end" : "flex-state"};
+    alignRight ? "flex-end" : "flex-start"};
 `;
 
 const SListItemImage = styled.div`

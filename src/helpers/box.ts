@@ -1,6 +1,4 @@
 import Box from "3box";
-import { createHttpProvider } from "./eth";
-import { getChainData } from "./utilities";
 
 const spaceSchema = {
   businessName: "BUSINESS_NAME"
@@ -8,8 +6,8 @@ const spaceSchema = {
 
 let box: any | null = null;
 
-export async function init3Box(address: string, chainId: number) {
-  await openBox(address, chainId);
+export async function init3Box(address: string, provider: any) {
+  await openBox(address, provider);
 
   await openSpace();
 
@@ -23,9 +21,7 @@ export async function getProfile(address: string) {
   return profile;
 }
 
-export async function openBox(address: string, chainId: number = 1) {
-  const rpcUrl = getChainData(chainId).rpc_url;
-  const provider = createHttpProvider(rpcUrl);
+export async function openBox(address: string, provider: any) {
   box = await Box.openBox(address, provider);
 }
 

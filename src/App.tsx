@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import styled from "styled-components";
 import { Switch, Route } from "react-router-dom";
 
@@ -27,6 +28,9 @@ const SContent = styled.div`
 `;
 
 class App extends React.Component<any, any> {
+  public static contextTypes = {
+    router: PropTypes.object.isRequired
+  };
   public componentDidMount() {
     window.browserHistory = this.context.router.history;
   }

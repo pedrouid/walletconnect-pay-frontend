@@ -20,6 +20,7 @@ import {
   sanitizeHex
 } from "../helpers/utilities";
 import { keccak256 } from "../helpers/eth";
+import menu from "../data/menu";
 // import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
 
 // -- Constants ------------------------------------------------------------- //
@@ -199,6 +200,7 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
+  menu,
   loading: false,
   submitted: false,
   items: [],

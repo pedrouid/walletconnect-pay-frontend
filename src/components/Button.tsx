@@ -31,8 +31,7 @@ const SHoverLayer = styled.div`
   visibility: hidden;
 `;
 
-const SButtonStyleTypes = styled.button<IButtonStyleProps>``;
-const SButton = styled(SButtonStyleTypes)`
+const SButton = styled.button<IButtonStyleProps>`
   transition: ${transitions.base};
   width: 100%;
   position: relative;

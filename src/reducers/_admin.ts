@@ -1,11 +1,17 @@
 import Web3 from "web3";
-import { init3Box } from "../helpers/box";
+import { init3Box, setSpacePrivate } from "../helpers/box";
 import { queryChainId } from "../helpers/utilities";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
 const ADMIN_CONNECT_SUCCESS = "admin/ADMIN_CONNECT_SUCCESS";
 const ADMIN_CONNECT_FAILURE = "admin/ADMIN_CONNECT_FAILURE";
+
+const ADMIN_UPDATE_SIGNUP_FORM = "admin/ADMIN_UPDATE_SIGNUP_FORM";
+
+const ADMIN_SUBMIT_SIGNUP_REQUEST = "admin/ADMIN_SUBMIT_SIGNUP_REQUEST";
+const ADMIN_SUBMIT_SIGNUP_SUCCESS = "admin/ADMIN_SUBMIT_SIGNUP_SUCCESS";
+const ADMIN_SUBMIT_SIGNUP_FAILURE = "admin/ADMIN_SUBMIT_SIGNUP_FAILURE";
 
 const ADMIN_CLEAR_STATE = "admin/ADMIN_CLEAR_STATE";
 
@@ -36,6 +42,34 @@ export const adminConnectWallet = (provider: any) => async (dispatch: any) => {
   }
 };
 
+export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
+  dispatch({ type: ADMIN_SUBMIT_SIGNUP_REQUEST });
+  try {
+    const { signUpForm } = getState().admin;
+    const profile = { name: signUpForm.name, type: signUpForm.type };
+    await setSpacePrivate("profile", profile);
+
+    // await apiSendEmailVerification(signUpForm.email)
+
+    dispatch({ type: ADMIN_SUBMIT_SIGNUP_SUCCESS });
+  } catch (error) {
+    console.error(error); // tslint:disable-line
+    dispatch({ type: ADMIN_SUBMIT_SIGNUP_FAILURE });
+  }
+};
+
+export const adminUpdateSignUpForm = (key: string, value: string) => async (
+  dispatch: any,
+  getState: any
+) => {
+  let { signUpForm } = getState().admin;
+  signUpForm = {
+    ...signUpForm,
+    [key]: value
+  };
+  dispatch({ type: ADMIN_UPDATE_SIGNUP_FORM, payload: signUpForm });
+};
+
 export const adminClearState = () => ({ type: ADMIN_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
@@ -44,7 +78,12 @@ const INITIAL_STATE = {
   web3: null,
   address: "",
   chainId: 1,
-  businessName: ""
+  businessName: "",
+  signUpForm: {
+    email: "",
+    name: "",
+    type: ""
+  }
 };
 
 export default (state = INITIAL_STATE, action: any) => {
@@ -62,8 +101,8 @@ export default (state = INITIAL_STATE, action: any) => {
       };
     case ADMIN_CONNECT_FAILURE:
       return { ...state, loading: false };
-    case ADMIN_CLEAR_STATE:
-      return { ...state, web3: action.payload };
+    case ADMIN_UPDATE_SIGNUP_FORM:
+      return { ...state, signUpForm: action.payload };
     case ADMIN_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
     default:

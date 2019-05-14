@@ -11,16 +11,12 @@ const ADMIN_CLEAR_STATE = "admin/ADMIN_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
 
-export const adminConnectWallet = (provider: any) => async (
-  dispatch: any,
-  getState: any
-) => {
+export const adminConnectWallet = (provider: any) => async (dispatch: any) => {
   dispatch({ type: ADMIN_CONNECT_REQUEST });
   try {
     const web3 = new Web3(provider);
 
-    const accounts = await web3.eth.getAccounts();
-    const address = accounts[0];
+    const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
     const businessName = await init3Box(address, provider);
 

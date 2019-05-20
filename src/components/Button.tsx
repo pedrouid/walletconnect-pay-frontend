@@ -56,10 +56,18 @@ const SButton = styled.button<IButtonStyleProps>`
     outline ? `rgb(${colors[color]})` : `rgb(${colors.white})`};
   box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.soft}`)};
   border-radius: 6px;
-  font-size: ${fonts.size.medium};
+  font-size: ${fonts.size.large};
   font-weight: ${fonts.weight.semibold};
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
   padding: ${({ icon, left }) =>
-    icon ? (left ? "7px 12px 8px 28px" : "7px 28px 8px 12px") : "8px 12px"};
+    icon
+      ? left
+        ? "0.4375em 0.75em 0.5em 1.75em"
+        : "0.4375em 1.75em 0.5em 0.75em"
+      : "0.5em 0.75em"};
   cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
   will-change: transform;
 

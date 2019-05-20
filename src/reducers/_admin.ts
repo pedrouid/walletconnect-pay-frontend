@@ -58,14 +58,14 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   }
 };
 
-export const adminUpdateSignUpForm = (key: string, value: string) => async (
+export const adminUpdateSignUpForm = (updatedSignUpForm: any) => async (
   dispatch: any,
   getState: any
 ) => {
   let { signUpForm } = getState().admin;
   signUpForm = {
     ...signUpForm,
-    [key]: value
+    ...updatedSignUpForm
   };
   dispatch({ type: ADMIN_UPDATE_SIGNUP_FORM, payload: signUpForm });
 };
@@ -80,9 +80,10 @@ const INITIAL_STATE = {
   chainId: 1,
   businessName: "",
   signUpForm: {
-    email: "",
     name: "",
-    type: ""
+    type: "cafe",
+    country: "DE",
+    email: ""
   }
 };
 

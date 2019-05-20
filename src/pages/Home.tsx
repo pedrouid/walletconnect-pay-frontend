@@ -1,23 +1,8 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import styled from "styled-components";
 import Web3Connect from "web3connect";
+import PageWrapper from "../components/PageWrapper";
 import { adminConnectWallet } from "../reducers/_admin";
-
-const SPageWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  max-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const STitle = styled.h4``;
 
 class Home extends React.Component<any, any> {
   public onConnect = (provider: any) => {
@@ -29,10 +14,10 @@ class Home extends React.Component<any, any> {
 
   public render() {
     return (
-      <SPageWrapper>
-        <STitle>{`WalletConnect Pay`}</STitle>
+      <PageWrapper center>
+        <h4>{`WalletConnect Pay`}</h4>
         <Web3Connect onConnect={this.onConnect} onClose={this.onClose} />
-      </SPageWrapper>
+      </PageWrapper>
     );
   }
 }

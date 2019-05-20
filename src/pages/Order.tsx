@@ -10,34 +10,13 @@ import {
   orderRemoveItem,
   orderSubmit,
   orderUnsubmit
-} from "../redux/_order";
+} from "../reducers/_order";
 import { toFixed } from "../helpers/bignumber";
 import QRCodeDisplay from "../components/QRCodeDisplay";
 import arrow from "../assets/arrow.png";
-import logo from "../assets/logo.png";
-
-const SHeader = styled.div`
-  width: 100%;
-  background-color: rgb(${colors.dark});
-  color: rgb(${colors.white});
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  height: 82px;
-`;
-
-const SBranding = styled.h1`
-  text-transform: uppercase;
-  font-size: 24px;
-  margin: 4px 0px;
-  margin-left: 10px;
-`;
-
-const SLogo = styled.img`
-  border-radius: 6px;
-  width: 40px;
-  height: 40px;
-`;
+import success from "../assets/success.png";
+import error from "../assets/error.png";
+import menu from "../data/menu";
 
 const SPageWrapper = styled.div`
   position: relative;
@@ -55,7 +34,8 @@ interface IColumnStyleProps {
   width: number;
 }
 
-const SColumn = styled.div<IColumnStyleProps>`
+const SColumnStyleTypes = styled.div<IColumnStyleProps>``;
+const SColumn = styled(SColumnStyleTypes)`
   transition: ${transitions.long};
   /* display: flex; */
   width: ${({ width }) => `${width}%`};
@@ -118,10 +98,11 @@ interface IListItemStyleProps {
   onClick?: any;
 }
 
-const SListItem = styled.div<IListItemStyleProps>`
+const SListItemStyleTypes = styled.div<IListItemStyleProps>``;
+const SListItem = styled(SListItemStyleTypes)`
   transition: ${transitions.base};
 
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid rgb(${colors.lightGrey});
   margin-bottom: 16px;
 
@@ -229,7 +210,8 @@ interface IModalStyleProps {
   show: boolean;
 }
 
-const SModal = styled.div<IModalStyleProps>`
+const SModalStyleTypes = styled.div<IModalStyleProps>``;
+const SModal = styled(SModalStyleTypes)`
   transition: ${transitions.long};
   position: absolute;
   bottom: 0;
@@ -278,6 +260,28 @@ const SModalFooter = styled(SColumnFooter)`
   border-top: 0;
 `;
 
+const SPaymentResult = styled.div`
+  width: 100%;
+  padding-top: 100%;
+  position: relative;
+
+  & > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  & > div > img {
+    width: 150px;
+    height: 150px;
+  }
+`;
+
 const SBackButton = styled.div`
   position: absolute;
   font-size: 16px;
@@ -296,128 +300,124 @@ const SBackButton = styled.div`
 class Order extends React.Component<any, any> {
   public render() {
     const {
-      menu,
       loading,
       submitted,
       items,
       subtotal,
       tax,
       nettotal,
+      payment,
       uri
     } = this.props;
     return (
-      <React.Fragment>
-        <SHeader>
-          <SLogo src={logo} alt="" />
-          <SBranding>{"Bufficorn Cafe"}</SBranding>
-        </SHeader>
-        <SPageWrapper>
-          <SColumn width={items.length ? 70 : 100}>
-            <SColumnHeader>
-              <STitle>{`Menu`}</STitle>
-            </SColumnHeader>
-            <SColumnList>
-              {menu.map((item: IMenuItem) => (
-                <SListItem
-                  key={item.name}
-                  onClick={() => this.props.orderAddItem(item)}
-                >
-                  <SListItemContainer>
-                    <SListItemDetails>
-                      <SListItemImage>
-                        <img src={item.image} alt={item.name} />
-                      </SListItemImage>
-                      <SListItemText>
-                        <SListItemName>{item.name}</SListItemName>
-                        <SListItemDescription>
-                          {item.description}
-                        </SListItemDescription>
-                      </SListItemText>
-                    </SListItemDetails>
-                    <SListItemPrice>{`$ ${toFixed(
-                      item.price,
-                      2
-                    )}`}</SListItemPrice>
-                  </SListItemContainer>
-                </SListItem>
-              ))}
-            </SColumnList>
-          </SColumn>
-          <SColumnOrder width={items.length ? 30 : 0}>
-            <SColumnHeader>
-              <STitle>{`Order`}</STitle>
-            </SColumnHeader>
-            <SColumnList>
-              {items.map((item: IOrderItem) => (
-                <SListItem key={item.name}>
-                  <SListItemContainer>
-                    <SListItemDetails>
-                      <SListItemText>
-                        <SListItemName>{item.name}</SListItemName>
-                        <SListItemDescription>
-                          {item.description}
-                        </SListItemDescription>
-                      </SListItemText>
-                    </SListItemDetails>
-                    <SListItemDetails alignRight>
-                      <SListItemText>
-                        <SListItemQuantity>{`x ${
-                          item.quantity
-                        }`}</SListItemQuantity>
-                        <SListItemSubtotal>{`$ ${toFixed(
-                          item.price * item.quantity,
-                          2
-                        )}`}</SListItemSubtotal>
-                      </SListItemText>
-                    </SListItemDetails>
-                  </SListItemContainer>
-                  <SListItemActions>
-                    <SListItemButton
-                      onClick={() => this.props.orderRemoveItem(item)}
-                    >
-                      <span>{"Remove"}</span>
-                    </SListItemButton>
-                    <SListItemButton
-                      onClick={() => this.props.orderAddItem(item)}
-                    >
-                      <span>{"Add"}</span>
-                    </SListItemButton>
-                  </SListItemActions>
-                </SListItem>
-              ))}
-            </SColumnList>
-            <SColumnFooter>
-              <SColumnRow>
-                <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
-              </SColumnRow>
-              <SColumnRow>
-                <div>{`Sub Total`}</div>
-                <div>{`$ ${toFixed(subtotal, 2)}`}</div>
-              </SColumnRow>
-              <SColumnRow>
-                <div>{`Tax`}</div>
-                <div>{`$ ${toFixed(tax, 2)}`}</div>
-              </SColumnRow>
-              <SColumnRow>
-                <div>{`Net Total`}</div>
-                <div>{`$ ${toFixed(nettotal, 2)}`}</div>
-              </SColumnRow>
-              <SColumnRow>
-                <Button onClick={this.props.orderSubmit}>{`Pay`}</Button>
-              </SColumnRow>
-            </SColumnFooter>
-          </SColumnOrder>
+      <SPageWrapper>
+        <SColumn width={items.length ? 70 : 100}>
+          <SColumnHeader>
+            <STitle>{`Menu`}</STitle>
+          </SColumnHeader>
+          <SColumnList>
+            {menu.map((item: IMenuItem) => (
+              <SListItem
+                key={item.name}
+                onClick={() => this.props.orderAddItem(item)}
+              >
+                <SListItemContainer>
+                  <SListItemDetails>
+                    <SListItemImage>
+                      <img src={item.image} alt={item.name} />
+                    </SListItemImage>
+                    <SListItemText>
+                      <SListItemName>{item.name}</SListItemName>
+                      <SListItemDescription>
+                        {item.description}
+                      </SListItemDescription>
+                    </SListItemText>
+                  </SListItemDetails>
+                  <SListItemPrice>{`$ ${toFixed(
+                    item.price,
+                    2
+                  )}`}</SListItemPrice>
+                </SListItemContainer>
+              </SListItem>
+            ))}
+          </SColumnList>
+        </SColumn>
+        <SColumnOrder width={items.length ? 30 : 0}>
+          <SColumnHeader>
+            <STitle>{`Order`}</STitle>
+          </SColumnHeader>
+          <SColumnList>
+            {items.map((item: IOrderItem) => (
+              <SListItem key={item.name}>
+                <SListItemContainer>
+                  <SListItemDetails>
+                    <SListItemText>
+                      <SListItemName>{item.name}</SListItemName>
+                      <SListItemDescription>
+                        {item.description}
+                      </SListItemDescription>
+                    </SListItemText>
+                  </SListItemDetails>
+                  <SListItemDetails alignRight>
+                    <SListItemText>
+                      <SListItemQuantity>{`x ${
+                        item.quantity
+                      }`}</SListItemQuantity>
+                      <SListItemSubtotal>{`$ ${toFixed(
+                        item.price * item.quantity,
+                        2
+                      )}`}</SListItemSubtotal>
+                    </SListItemText>
+                  </SListItemDetails>
+                </SListItemContainer>
+                <SListItemActions>
+                  <SListItemButton
+                    onClick={() => this.props.orderRemoveItem(item)}
+                  >
+                    <span>{"Remove"}</span>
+                  </SListItemButton>
+                  <SListItemButton
+                    onClick={() => this.props.orderAddItem(item)}
+                  >
+                    <span>{"Add"}</span>
+                  </SListItemButton>
+                </SListItemActions>
+              </SListItem>
+            ))}
+          </SColumnList>
+          <SColumnFooter>
+            <SColumnRow>
+              <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
+            </SColumnRow>
+            <SColumnRow>
+              <div>{`Sub Total`}</div>
+              <div>{`$ ${toFixed(subtotal, 2)}`}</div>
+            </SColumnRow>
+            <SColumnRow>
+              <div>{`Tax`}</div>
+              <div>{`$ ${toFixed(tax, 2)}`}</div>
+            </SColumnRow>
+            <SColumnRow>
+              <div>{`Net Total`}</div>
+              <div>{`$ ${toFixed(nettotal, 2)}`}</div>
+            </SColumnRow>
+            <SColumnRow>
+              <Button onClick={this.props.orderSubmit}>{`Pay`}</Button>
+            </SColumnRow>
+          </SColumnFooter>
+        </SColumnOrder>
 
-          <SModal show={submitted}>
-            <SModalHeader>
-              <SBackButton onClick={this.props.orderUnsubmit}>
-                <img src={arrow} alt="" />
-                <span>{`Back`}</span>
-              </SBackButton>
-              <STitle>{`Payment`}</STitle>
-            </SModalHeader>
-            {!loading ? (
-              <SModalContainer>
+        <SModal show={submitted}>
+          <SModalHeader>
+            <SBackButton onClick={this.props.orderUnsubmit}>
+              <img src={arrow} alt="" />
+              <span>{`Back`}</span>
+            </SBackButton>
+            <STitle>{`Payment`}</STitle>
+          </SModalHeader>
+          {!loading ? (
+            <SModalContainer>
+              {!payment ? (
                 <SModalColumn>
                   <QRCodeDisplay data={uri} />
                   <SModalCallToAction>{`Scan with WalletConnect`}</SModalCallToAction>
@@ -425,45 +425,69 @@ class Order extends React.Component<any, any> {
                     {`Scan this QR code with your WalletConnect-enabled mobile wallet to pay.`}
                   </SModalDescription>
                 </SModalColumn>
-                <SModalFooter>
-                  <SColumnRow>
-                    <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
-                  </SColumnRow>
-                  <SColumnRow>
-                    <div>{`Sub Total`}</div>
-                    <div>{`$ ${toFixed(subtotal, 2)}`}</div>
-                  </SColumnRow>
-                  <SColumnRow>
-                    <div>{`Tax`}</div>
-                    <div>{`$ ${toFixed(tax, 2)}`}</div>
-                  </SColumnRow>
-                  <SColumnRow>
-                    <div>{`Net Total`}</div>
-                    <div>{`$ ${toFixed(nettotal, 2)}`}</div>
-                  </SColumnRow>
-                </SModalFooter>
-              </SModalContainer>
-            ) : (
-              <SModalContainer>
-                <Loader />
-              </SModalContainer>
-            )}
-          </SModal>
-        </SPageWrapper>
-      </React.Fragment>
+              ) : payment && payment.success ? (
+                <SModalColumn>
+                  <SPaymentResult>
+                    <div>
+                      <img src={success} alt="Success" />
+                    </div>
+                  </SPaymentResult>
+                  <SModalCallToAction>{`Success`}</SModalCallToAction>
+                  <SModalDescription>
+                    {`Your payment went through and your order is being prepared.`}
+                  </SModalDescription>
+                </SModalColumn>
+              ) : (
+                <SModalColumn>
+                  <SPaymentResult>
+                    <div>
+                      <img src={error} alt="Failed" />
+                    </div>
+                  </SPaymentResult>
+                  <SModalCallToAction>{`Payment Failed`}</SModalCallToAction>
+                  <SModalDescription>
+                    {`Please check your wallet to for any transaction information.`}
+                  </SModalDescription>
+                </SModalColumn>
+              )}
+              <SModalFooter>
+                <SColumnRow>
+                  <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
+                </SColumnRow>
+                <SColumnRow>
+                  <div>{`Sub Total`}</div>
+                  <div>{`$ ${toFixed(subtotal, 2)}`}</div>
+                </SColumnRow>
+                <SColumnRow>
+                  <div>{`Tax`}</div>
+                  <div>{`$ ${toFixed(tax, 2)}`}</div>
+                </SColumnRow>
+                <SColumnRow>
+                  <div>{`Net Total`}</div>
+                  <div>{`$ ${toFixed(nettotal, 2)}`}</div>
+                </SColumnRow>
+              </SModalFooter>
+            </SModalContainer>
+          ) : (
+            <SModalContainer>
+              <Loader />
+            </SModalContainer>
+          )}
+        </SModal>
+      </SPageWrapper>
     );
   }
 }
 
-const reduxProps = (store: any) => ({
-  menu: store.order.menu,
-  loading: store.order.loading,
-  submitted: store.order.submitted,
-  items: store.order.items,
-  subtotal: store.order.subtotal,
-  tax: store.order.tax,
-  nettotal: store.order.nettotal,
-  uri: store.order.uri
+const reduxProps = (reduxState: any) => ({
+  loading: reduxState.order.loading,
+  submitted: reduxState.order.submitted,
+  items: reduxState.order.items,
+  subtotal: reduxState.order.subtotal,
+  tax: reduxState.order.tax,
+  nettotal: reduxState.order.nettotal,
+  uri: reduxState.order.uri,
+  payment: reduxState.order.payment
 });
 
 export default connect(

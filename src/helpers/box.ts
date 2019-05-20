@@ -23,13 +23,19 @@ let box: any | null = null;
 // }
 
 export async function init3Box(address: string, provider: any) {
+  let result = null;
+
   await openBox(address, provider);
 
   await openSpace();
 
   const profile = await getSpacePrivate("profile");
 
-  return profile.name;
+  if (profile) {
+    result = profile.name;
+  }
+
+  return result;
 }
 
 export async function getProfile(address: string) {

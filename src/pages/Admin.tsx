@@ -1,10 +1,28 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
+import { connect } from "react-redux";
 import PageWrapper from "../components/PageWrapper";
 
-const Admin = () => (
-  <PageWrapper>
-    <h4>{`Admin`}</h4>
-  </PageWrapper>
-);
+class Admin extends React.Component<any, any> {
+  public static propTypes = {
+    businessName: PropTypes.string.isRequired
+  };
 
-export default Admin;
+  public render() {
+    return (
+      <PageWrapper>
+        <h4>{`Admin`}</h4>
+        <p>{this.props.businessName}</p>
+      </PageWrapper>
+    );
+  }
+}
+
+const reduxProps = (reduxState: any) => ({
+  businessName: reduxState.admin.businessName
+});
+
+export default connect(
+  reduxProps,
+  null
+)(Admin);

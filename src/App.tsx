@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import styled from "styled-components";
-import { Switch, Route } from "react-router-dom";
-
+import { Route, Switch, withRouter, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 import Home from "./pages/Home";
 import Order from "./pages/Order";
 import Admin from "./pages/Admin";
@@ -41,8 +41,26 @@ class App extends React.Component<any, any> {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/order" component={Order} />
-            <Route exact path="/signup" component={SignUp} />
-            <Route exact path="/admin" component={Admin} />
+            <Route
+              exact
+              path="/signup"
+              render={routerProps => {
+                if (!this.props.web3) {
+                  return <Redirect to="/" />;
+                }
+                return <SignUp {...routerProps} />;
+              }}
+            />
+            <Route
+              exact
+              path="/admin"
+              render={routerProps => {
+                if (!this.props.web3 && !this.props.businessName) {
+                  return <Redirect to="/" />;
+                }
+                return <Admin {...routerProps} />;
+              }}
+            />
             <Route component={NotFound} />
           </Switch>
         </SContent>
@@ -51,4 +69,12 @@ class App extends React.Component<any, any> {
   }
 }
 
-export default App;
+const reduxProps = (reduxState: any) => ({
+  web3: reduxState.admin.web3,
+  businessName: reduxState.admin.businessName
+});
+
+export default withRouter(connect(
+  reduxProps,
+  null
+)(App) as any);

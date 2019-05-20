@@ -22,6 +22,7 @@ import {
 import { keccak256 } from "../helpers/eth";
 import menu from "../data/menu";
 // import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
+import { notificationShow } from "./_notification";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -142,6 +143,7 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
     );
   } catch (error) {
     console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_SUBMIT_FAILURE });
   }
 };

@@ -1,6 +1,7 @@
 import Web3 from "web3";
 import { init3Box, setSpacePrivate } from "../helpers/box";
 import { queryChainId } from "../helpers/utilities";
+import { notificationShow } from "./_notification";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
@@ -38,6 +39,7 @@ export const adminConnectWallet = (provider: any) => async (dispatch: any) => {
     }
   } catch (error) {
     console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
     dispatch({ type: ADMIN_CONNECT_FAILURE });
   }
 };
@@ -52,8 +54,11 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
     // await apiSendEmailVerification(signUpForm.email)
 
     dispatch({ type: ADMIN_SUBMIT_SIGNUP_SUCCESS });
+
+    window.browserHistory.push("/admin");
   } catch (error) {
     console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
     dispatch({ type: ADMIN_SUBMIT_SIGNUP_FAILURE });
   }
 };

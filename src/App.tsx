@@ -3,6 +3,7 @@ import * as PropTypes from "prop-types";
 import styled from "styled-components";
 import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+// import Notification from "./components/Notification";
 import Home from "./pages/Home";
 import Order from "./pages/Order";
 import Admin from "./pages/Admin";
@@ -64,6 +65,8 @@ class App extends React.Component<any, any> {
             <Route component={NotFound} />
           </Switch>
         </SContent>
+        {/* TODO: Fix Notification Render Error */}
+        {/* <Notification /> */}
       </SLayout>
     );
   }

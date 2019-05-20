@@ -6,7 +6,7 @@ import PageWrapper from "../components/PageWrapper";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
-import { adminUpdateSignUpForm, adminSubmitSignUp } from "../reducers/_admin";
+import { adminUpdateSignUpForm, adminSubmitSignUp } from "../redux/_admin";
 import businessTypes from "../ref/businessTypes";
 import countries from "src/ref/countries";
 
@@ -93,11 +93,11 @@ class SignUp extends React.Component<any, ISignUpProps> {
   }
 }
 
-const reduxProps = (reduxState: any) => ({
-  name: reduxState.admin.signUpForm.name,
-  type: reduxState.admin.signUpForm.type,
-  country: reduxState.admin.signUpForm.country,
-  email: reduxState.admin.signUpForm.email
+const reduxProps = (store: any) => ({
+  name: store.admin.signUpForm.name,
+  type: store.admin.signUpForm.type,
+  country: store.admin.signUpForm.country,
+  email: store.admin.signUpForm.email
 });
 
 export default connect(

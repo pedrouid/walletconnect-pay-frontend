@@ -54,10 +54,10 @@ Notification.propTypes = {
   message: PropTypes.string.isRequired
 };
 
-const reduxProps = (reduxState: any) => ({
-  error: reduxState.notification.error,
-  show: reduxState.notification.show,
-  message: reduxState.notification.message
+const reduxProps = (store: any) => ({
+  error: store.notification.error,
+  show: store.notification.show,
+  message: store.notification.message
 });
 
 export default connect(

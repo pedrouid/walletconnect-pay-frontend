@@ -18,8 +18,8 @@ class Admin extends React.Component<any, any> {
   }
 }
 
-const reduxProps = (reduxState: any) => ({
-  businessName: reduxState.admin.businessName
+const reduxProps = (store: any) => ({
+  businessName: store.admin.businessName
 });
 
 export default connect(

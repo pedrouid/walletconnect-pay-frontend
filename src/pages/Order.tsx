@@ -10,7 +10,7 @@ import {
   orderRemoveItem,
   orderSubmit,
   orderUnsubmit
-} from "../reducers/_order";
+} from "../redux/_order";
 import { toFixed } from "../helpers/bignumber";
 import QRCodeDisplay from "../components/QRCodeDisplay";
 import arrow from "../assets/arrow.png";
@@ -455,15 +455,15 @@ class Order extends React.Component<any, any> {
   }
 }
 
-const reduxProps = (reduxState: any) => ({
-  menu: reduxState.order.menu,
-  loading: reduxState.order.loading,
-  submitted: reduxState.order.submitted,
-  items: reduxState.order.items,
-  subtotal: reduxState.order.subtotal,
-  tax: reduxState.order.tax,
-  nettotal: reduxState.order.nettotal,
-  uri: reduxState.order.uri
+const reduxProps = (store: any) => ({
+  menu: store.order.menu,
+  loading: store.order.loading,
+  submitted: store.order.submitted,
+  items: store.order.items,
+  subtotal: store.order.subtotal,
+  tax: store.order.tax,
+  nettotal: store.order.nettotal,
+  uri: store.order.uri
 });
 
 export default connect(

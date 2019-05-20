@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Web3Connect from "web3connect";
 import PageWrapper from "../components/PageWrapper";
-import { adminConnectWallet } from "../reducers/_admin";
+import { adminConnectWallet } from "../redux/_admin";
 
 class Home extends React.Component<any, any> {
   public onConnect = (provider: any) => {

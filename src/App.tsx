@@ -72,9 +72,9 @@ class App extends React.Component<any, any> {
   }
 }
 
-const reduxProps = (reduxState: any) => ({
-  web3: reduxState.admin.web3,
-  businessName: reduxState.admin.businessName
+const reduxProps = (store: any) => ({
+  web3: store.admin.web3,
+  businessName: store.admin.businessName
 });
 
 export default withRouter(connect(

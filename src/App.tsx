@@ -1,7 +1,12 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import styled from "styled-components";
-import { Route, Switch, withRouter, Redirect } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  withRouter
+  // Redirect
+} from "react-router-dom";
 import { connect } from "react-redux";
 // import Notification from "./components/Notification";
 import Home from "./pages/Home";
@@ -46,9 +51,9 @@ class App extends React.Component<any, any> {
               exact
               path="/signup"
               render={routerProps => {
-                if (!this.props.web3) {
-                  return <Redirect to="/" />;
-                }
+                // if (!this.props.web3) {
+                //   return <Redirect to="/" />;
+                // }
                 return <SignUp {...routerProps} />;
               }}
             />
@@ -56,9 +61,9 @@ class App extends React.Component<any, any> {
               exact
               path="/admin"
               render={routerProps => {
-                if (!this.props.web3 && !this.props.businessName) {
-                  return <Redirect to="/" />;
-                }
+                // if (!this.props.web3 && !this.props.businessName) {
+                //   return <Redirect to="/" />;
+                // }
                 return <Admin {...routerProps} />;
               }}
             />

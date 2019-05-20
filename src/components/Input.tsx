@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import styled from "styled-components";
-import { colors, fonts, shadows, responsive } from "../styles";
+import { colors, fonts, shadows } from "../styles";
 
 interface IInputWrapperStyleProps {
   disabled: boolean;
@@ -25,15 +25,6 @@ const SLabel = styled.label`
   & ~ input,
   & ~ div {
     margin-top: 8px;
-  }
-
-  @media screen and (${responsive.sm.max}) {
-    margin-top: 12px;
-
-    & ~ input,
-    & ~ div {
-      margin-top: 6px;
-    }
   }
 `;
 
@@ -65,10 +56,6 @@ const SInput = styled.input<IInputStyleProps>`
     color: rgba(${colors.grey}, 0.8);
     font-weight: ${fonts.weight.medium};
     opacity: 1;
-  }
-
-  @media screen and (${responsive.sm.max}) {
-    padding: 8px 10px;
   }
 `;
 

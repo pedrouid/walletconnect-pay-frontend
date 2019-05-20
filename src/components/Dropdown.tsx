@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import { colors, fonts, shadows, responsive, transitions } from "../styles";
+import { colors, fonts, shadows, transitions } from "../styles";
 import ClickOutside from "./ClickOutside";
 
 const SDropdownWrapper = styled.div`
@@ -24,15 +24,6 @@ const SLabel = styled.label`
   & ~ input,
   & ~ div {
     margin-top: 8px;
-  }
-
-  @media screen and (${responsive.sm.max}) {
-    margin-top: 12px;
-
-    & ~ input,
-    & ~ div {
-      margin-top: 6px;
-    }
   }
 `;
 
@@ -81,10 +72,6 @@ const SRow = styled.div<IDropdownStyle>`
     show ? `rgba(${colors.dark}, 0.3)` : `rgba(${colors.dark}, 0)`};
   &:last-child {
     border-bottom-color: rgba(${colors.dark}, 0);
-  }
-
-  @media screen and (${responsive.sm.max}) {
-    padding: 8px 10px;
   }
 `;
 

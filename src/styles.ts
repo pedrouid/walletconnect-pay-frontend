@@ -45,7 +45,8 @@ export const fonts = {
 export const transitions = {
   short: "all 0.1s ease-in-out",
   base: "all 0.2s ease-in-out",
-  long: "all 0.3s ease-in-out"
+  long: "all 0.3s ease-in-out",
+  button: "all 0.15s ease-in-out"
 };
 
 export const shadows = {

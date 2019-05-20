@@ -17,7 +17,7 @@ const SInputWrapper = styled.div<IInputWrapperStyleProps>`
 
 const SLabel = styled.label`
   color: rgb(${colors.grey});
-  font-size: 13px;
+  font-size: ${fonts.size.small};
   font-weight: ${fonts.weight.semibold};
   width: 100%;
   margin-top: 16px;
@@ -49,14 +49,14 @@ const SInput = styled.input<IInputStyleProps>`
   border-style: none;
   font-family: ${({ monospace }) =>
     monospace ? `${fonts.family.RobotoMono}` : `inherit`};
-  font-size: ${fonts.size.h6};
+  font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.semibold};
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
   text-align: left;
-  border-radius: 8px;
+  border-radius: 6px;
   -webkit-box-shadow: ${shadows.medium};
   box-shadow: ${shadows.medium};
   outline: none;

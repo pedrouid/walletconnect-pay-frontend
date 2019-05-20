@@ -16,7 +16,7 @@ const SDropdownWrapper = styled.div`
 
 const SLabel = styled.label`
   color: rgb(${colors.grey});
-  font-size: 13px;
+  font-size: ${fonts.size.small};
   font-weight: ${fonts.weight.semibold};
   width: 100%;
   margin-top: 16px;
@@ -51,7 +51,7 @@ const SDropdown = styled.div<IDropdownStyle>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: ${shadows.medium};
   font-family: ${({ monospace }) =>
     monospace ? `${fonts.family.RobotoMono}` : `inherit`};
@@ -65,7 +65,7 @@ const SRow = styled.div<IDropdownStyle>`
   padding: 10px 14px;
   font-family: ${({ monospace }) =>
     monospace ? `${fonts.family.RobotoMono}` : `inherit`};
-  font-size: ${fonts.size.h6};
+  font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.semibold};
   font-style: normal;
   font-stretch: normal;

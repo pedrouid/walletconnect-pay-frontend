@@ -34,7 +34,7 @@ const SBranding = styled.h1`
 `;
 
 const SLogo = styled.img`
-  border-radius: 4px;
+  border-radius: 6px;
   width: 40px;
   height: 40px;
 `;
@@ -121,7 +121,7 @@ interface IListItemStyleProps {
 const SListItem = styled.div<IListItemStyleProps>`
   transition: ${transitions.base};
 
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid rgb(${colors.lightGrey});
   margin-bottom: 16px;
 

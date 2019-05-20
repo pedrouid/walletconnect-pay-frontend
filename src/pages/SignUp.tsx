@@ -1,16 +1,36 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import PageWrapper from "../components/PageWrapper";
 import Input from "../components/Input";
+import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
-import { adminUpdateSignUpForm } from "../reducers/_admin";
+import { adminUpdateSignUpForm, adminSubmitSignUp } from "../reducers/_admin";
 import businessTypes from "../ref/businessTypes";
 import countries from "src/ref/countries";
 
-class SignUp extends React.Component<any, any> {
+const SSubmitWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin-top: 24px;
+`;
+
+interface ISignUpProps {
+  adminUpdateSignUpForm: (updatedSignUpForm: any) => void;
+  adminSubmitSignUp: () => void;
+  name: string;
+  type: string;
+  country: string;
+  email: string;
+}
+
+class SignUp extends React.Component<any, ISignUpProps> {
   public static propTypes = {
     adminUpdateSignUpForm: PropTypes.func.isRequired,
+    adminSubmitSignUp: PropTypes.func.isRequired,
     name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     country: PropTypes.string.isRequired,
@@ -65,6 +85,9 @@ class SignUp extends React.Component<any, any> {
             this.props.adminUpdateSignUpForm({ country })
           }
         />
+        <SSubmitWrapper>
+          <Button onClick={this.props.adminSubmitSignUp}>{`Submit`}</Button>
+        </SSubmitWrapper>
       </PageWrapper>
     );
   }
@@ -79,5 +102,5 @@ const reduxProps = (reduxState: any) => ({
 
 export default connect(
   reduxProps,
-  { adminUpdateSignUpForm }
+  { adminUpdateSignUpForm, adminSubmitSignUp }
 )(SignUp);

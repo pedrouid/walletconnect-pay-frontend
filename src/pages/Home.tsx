@@ -1,7 +1,8 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import Web3Connect from "web3connect";
+// import Web3Connect from "web3connect";
 import PageWrapper from "../components/PageWrapper";
+import Button from "../components/Button";
 import { adminConnectWallet } from "../reducers/_admin";
 
 class Home extends React.Component<any, any> {
@@ -15,8 +16,9 @@ class Home extends React.Component<any, any> {
   public render() {
     return (
       <PageWrapper center>
-        <h4>{`WalletConnect Pay`}</h4>
-        <Web3Connect onConnect={this.onConnect} onClose={this.onClose} />
+        <Button>{`Test`}</Button>
+        {/* <h4>{`WalletConnect Pay`}</h4> */}
+        {/* <Web3Connect onConnect={this.onConnect} onClose={this.onClose} /> */}
       </PageWrapper>
     );
   }

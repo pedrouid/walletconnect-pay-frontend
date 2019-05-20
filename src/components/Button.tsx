@@ -6,9 +6,11 @@ import { colors, fonts, shadows, transitions } from "../styles";
 interface IButtonStyleProps {
   fetching: boolean;
   outline: boolean;
-  type: "button" | "reset" | "submit";
+  type: "button" | "submit" | "reset";
   color: string;
   disabled: boolean;
+  icon: any;
+  left: boolean;
 }
 
 interface IButtonProps extends IButtonStyleProps {
@@ -16,8 +18,16 @@ interface IButtonProps extends IButtonStyleProps {
   onClick?: any;
 }
 
+const SIcon = styled.div`
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  margin: 0 8px;
+  top: calc((100% - 15px) / 2);
+`;
+
 const SHoverLayer = styled.div`
-  transition: ${transitions.base};
+  transition: ${transitions.button};
   position: absolute;
   height: 100%;
   width: 100%;
@@ -32,8 +42,8 @@ const SHoverLayer = styled.div`
 `;
 
 const SButton = styled.button<IButtonStyleProps>`
-  transition: ${transitions.base};
   width: 100%;
+  transition: ${transitions.button};
   position: relative;
   border: none;
   border-style: none;
@@ -44,18 +54,18 @@ const SButton = styled.button<IButtonStyleProps>`
     outline ? `1px solid rgb(${colors[color]})` : "none"};
   color: ${({ outline, color }) =>
     outline ? `rgb(${colors[color]})` : `rgb(${colors.white})`};
-  box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.base}`)};
-  border-radius: 4px;
-  font-size: ${fonts.size.large};
+  box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.soft}`)};
+  border-radius: 6px;
+  font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.semibold};
-  padding: 16px;
-  margin: 10px 0;
+  padding: ${({ icon, left }) =>
+    icon ? (left ? "7px 12px 8px 28px" : "7px 28px 8px 12px") : "8px 12px"};
   cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
   will-change: transform;
 
   &:disabled {
     opacity: 0.6;
-    box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.base}`)};
+    box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.soft}`)};
   }
 
   @media (hover: hover) {
@@ -66,7 +76,7 @@ const SButton = styled.button<IButtonStyleProps>`
           ? outline
             ? "none"
             : `${shadows.hover}`
-          : `${shadows.base}`};
+          : `${shadows.soft}`};
     }
 
     &:hover ${SHoverLayer} {
@@ -77,9 +87,23 @@ const SButton = styled.button<IButtonStyleProps>`
 
   &:active {
     transform: ${({ disabled }) => (!disabled ? "translateY(1px)" : "none")};
-    box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.base}`)};
+    box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.soft}`)};
     color: ${({ outline, color }) =>
       outline ? `rgb(${colors[color]})` : `rgba(${colors.white}, 0.24)`};
+
+    & ${SIcon} {
+      opacity: 0.8;
+    }
+  }
+
+  & ${SIcon} {
+    right: ${({ left }) => (left ? "auto" : "0")};
+    left: ${({ left }) => (left ? "0" : "auto")};
+    display: ${({ icon }) => (icon ? "block" : "none")};
+    mask: ${({ icon }) => (icon ? `url(${icon}) center no-repeat` : "none")};
+    background-color: ${({ outline, color }) =>
+      outline ? `rgb(${colors[color]})` : `rgb(${colors.white})`};
+    transition: 0.15s ease;
   }
 `;
 
@@ -89,9 +113,12 @@ const Button = (props: IButtonProps) => (
     outline={props.outline}
     color={props.color}
     disabled={props.disabled}
+    icon={props.icon}
+    left={props.left}
     {...props}
   >
     <SHoverLayer />
+    <SIcon />
     {props.fetching ? (
       <Loader size={20} color="white" background={props.color} />
     ) : (
@@ -104,8 +131,10 @@ Button.defaultProps = {
   fetching: false,
   outline: false,
   type: "button",
-  color: "green",
-  disabled: false
+  color: "dark",
+  disabled: false,
+  icon: null,
+  left: false
 };
 
 export default Button;

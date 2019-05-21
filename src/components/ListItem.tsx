@@ -121,7 +121,7 @@ const ListItem = ({
   onClick,
   ...props
 }: IListItemProps) => (
-  <SListItem key={item.name} onClick={onClick} {...props}>
+  <SListItem onClick={onClick} {...props}>
     <SListItemContainer>
       <SListItemDetails>
         {!!item.image && !noImage && (

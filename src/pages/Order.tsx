@@ -74,7 +74,7 @@ class Order extends React.Component<any, any> {
             <SColumnList>
               {menu.map((item: IMenuItem) => (
                 <ListItem
-                  key={item.name}
+                  key={`menu-${item.name}`}
                   item={item}
                   onClick={() => this.props.orderAddItem(item)}
                 />
@@ -89,7 +89,7 @@ class Order extends React.Component<any, any> {
               {items.map((item: IOrderItem) => (
                 <ListItem
                   noImage
-                  key={item.name}
+                  key={`order-${item.name}`}
                   item={item}
                   actions={[
                     { label: "Remove", callback: this.props.orderRemoveItem },

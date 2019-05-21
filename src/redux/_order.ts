@@ -58,18 +58,20 @@ interface ICheckoutDetails {
 }
 
 function formatCheckoutDetails(subtotal: number): ICheckoutDetails {
-  return {
+  const checkout = {
     subtotal,
     tax: subtotal * TAX_RATE,
     nettotal: subtotal * (1 + TAX_RATE)
   };
+  return checkout;
 }
 
 export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  let { items, subtotal } = getState().order;
+  let { items } = getState().order;
+  let { subtotal } = getState().order.checkout;
 
   let newItem = true;
 
@@ -242,7 +244,11 @@ const INITIAL_STATE = {
   submitted: false,
   items: [],
   uri: "",
-  checkout: {},
+  checkout: {
+    subtotal: 0,
+    tax: 0,
+    nettotal: 0
+  },
   payment: null
 };
 

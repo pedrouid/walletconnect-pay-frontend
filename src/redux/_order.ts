@@ -51,7 +51,19 @@ const DAI_TOKEN = {
   contractAddress: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
 };
 
-// const PAYMENT_ADDRESS = "0x9b7b2B4f7a391b6F14A81221AE0920A9735B67Fb";
+interface ICheckoutDetails {
+  subtotal: number;
+  tax: number;
+  nettotal: number;
+}
+
+function formatCheckoutDetails(subtotal: number): ICheckoutDetails {
+  return {
+    subtotal,
+    tax: subtotal * TAX_RATE,
+    nettotal: subtotal * (1 + TAX_RATE)
+  };
+}
 
 export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
@@ -78,14 +90,18 @@ export const orderAddItem = (item: IMenuItem) => (
     subtotal += item.price;
   }
 
-  dispatch({ type: ORDER_UPDATE_ITEMS, payload: { items, subtotal } });
+  dispatch({
+    type: ORDER_UPDATE_ITEMS,
+    payload: { items, checkout: formatCheckoutDetails(subtotal) }
+  });
 };
 
 export const orderRemoveItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  let { items, subtotal } = getState().order;
+  let { items } = getState().order;
+  let { subtotal } = getState().order.checkout;
 
   items = items
     .map((orderItem: IOrderItem) => {
@@ -100,7 +116,10 @@ export const orderRemoveItem = (item: IMenuItem) => (
     })
     .filter((item: IOrderItem | null) => !!item);
 
-  dispatch({ type: ORDER_UPDATE_ITEMS, payload: { items, subtotal } });
+  dispatch({
+    type: ORDER_UPDATE_ITEMS,
+    payload: { items, checkout: formatCheckoutDetails(subtotal) }
+  });
 };
 
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
@@ -223,9 +242,7 @@ const INITIAL_STATE = {
   submitted: false,
   items: [],
   uri: "",
-  subtotal: 0,
-  tax: 0,
-  nettotal: 0,
+  checkout: {},
   payment: null
 };
 
@@ -235,9 +252,7 @@ export default (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         items: action.payload.items,
-        subtotal: action.payload.subtotal,
-        tax: action.payload.subtotal * TAX_RATE,
-        nettotal: action.payload.subtotal * (1 + TAX_RATE)
+        checkout: action.payload.checkout
       };
     case ORDER_SUBMIT_REQUEST:
       return { ...state, loading: true };

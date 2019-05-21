@@ -5,6 +5,7 @@ import styled from "styled-components";
 interface IPageWrapperStyleProps {
   center?: boolean;
   maxWidth?: number;
+  noPadding?: boolean;
 }
 
 const SPageWrapper = styled.div<IPageWrapperStyleProps>`
@@ -19,7 +20,7 @@ const SPageWrapper = styled.div<IPageWrapperStyleProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: ${({ noPadding }) => (noPadding ? "0" : "20px")};
   justify-content: ${({ center }) => (center ? "center" : "inherit")};
 `;
 

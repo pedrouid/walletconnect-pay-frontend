@@ -3,6 +3,12 @@ import styled from "styled-components";
 import { colors, fonts, shadows, transitions } from "../styles";
 import { IMenuItem, IOrderItem } from "../helpers/types";
 import { toFixed } from "../helpers/bignumber";
+import {
+  SListItemImage,
+  SListItemText,
+  SListItemName,
+  SListItemDescription
+} from "../components/common";
 
 interface IListItemStyleProps {
   onClick?: any;
@@ -75,33 +81,6 @@ const SListItemDetails = styled.div<IListItemDetailsStyleProps>`
   align-items: center;
   justify-content: ${({ alignRight }) =>
     alignRight ? "flex-end" : "flex-start"};
-`;
-
-const SListItemImage = styled.div`
-  width: 120px;
-  height: 120px;
-  margin-right: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  & img {
-    width: 100%;
-  }
-`;
-
-const SListItemText = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SListItemName = styled.div`
-  font-size: ${fonts.size.large};
-`;
-
-const SListItemDescription = styled.div`
-  color: rgb(${colors.grey});
-  margin-top: 8px;
 `;
 
 const SListItemPrice = styled.div`

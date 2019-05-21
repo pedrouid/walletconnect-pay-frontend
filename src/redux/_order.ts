@@ -20,7 +20,9 @@ import {
   sanitizeHex
 } from "../helpers/utilities";
 import { keccak256 } from "../helpers/eth";
+import menu from "../data/menu";
 // import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
+import { notificationShow } from "./_notification";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -145,6 +147,7 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
     );
   } catch (error) {
     console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_SUBMIT_FAILURE });
   }
 };
@@ -202,6 +205,7 @@ export const orderRequestPayment = (
     }
   } catch (error) {
     console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_PAYMENT_FAILURE });
   }
 };
@@ -215,6 +219,7 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
+  menu,
   loading: false,
   submitted: false,
   items: [],

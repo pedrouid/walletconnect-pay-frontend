@@ -157,7 +157,6 @@ export const orderRequestPayment = (
   orderHash: string
 ) => async (dispatch: any, getState: any) => {
   dispatch({ type: ORDER_PAYMENT_REQUEST });
-  console.log("[orderRequestPayment] account", account); // tslint:disable-line
   try {
     const { nettotal } = getState().order;
     const nonce = await apiGetAccountNonce(account);

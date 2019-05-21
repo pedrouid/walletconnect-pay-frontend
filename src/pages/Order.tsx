@@ -123,7 +123,7 @@ interface IListItemStyleProps {
 const SListItem = styled.div<IListItemStyleProps>`
   transition: ${transitions.base};
 
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid rgb(${colors.lightGrey});
   margin-bottom: 16px;
 

@@ -14,6 +14,8 @@ import {
 import { toFixed } from "../helpers/bignumber";
 import QRCodeDisplay from "../components/QRCodeDisplay";
 import arrow from "../assets/arrow.png";
+import success from "../assets/success.png";
+import error from "../assets/error.png";
 import logo from "../assets/logo.png";
 
 const SHeader = styled.div`
@@ -278,6 +280,28 @@ const SModalFooter = styled(SColumnFooter)`
   border-top: 0;
 `;
 
+const SPaymentResult = styled.div`
+  width: 100%;
+  padding-top: 100%;
+  position: relative;
+
+  & > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  & > div > img {
+    width: 150px;
+    height: 150px;
+  }
+`;
+
 const SBackButton = styled.div`
   position: absolute;
   font-size: 16px;
@@ -303,6 +327,7 @@ class Order extends React.Component<any, any> {
       subtotal,
       tax,
       nettotal,
+      payment,
       uri
     } = this.props;
     return (
@@ -418,13 +443,39 @@ class Order extends React.Component<any, any> {
             </SModalHeader>
             {!loading ? (
               <SModalContainer>
-                <SModalColumn>
-                  <QRCodeDisplay data={uri} />
-                  <SModalCallToAction>{`Scan with WalletConnect`}</SModalCallToAction>
-                  <SModalDescription>
-                    {`Scan this QR code with your WalletConnect-enabled mobile wallet to pay.`}
-                  </SModalDescription>
-                </SModalColumn>
+                {!payment ? (
+                  <SModalColumn>
+                    <QRCodeDisplay data={uri} />
+                    <SModalCallToAction>{`Scan with WalletConnect`}</SModalCallToAction>
+                    <SModalDescription>
+                      {`Scan this QR code with your WalletConnect-enabled mobile wallet to pay.`}
+                    </SModalDescription>
+                  </SModalColumn>
+                ) : payment && payment.success ? (
+                  <SModalColumn>
+                    <SPaymentResult>
+                      <div>
+                        <img src={success} alt="Success" />
+                      </div>
+                    </SPaymentResult>
+                    <SModalCallToAction>{`Success`}</SModalCallToAction>
+                    <SModalDescription>
+                      {`Your payment went through and your order is being prepared.`}
+                    </SModalDescription>
+                  </SModalColumn>
+                ) : (
+                  <SModalColumn>
+                    <SPaymentResult>
+                      <div>
+                        <img src={error} alt="Failed" />
+                      </div>
+                    </SPaymentResult>
+                    <SModalCallToAction>{`Payment Failed`}</SModalCallToAction>
+                    <SModalDescription>
+                      {`Please check your wallet to for any transaction information.`}
+                    </SModalDescription>
+                  </SModalColumn>
+                )}
                 <SModalFooter>
                   <SColumnRow>
                     <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
@@ -463,7 +514,8 @@ const reduxProps = (store: any) => ({
   subtotal: store.order.subtotal,
   tax: store.order.tax,
   nettotal: store.order.nettotal,
-  uri: store.order.uri
+  uri: store.order.uri,
+  payment: store.order.payment
 });
 
 export default connect(

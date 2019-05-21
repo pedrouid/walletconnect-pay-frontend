@@ -32,6 +32,10 @@ const ORDER_SUBMIT_REQUEST = "order/ORDER_SUBMIT_REQUEST";
 const ORDER_SUBMIT_SUCCESS = "order/ORDER_SUBMIT_SUCCESS";
 const ORDER_SUBMIT_FAILURE = "order/ORDER_SUBMIT_FAILURE";
 
+const ORDER_PAYMENT_REQUEST = "order/ORDER_PAYMENT_REQUEST";
+const ORDER_PAYMENT_SUCCESS = "order/ORDER_PAYMENT_SUCCESS";
+const ORDER_PAYMENT_FAILURE = "order/ORDER_PAYMENT_FAILURE";
+
 const ORDER_UNSUBMIT = "order/ORDER_UNSUBMIT";
 
 const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
@@ -47,7 +51,7 @@ const DAI_TOKEN = {
   contractAddress: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
 };
 
-const PAYMENT_ADDRESS = "0x9b7b2B4f7a391b6F14A81221AE0920A9735B67Fb";
+// const PAYMENT_ADDRESS = "0x9b7b2B4f7a391b6F14A81221AE0920A9735B67Fb";
 
 export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
@@ -152,45 +156,57 @@ export const orderRequestPayment = (
   account: string,
   orderHash: string
 ) => async (dispatch: any, getState: any) => {
-  const { nettotal } = getState().order;
-  const nonce = await apiGetAccountNonce(account);
-  const gasPrices = await apiGetGasPrices();
-  const gasPrice = convertAmountToRawNumber(gasPrices.average.price, 9);
-  const amount = convertAmountToRawNumber(nettotal, DAI_TOKEN.decimals);
-  const data = getDataString("0xa9059cbb", [
-    removeHexPrefix(PAYMENT_ADDRESS),
-    removeHexPrefix(convertStringToHex(amount))
-  ]);
-  const gasLimit = await apiGetGasLimit(DAI_TOKEN.contractAddress, data);
-  const tx = {
-    from: sanitizeHex(account),
-    to: sanitizeHex(DAI_TOKEN.contractAddress),
-    nonce: sanitizeHex(convertStringToHex(nonce)),
-    gasLimit: gasLimit ? sanitizeHex(`${gasLimit}`) : "0x",
-    gasPrice: gasPrice ? sanitizeHex(convertStringToHex(gasPrice)) : "0x",
-    value: "0x00",
-    data: data ? sanitizeHex(data) : "0x"
-  };
-  const txhash = await sendTransaction(tx);
+  dispatch({ type: ORDER_PAYMENT_REQUEST });
+  try {
+    const { nettotal } = getState().order;
+    const nonce = await apiGetAccountNonce(account);
+    const gasPrices = await apiGetGasPrices();
+    const gasPrice = convertAmountToRawNumber(gasPrices.average.price, 9);
+    const amount = convertAmountToRawNumber(nettotal, DAI_TOKEN.decimals);
+    const data = getDataString("0xa9059cbb", [
+      removeHexPrefix(account),
+      removeHexPrefix(convertStringToHex(amount))
+    ]);
+    const gasLimit = await apiGetGasLimit(DAI_TOKEN.contractAddress, data);
+    const tx = {
+      from: sanitizeHex(account),
+      to: sanitizeHex(DAI_TOKEN.contractAddress),
+      nonce: sanitizeHex(convertStringToHex(nonce)),
+      gasLimit: gasLimit ? sanitizeHex(`${gasLimit}`) : "0x",
+      gasPrice: gasPrice ? sanitizeHex(convertStringToHex(gasPrice)) : "0x",
+      value: "0x00",
+      data: data ? sanitizeHex(data) : "0x"
+    };
+    const txhash = await sendTransaction(tx);
 
-  if (txhash) {
-    killSession();
+    if (txhash) {
+      // const order = await getSpacePrivate(orderHash);
+
+      const order = `{
+        "name": '',
+        "description": '',
+        "price": '',
+        "quantity": '',
+        "receipt": ''
+      }`;
+
+      const orderJson = JSON.parse(order);
+
+      orderJson.receipt = txhash;
+
+      // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
+
+      killSession();
+
+      dispatch({ type: ORDER_PAYMENT_FAILURE, payload: txhash });
+    } else {
+      dispatch({ type: ORDER_PAYMENT_FAILURE });
+    }
+  } catch (error) {
+    console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
+    dispatch({ type: ORDER_PAYMENT_FAILURE });
   }
-
-  // const order = await getSpacePrivate(orderHash);
-  const order = `{
-    "name": '',
-    "description": '',
-    "price": '',
-    "quantity": '',
-    "receipt": ''
-  }`;
-
-  const orderJson = JSON.parse(order);
-
-  orderJson.receipt = txhash;
-
-  // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
 };
 
 export const orderUnsubmit = () => (dispatch: any) => {
@@ -209,7 +225,8 @@ const INITIAL_STATE = {
   uri: "",
   subtotal: 0,
   tax: 0,
-  nettotal: 0
+  nettotal: 0,
+  payment: null
 };
 
 export default (state = INITIAL_STATE, action: any) => {
@@ -228,9 +245,14 @@ export default (state = INITIAL_STATE, action: any) => {
       return { ...state, uri: action.payload, submitted: true, loading: false };
     case ORDER_SUBMIT_FAILURE:
       return { ...state, loading: false };
+    case ORDER_PAYMENT_REQUEST:
+      return { ...state, payment: null };
+    case ORDER_PAYMENT_SUCCESS:
+      return { ...state, payment: { success: true, result: action.payload } };
+    case ORDER_PAYMENT_FAILURE:
+      return { ...state, payment: { success: false, result: null } };
     case ORDER_UNSUBMIT:
-      return { ...state, uri: "", submitted: false };
-
+      return { ...state, uri: "", payment: null, submitted: false };
     case ORDER_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
     default:

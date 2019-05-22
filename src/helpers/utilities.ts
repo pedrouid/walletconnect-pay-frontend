@@ -1,5 +1,12 @@
+import { utils } from "ethers";
 import { IChainData } from "./types";
 import supportedChains from "./chains";
+import { ITxData } from "@walletconnect/types";
+import {
+  isValidAddress,
+  convertUtf8ToNumber,
+  convertNumberToHex
+} from "@walletconnect/utils";
 
 export function capitalize(string: string): string {
   return string
@@ -55,17 +62,86 @@ export const getDataString = (func: string, arrVals: any[]): string => {
   return data;
 };
 
-export const removeHexPrefix = (hex: string): string =>
-  hex.toLowerCase().replace("0x", "");
+export function isHexString(value: any): boolean {
+  return utils.isHexString(value);
+}
 
-export const sanitizeHex = (hex: string): string => {
-  hex = hex.substring(0, 2) === "0x" ? hex.substring(2) : hex;
-  if (hex === "") {
-    return "";
-  }
+export function sanitizeHex(hex: string): string {
+  hex = removeHexPrefix(hex);
   hex = hex.length % 2 !== 0 ? "0" + hex : hex;
+  if (hex) {
+    hex = addHexPrefix(hex);
+  }
+  return hex;
+}
+
+export function addHexPrefix(hex: string): string {
+  if (hex.toLowerCase().substring(0, 2) === "0x") {
+    return hex;
+  }
   return "0x" + hex;
-};
+}
+
+export function removeHexPrefix(hex: string): string {
+  if (hex.toLowerCase().substring(0, 2) === "0x") {
+    return hex.substring(2);
+  }
+  return hex;
+}
+
+export function parseTransactionData(
+  txData: Partial<ITxData>
+): Partial<ITxData> {
+  if (typeof txData.from === "undefined" || !isValidAddress(txData.from)) {
+    throw new Error(`Transaction object must include a valid 'from' value.`);
+  }
+
+  function parseHexValues(value: number | string) {
+    let result = value;
+    if (value !== "") {
+      if (!utils.isHexString(value)) {
+        if (typeof value === "string") {
+          value = convertUtf8ToNumber(value);
+        }
+        result = convertNumberToHex(value);
+      } else {
+        if (typeof value === "string") {
+          result = sanitizeHex(value);
+        }
+      }
+    }
+    return result;
+  }
+
+  const txDataRPC = {
+    from: sanitizeHex(txData.from),
+    to: typeof txData.to === "undefined" ? "" : sanitizeHex(txData.to),
+    gasPrice:
+      typeof txData.gasPrice === "undefined"
+        ? ""
+        : parseHexValues(txData.gasPrice),
+    gasLimit:
+      typeof txData.gasLimit === "undefined"
+        ? typeof txData.gas === "undefined"
+          ? ""
+          : parseHexValues(txData.gas)
+        : parseHexValues(txData.gasLimit),
+    value:
+      typeof txData.value === "undefined" ? "" : parseHexValues(txData.value),
+    nonce:
+      typeof txData.nonce === "undefined" ? "" : parseHexValues(txData.nonce),
+    data: typeof txData.data === "undefined" ? "" : sanitizeHex(txData.data)
+  };
+
+  const prunable = ["gasPrice", "gasLimit", "value", "nonce"];
+  Object.keys(txDataRPC).forEach((key: string) => {
+    if (!txDataRPC[key].trim().length && prunable.includes(key)) {
+      delete txDataRPC[key];
+    }
+  });
+
+  return txDataRPC;
+}
 
 export function payloadId(): number {
   const datePart: number = new Date().getTime() * Math.pow(10, 3);

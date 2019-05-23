@@ -127,15 +127,9 @@ export async function formatTransaction(
     data: data || "0x"
   };
 
-  console.log("tx", tx); // tslint:disable-line
-
   const parsedTx = parseTransactionData(tx);
 
-  console.log("parsedTx BEFORE", parsedTx); // tslint:disable-line
-
   // parsedTx.gasLimit = "0x";
-
-  // console.log("parsedTx AFTER", parsedTx); // tslint:disable-line
 
   return parsedTx;
 }

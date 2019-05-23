@@ -1,14 +1,19 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import styled from "styled-components";
-import { Switch, Route } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  withRouter
+  // Redirect
+} from "react-router-dom";
+import { connect } from "react-redux";
 // import Notification from "./components/Notification";
 import Home from "./pages/Home";
+import Order from "./pages/Order";
 import Admin from "./pages/Admin";
+import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
-
-import logo from "./assets/logo.png";
-
-import { colors } from "./styles";
 
 const SLayout = styled.div`
   height: 100%;
@@ -18,56 +23,66 @@ const SLayout = styled.div`
   overflow-y: hidden;
 `;
 
-const SHeader = styled.div`
-  width: 100%;
-  background-color: rgb(${colors.dark});
-  color: rgb(${colors.white});
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  height: 82px;
-`;
-
-const SBranding = styled.h1`
-  text-transform: uppercase;
-  font-size: 24px;
-  margin: 4px 0px;
-  margin-left: 10px;
-`;
-
-const SLogo = styled.img`
-  border-radius: 4px;
-  width: 40px;
-  height: 40px;
-`;
-
 const SContent = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
-  height: calc(100% - 82px);
+  height: 100%;
   max-height: 100vh;
   overflow-x: hidden;
   overflow-y: hidden;
 `;
 
-const App = () => (
-  <SLayout>
-    <SHeader>
-      <SLogo src={logo} alt="" />
-      <SBranding>{"WalletConnect Pay"}</SBranding>
-    </SHeader>
+class App extends React.Component<any, any> {
+  public static contextTypes = {
+    router: PropTypes.object.isRequired
+  };
+  public componentDidMount() {
+    window.browserHistory = this.context.router.history;
+  }
+  public render() {
+    return (
+      <SLayout>
+        <SContent>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/order" component={Order} />
+            <Route
+              exact
+              path="/signup"
+              render={routerProps => {
+                // if (!this.props.web3) {
+                //   return <Redirect to="/" />;
+                // }
+                return <SignUp {...routerProps} />;
+              }}
+            />
+            <Route
+              exact
+              path="/admin"
+              render={routerProps => {
+                // if (!this.props.web3 && !this.props.businessName) {
+                //   return <Redirect to="/" />;
+                // }
+                return <Admin {...routerProps} />;
+              }}
+            />
+            <Route component={NotFound} />
+          </Switch>
+        </SContent>
+        {/* TODO: Fix Notification Render Error */}
+        {/* <Notification /> */}
+      </SLayout>
+    );
+  }
+}
 
-    <SContent>
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/admin" component={Admin} />
-        <Route component={NotFound} />
-      </Switch>
-    </SContent>
+const reduxProps = (store: any) => ({
+  web3: store.admin.web3,
+  businessName: store.admin.businessName
+});
 
-    {/* TODO: Fix Notification Render Error */}
-    {/* <Notification /> */}
-  </SLayout>
-);
-
-export default App;
+export default withRouter(connect(
+  reduxProps,
+  null
+)(App) as any);

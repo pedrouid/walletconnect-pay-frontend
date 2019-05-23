@@ -1,26 +1,9 @@
-import Box from "3box";
+const Box =
+  typeof window !== "undefined" && typeof window.Box !== "undefined"
+    ? window.Box
+    : null;
 
 let box: any | null = null;
-
-// export function getValue(parent: any, parentModel: any, path: string) {
-//   const keys = path.split("/");
-
-//   let result = null;
-
-//   keys.forEach((key: string, idx: number) => {
-//     const target = parentModel[key];
-//     const value = parent[target.key];
-
-//     if (idx === keys.length - 1) {
-//       result = value;
-//     } else {
-//       parent = value;
-//       parentModel = target.model;
-//     }
-//   });
-
-//   return result;
-// }
 
 export async function init3Box(address: string, provider: any) {
   let result = null;
@@ -39,11 +22,17 @@ export async function init3Box(address: string, provider: any) {
 }
 
 export async function getProfile(address: string) {
+  if (!Box) {
+    throw new Error("Box library is not available in window");
+  }
   const profile = await Box.getProfile(address);
   return profile;
 }
 
 export async function openBox(address: string, provider: any) {
+  if (!Box) {
+    throw new Error("Box library is not available in window");
+  }
   box = await Box.openBox(address, provider);
 }
 

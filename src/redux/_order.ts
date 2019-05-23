@@ -105,7 +105,9 @@ export const orderRemoveItem = (item: IMenuItem) => (
 };
 
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
-  const { items, subtotal, tax, nettotal } = getState().order;
+  const { items, checkout } = getState().order;
+
+  const { subtotal, tax, nettotal } = checkout;
 
   dispatch({ type: ORDER_SUBMIT_REQUEST });
 
@@ -164,7 +166,7 @@ export const orderRequestPayment = (
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
-    const { nettotal } = getState().order;
+    const { nettotal } = getState().order.checkout;
 
     const symbol = "DAI";
     const chainId = 1;

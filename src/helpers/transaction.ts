@@ -100,7 +100,6 @@ export async function formatTransaction(
   if (isToken(asset)) {
     value = "0x00";
     to = asset.contractAddress;
-    amount = amount;
     data = getDataString(TOKEN_TRANSFER, [
       removeHexPrefix(account),
       removeHexPrefix(convertStringToHex(amount))
@@ -128,15 +127,9 @@ export async function formatTransaction(
     data: data || "0x"
   };
 
-  console.log("tx", tx); // tslint:disable-line
-
   const parsedTx = parseTransactionData(tx);
 
-  console.log("parsedTx BEFORE", parsedTx); // tslint:disable-line
-
   // parsedTx.gasLimit = "0x";
-
-  // console.log("parsedTx AFTER", parsedTx); // tslint:disable-line
 
   return parsedTx;
 }

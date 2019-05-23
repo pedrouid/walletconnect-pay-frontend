@@ -37,14 +37,14 @@ export const apiGetGasLimit = async (
   return result;
 };
 
-export const apiGetDaiPrice = async () => {
+export const apiGetAssetPrice = async (symbol: string) => {
   const response = await axios.get(
-    "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=DAI",
+    `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbol}`,
     {
       headers: {
         "X-CMC_PRO_API_KEY": "c9e6675f-3d01-4b7e-bf86-809c5eead93c"
       }
     }
   );
-  console.log("apiGetGasLimit response.data", response.data); // tslint:disable-line
+  console.log("apiGetDaiPrice response.data", response.data); // tslint:disable-line
 };

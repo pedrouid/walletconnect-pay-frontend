@@ -5,20 +5,7 @@ import {
   sendTransaction,
   killSession
 } from "../helpers/walletconnect";
-import {
-  convertAmountToRawNumber,
-  convertStringToHex
-} from "../helpers/bignumber";
-import {
-  apiGetAccountNonce,
-  apiGetGasLimit,
-  apiGetGasPrices
-} from "../helpers/api";
-import {
-  getDataString,
-  removeHexPrefix,
-  sanitizeHex
-} from "../helpers/utilities";
+import { formatTransaction } from "../helpers/transaction";
 import { keccak256 } from "../helpers/eth";
 import menu from "../data/menu";
 // import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
@@ -43,13 +30,6 @@ const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
 // -- Actions --------------------------------------------------------------- //
 
 const TAX_RATE = 0.11;
-
-const DAI_TOKEN = {
-  symbol: "DAI",
-  name: "DAI Stablecoin v1.0",
-  decimals: 18,
-  contractAddress: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
-};
 
 interface ICheckoutDetails {
   subtotal: number;
@@ -141,6 +121,10 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
   const orderHash = keccak256(JSON.stringify(orderJson));
 
   try {
+    if (localStorage.getItem("walletconnect")) {
+      localStorage.removeItem("walletconnect");
+    }
+
     const connector = await initWalletConnect();
 
     dispatch({ type: ORDER_SUBMIT_SUCCESS, payload: connector.uri });
@@ -178,40 +162,36 @@ export const orderRequestPayment = (
   orderHash: string
 ) => async (dispatch: any, getState: any) => {
   dispatch({ type: ORDER_PAYMENT_REQUEST });
+
   try {
     const { nettotal } = getState().order;
-    const nonce = await apiGetAccountNonce(account);
-    const gasPrices = await apiGetGasPrices();
-    const gasPrice = convertAmountToRawNumber(gasPrices.average.price, 9);
-    const amount = convertAmountToRawNumber(nettotal, DAI_TOKEN.decimals);
-    const data = getDataString("0xa9059cbb", [
-      removeHexPrefix(account),
-      removeHexPrefix(convertStringToHex(amount))
-    ]);
-    const gasLimit = await apiGetGasLimit(DAI_TOKEN.contractAddress, data);
-    const tx = {
-      from: sanitizeHex(account),
-      to: sanitizeHex(DAI_TOKEN.contractAddress),
-      nonce: sanitizeHex(convertStringToHex(nonce)),
-      gasLimit: gasLimit ? sanitizeHex(`${gasLimit}`) : "0x",
-      gasPrice: gasPrice ? sanitizeHex(convertStringToHex(gasPrice)) : "0x",
-      value: "0x00",
-      data: data ? sanitizeHex(data) : "0x"
-    };
+
+    const symbol = "DAI";
+    const chainId = 1;
+    const currency = "USD";
+
+    const tx = await formatTransaction(
+      account,
+      nettotal,
+      currency,
+      symbol,
+      chainId
+    );
+
     const txhash = await sendTransaction(tx);
 
     if (txhash) {
       // const order = await getSpacePrivate(orderHash);
 
-      const order = `{
-        "name": '',
-        "description": '',
-        "price": '',
-        "quantity": '',
-        "receipt": ''
-      }`;
+      const order = {
+        name: "",
+        description: "",
+        price: "",
+        quantity: "",
+        receipt: ""
+      };
 
-      const orderJson = JSON.parse(order);
+      const orderJson = JSON.parse(JSON.stringify(order));
 
       orderJson.receipt = txhash;
 

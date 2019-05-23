@@ -7,7 +7,9 @@ import {
 } from "../helpers/walletconnect";
 import { formatTransaction } from "../helpers/transaction";
 import { keccak256 } from "../helpers/eth";
+import menu from "../data/menu";
 // import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
+import { notificationShow } from "./_notification";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -29,11 +31,27 @@ const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
 
 const TAX_RATE = 0.11;
 
+interface ICheckoutDetails {
+  subtotal: number;
+  tax: number;
+  nettotal: number;
+}
+
+function formatCheckoutDetails(subtotal: number): ICheckoutDetails {
+  const checkout = {
+    subtotal,
+    tax: subtotal * TAX_RATE,
+    nettotal: subtotal * (1 + TAX_RATE)
+  };
+  return checkout;
+}
+
 export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  let { items, subtotal } = getState().order;
+  let { items } = getState().order;
+  let { subtotal } = getState().order.checkout;
 
   let newItem = true;
 
@@ -54,14 +72,18 @@ export const orderAddItem = (item: IMenuItem) => (
     subtotal += item.price;
   }
 
-  dispatch({ type: ORDER_UPDATE_ITEMS, payload: { items, subtotal } });
+  dispatch({
+    type: ORDER_UPDATE_ITEMS,
+    payload: { items, checkout: formatCheckoutDetails(subtotal) }
+  });
 };
 
 export const orderRemoveItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  let { items, subtotal } = getState().order;
+  let { items } = getState().order;
+  let { subtotal } = getState().order.checkout;
 
   items = items
     .map((orderItem: IOrderItem) => {
@@ -76,7 +98,10 @@ export const orderRemoveItem = (item: IMenuItem) => (
     })
     .filter((item: IOrderItem | null) => !!item);
 
-  dispatch({ type: ORDER_UPDATE_ITEMS, payload: { items, subtotal } });
+  dispatch({
+    type: ORDER_UPDATE_ITEMS,
+    payload: { items, checkout: formatCheckoutDetails(subtotal) }
+  });
 };
 
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
@@ -127,6 +152,7 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
     );
   } catch (error) {
     console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_SUBMIT_FAILURE });
   }
 };
@@ -179,6 +205,7 @@ export const orderRequestPayment = (
     }
   } catch (error) {
     console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_PAYMENT_FAILURE });
   }
 };
@@ -192,13 +219,16 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
+  menu,
   loading: false,
   submitted: false,
   items: [],
   uri: "",
-  subtotal: 0,
-  tax: 0,
-  nettotal: 0,
+  checkout: {
+    subtotal: 0,
+    tax: 0,
+    nettotal: 0
+  },
   payment: null
 };
 
@@ -208,9 +238,7 @@ export default (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         items: action.payload.items,
-        subtotal: action.payload.subtotal,
-        tax: action.payload.subtotal * TAX_RATE,
-        nettotal: action.payload.subtotal * (1 + TAX_RATE)
+        checkout: action.payload.checkout
       };
     case ORDER_SUBMIT_REQUEST:
       return { ...state, loading: true };

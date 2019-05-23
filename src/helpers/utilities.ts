@@ -5,7 +5,8 @@ import { ITxData } from "@walletconnect/types";
 import {
   isValidAddress,
   convertUtf8ToNumber,
-  convertNumberToHex
+  convertNumberToHex,
+  convertHexToNumber
 } from "@walletconnect/utils";
 
 export function capitalize(string: string): string {
@@ -160,4 +161,41 @@ export function getChainData(chainId: number): IChainData {
   }
 
   return chainData;
+}
+
+export function getChainIdFromNetworkId(networkId: number): number | null {
+  let result = null;
+
+  const chainData = supportedChains.filter(
+    (chain: any) => chain.network_id === networkId
+  )[0];
+
+  if (chainData) {
+    result = chainData.chain_id;
+  }
+
+  return result;
+}
+
+export async function queryChainId(web3: any) {
+  const chainIdRes = await web3.currentProvider.send("eth_chainId", []);
+
+  let chainId = convertHexToNumber(sanitizeHex(addHexPrefix(`${chainIdRes}`)));
+
+  if (!chainId) {
+    const networkIdRes = await web3.currentProvider.send("net_version", []);
+
+    const networkId = convertHexToNumber(
+      sanitizeHex(addHexPrefix(`${networkIdRes}`))
+    );
+
+    if (networkId) {
+      const _chainId = getChainIdFromNetworkId(networkId);
+
+      if (_chainId) {
+        chainId = _chainId;
+      }
+    }
+  }
+  return chainId;
 }

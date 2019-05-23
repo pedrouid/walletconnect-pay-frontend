@@ -7,7 +7,6 @@ export async function initWalletConnect(): Promise<WalletConnect> {
   connector = new WalletConnect({
     bridge: "https://bridge.walletconnect.org"
   });
-  console.log("[initWalletConnect] connector.connected", connector.connected); // tslint:disable-line
   if (!connector.connected) {
     await connector.createSession();
   }

@@ -6,13 +6,17 @@ import {
   killSession
 } from "../helpers/walletconnect";
 import { formatTransaction } from "../helpers/transaction";
-import menu from "../data/menu";
+import menus from "../data";
 // import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
 import { notificationShow } from "./_notification";
 
 // -- Constants ------------------------------------------------------------- //
 
 const ORDER_UPDATE_ITEMS = "order/ORDER_UPDATE_ITEMS";
+
+const ORDER_LOAD_MENU_REQUEST = "order/ORDER_LOAD_MENU_REQUEST";
+const ORDER_LOAD_MENU_SUCCESS = "order/ORDER_LOAD_MENU_SUCCESS";
+const ORDER_LOAD_MENU_FAILURE = "order/ORDER_LOAD_MENU_FAILURE";
 
 const ORDER_SUBMIT_REQUEST = "order/ORDER_SUBMIT_REQUEST";
 const ORDER_SUBMIT_SUCCESS = "order/ORDER_SUBMIT_SUCCESS";
@@ -44,6 +48,30 @@ function formatCheckoutDetails(subtotal: number): ICheckoutDetails {
   };
   return checkout;
 }
+
+function getMenu(bussinessName: string) {
+  let result = null;
+  if (menus[bussinessName]) {
+    result = menus[bussinessName] || null;
+  }
+  return result;
+}
+
+export const orderLoadMenu = (bussinessName: string) => (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch({ type: ORDER_LOAD_MENU_REQUEST });
+  const businessData = getMenu(bussinessName);
+
+  if (businessData) {
+    dispatch({ type: ORDER_LOAD_MENU_SUCCESS, payload: businessData });
+  } else {
+    const error = new Error(`Menu doesn't exist for ${bussinessName}`);
+    dispatch(notificationShow(error.message, true));
+    dispatch({ type: ORDER_LOAD_MENU_FAILURE });
+  }
+};
 
 export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
@@ -221,7 +249,11 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
-  menu,
+  // businessData: {
+  //   logo: "",
+  //   menu: null
+  // },
+  businessData: menus.bufficorn,
   loading: false,
   submitted: false,
   items: [],
@@ -242,6 +274,13 @@ export default (state = INITIAL_STATE, action: any) => {
         items: action.payload.items,
         checkout: action.payload.checkout
       };
+    case ORDER_LOAD_MENU_REQUEST:
+      return { ...state, loading: true };
+    case ORDER_LOAD_MENU_SUCCESS:
+      return { ...state, loading: false, businessData: action.payload };
+    case ORDER_LOAD_MENU_FAILURE:
+      return { ...state, loading: false };
+
     case ORDER_SUBMIT_REQUEST:
       return { ...state, loading: true };
     case ORDER_SUBMIT_SUCCESS:

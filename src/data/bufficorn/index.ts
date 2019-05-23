@@ -1,16 +1,18 @@
-import { IMenuItem } from "../helpers/types";
+import { IMenuItem } from "../../helpers/types";
 
-import espresso from "../assets/menu/espresso.jpg";
-import doubleEspresso from "../assets/menu/double-espresso.jpg";
-import americano from "../assets/menu/americano.jpg";
-import latte from "../assets/menu/latte.jpg";
-import cappuccino from "../assets/menu/cappuccino.jpg";
-import tea from "../assets/menu/tea.jpg";
-import blueberryMuffin from "../assets/menu/blueberry-muffin.jpg";
-import chocolateMuffin from "../assets/menu/chocolate-muffin.jpg";
-import scone from "../assets/menu/scone.jpg";
-import croissant from "../assets/menu/croissant.jpg";
-import almondCroissant from "../assets/menu/almond-croissant.jpg";
+import logo from "./logo.png";
+
+import espresso from "./menu/espresso.jpg";
+import doubleEspresso from "./menu/double-espresso.jpg";
+import americano from "./menu/americano.jpg";
+import latte from "./menu/latte.jpg";
+import cappuccino from "./menu/cappuccino.jpg";
+import tea from "./menu/tea.jpg";
+import blueberryMuffin from "./menu/blueberry-muffin.jpg";
+import chocolateMuffin from "./menu/chocolate-muffin.jpg";
+import scone from "./menu/scone.jpg";
+import croissant from "./menu/croissant.jpg";
+import almondCroissant from "./menu/almond-croissant.jpg";
 
 const menu: IMenuItem[] = [
   {
@@ -81,4 +83,6 @@ const menu: IMenuItem[] = [
   }
 ];
 
-export default menu;
+const name = "Bufficorn Cafe";
+
+export default { name, logo, menu };

@@ -4,13 +4,16 @@ import styled from "styled-components";
 import { colors } from "../styles";
 import { IMenuItem, IOrderItem } from "../helpers/types";
 import {
+  orderLoadMenu,
   orderAddItem,
   orderRemoveItem,
   orderSubmit,
   orderUnsubmit
 } from "../redux/_order";
 import Button from "../components/Button";
+import PageWrapper from "../components/PageWrapper";
 import PaymentModal from "../components/PaymentModal";
+import Loader from "../components/Loader";
 import ListItem from "../components/ListItem";
 import {
   SColumnWrapper,
@@ -24,7 +27,6 @@ import {
   STitle
 } from "../components/common";
 import { toFixed } from "../helpers/bignumber";
-import logo from "../assets/logo.png";
 
 const SHeader = styled.div`
   width: 100%;
@@ -50,9 +52,15 @@ const SLogo = styled.img`
 `;
 
 class Order extends React.Component<any, any> {
+  public componentDidMount() {
+    const businessName = this.props.match.params.businessName;
+    if (businessName) {
+      this.props.orderLoadMenu(businessName);
+    }
+  }
   public render() {
     const {
-      menu,
+      businessData,
       loading,
       submitted,
       items,
@@ -60,10 +68,11 @@ class Order extends React.Component<any, any> {
       payment,
       uri
     } = this.props;
-    return (
+    console.log("businessData", businessData); // tslint:disable-line
+    return !this.props.loading ? (
       <React.Fragment>
         <SHeader>
-          <SLogo src={logo} alt="" />
+          {businessData.logo && <SLogo src={businessData.logo} alt="" />}
           <SBranding>{"Bufficorn Cafe"}</SBranding>
         </SHeader>
         <SColumnWrapper>
@@ -72,13 +81,14 @@ class Order extends React.Component<any, any> {
               <STitle>{`Menu`}</STitle>
             </SColumnHeader>
             <SColumnList>
-              {menu.map((item: IMenuItem) => (
-                <ListItem
-                  key={`menu-${item.name}`}
-                  item={item}
-                  onClick={() => this.props.orderAddItem(item)}
-                />
-              ))}
+              {businessData.menu &&
+                businessData.menu.map((item: IMenuItem) => (
+                  <ListItem
+                    key={`menu-${item.name}`}
+                    item={item}
+                    onClick={() => this.props.orderAddItem(item)}
+                  />
+                ))}
             </SColumnList>
           </SColumn>
           <SColumnOrder width={items.length ? 30 : 0}>
@@ -130,12 +140,16 @@ class Order extends React.Component<any, any> {
           />
         </SColumnWrapper>
       </React.Fragment>
+    ) : (
+      <PageWrapper center>
+        <Loader />
+      </PageWrapper>
     );
   }
 }
 
 const reduxProps = (store: any) => ({
-  menu: store.order.menu,
+  businessData: store.order.businessData,
   loading: store.order.loading,
   submitted: store.order.submitted,
   items: store.order.items,
@@ -146,5 +160,5 @@ const reduxProps = (store: any) => ({
 
 export default connect(
   reduxProps,
-  { orderAddItem, orderRemoveItem, orderSubmit, orderUnsubmit }
+  { orderLoadMenu, orderAddItem, orderRemoveItem, orderSubmit, orderUnsubmit }
 )(Order);

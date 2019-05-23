@@ -100,7 +100,6 @@ export async function formatTransaction(
   if (isToken(asset)) {
     value = "0x00";
     to = asset.contractAddress;
-    amount = amount;
     data = getDataString(TOKEN_TRANSFER, [
       removeHexPrefix(account),
       removeHexPrefix(convertStringToHex(amount))

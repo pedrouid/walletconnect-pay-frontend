@@ -6,7 +6,6 @@ import {
   killSession
 } from "../helpers/walletconnect";
 import { formatTransaction } from "../helpers/transaction";
-import { keccak256 } from "../helpers/eth";
 import menu from "../data/menu";
 // import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
 import { notificationShow } from "./_notification";
@@ -105,20 +104,23 @@ export const orderRemoveItem = (item: IMenuItem) => (
 };
 
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
-  const { items, subtotal, tax, nettotal } = getState().order;
+  // const { items, checkout } = getState().order;
+
+  // const { subtotal, tax, nettotal } = checkout;
 
   dispatch({ type: ORDER_SUBMIT_REQUEST });
 
-  const orderJson = {
-    timestamp: Date.now(),
-    items,
-    subtotal,
-    tax,
-    nettotal,
-    receipt: ""
-  };
+  // const orderJson = {
+  //   timestamp: Date.now(),
+  //   items,
+  //   subtotal,
+  //   tax,
+  //   nettotal,
+  //   receipt: ""
+  // };
 
-  const orderHash = keccak256(JSON.stringify(orderJson));
+  // const orderHash = keccak256(JSON.stringify(orderJson));
+  const orderHash = "";
 
   try {
     if (localStorage.getItem("walletconnect")) {
@@ -164,7 +166,7 @@ export const orderRequestPayment = (
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
-    const { nettotal } = getState().order;
+    const { nettotal } = getState().order.checkout;
 
     const symbol = "DAI";
     const chainId = 1;

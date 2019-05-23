@@ -1,7 +1,3 @@
-declare module "walletconnect";
-declare module "3box";
-declare module "ethjs";
-
 declare module "*.svg";
 declare module "*.png";
 declare module "*.jpg";

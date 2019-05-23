@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-// import Web3Connect from "web3connect";
+import Web3Connect from "web3connect";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import Card from "../components/Card";
@@ -20,7 +20,7 @@ class Home extends React.Component<any, any> {
       <PageWrapper row center>
         <Card shadow margin={20}>
           <h4>{`WalletConnect Pay`}</h4>
-          {/* <Web3Connect onConnect={this.onConnect} onClose={this.onClose} /> */}
+          <Web3Connect onConnect={this.onConnect} onClose={this.onClose} />
         </Card>
         <Card shadow margin={20}>
           <h4>{`Order Menu`}</h4>

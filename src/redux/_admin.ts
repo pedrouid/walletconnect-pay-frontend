@@ -1,5 +1,7 @@
+import Web3 from "web3";
+import { init3Box, setSpacePrivate } from "../helpers/box";
+import { queryChainId } from "../helpers/utilities";
 import { notificationShow } from "./_notification";
-import { setSpacePrivate } from "../helpers/box";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
@@ -19,26 +21,21 @@ const ADMIN_CLEAR_STATE = "admin/ADMIN_CLEAR_STATE";
 export const adminConnectWallet = (provider: any) => async (dispatch: any) => {
   dispatch({ type: ADMIN_CONNECT_REQUEST });
   try {
-    // TODO: Replace these
-    const web3 = null;
-    const address = "0x";
-    const chainId = 1;
-    const businessName = "Coffesshop";
+    const web3 = new Web3(provider);
+
+    const address = (await web3.eth.getAccounts())[0];
+    const chainId = await queryChainId(web3);
+    const businessName = await init3Box(address, provider);
 
     if (businessName) {
       dispatch({
         type: ADMIN_CONNECT_SUCCESS,
-        payload: {
-          web3,
-          address,
-          chainId,
-          businessName
-        }
+        payload: { web3, address, chainId, businessName }
       });
-      // window.browserHistory.push("/admin");
+      window.browserHistory.push("/admin");
     } else {
       dispatch({ type: ADMIN_CONNECT_FAILURE });
-      // window.browserHistory.push("/signup");
+      window.browserHistory.push("/signup");
     }
   } catch (error) {
     console.error(error); // tslint:disable-line
@@ -58,7 +55,7 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
 
     dispatch({ type: ADMIN_SUBMIT_SIGNUP_SUCCESS });
 
-    // window.browserHistory.push("/admin");
+    window.browserHistory.push("/admin");
   } catch (error) {
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
@@ -83,8 +80,8 @@ export const adminClearState = () => ({ type: ADMIN_CLEAR_STATE });
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
   loading: false,
-  address: "",
   web3: null,
+  address: "",
   chainId: 1,
   businessName: "",
   signUpForm: {

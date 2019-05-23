@@ -17,7 +17,8 @@
     "react-scripts-ts": "^4.0.8",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "styled-components": "4.2.0"
+    "styled-components": "4.2.0",
+    "web3": "^1.0.0-beta.55"
   },
   "scripts": {
     "start": "react-scripts-ts start",

@@ -10,7 +10,7 @@ import {
   orderRemoveItem,
   orderSubmit,
   orderUnsubmit
-} from "../reducers/_order";
+} from "../redux/_order";
 import { toFixed } from "../helpers/bignumber";
 import QRCodeDisplay from "../components/QRCodeDisplay";
 import arrow from "../assets/arrow.png";

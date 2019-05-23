@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { Switch, Route } from "react-router-dom";
-
+// import Notification from "./components/Notification";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -64,6 +64,9 @@ const App = () => (
         <Route component={NotFound} />
       </Switch>
     </SContent>
+
+    {/* TODO: Fix Notification Render Error */}
+    {/* <Notification /> */}
   </SLayout>
 );
 

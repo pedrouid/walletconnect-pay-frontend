@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 interface IPageWrapperStyleProps {
   center?: boolean;
+  row?: boolean;
   maxWidth?: number;
   noPadding?: boolean;
 }
@@ -18,7 +19,7 @@ const SPageWrapper = styled.div<IPageWrapperStyleProps>`
   overflow-x: hidden;
   overflow-y: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ row }) => (row ? "row" : "column")};
   align-items: center;
   padding: ${({ noPadding }) => (noPadding ? "0" : "20px")};
   justify-content: ${({ center }) => (center ? "center" : "inherit")};
@@ -29,7 +30,7 @@ interface IPageWrapperProps extends IPageWrapperStyleProps {
 }
 
 const PageWrapper = (props: IPageWrapperProps) => (
-  <SPageWrapper center={props.center} maxWidth={props.maxWidth}>
+  <SPageWrapper center={props.center} row={props.row} maxWidth={props.maxWidth}>
     {props.children}
   </SPageWrapper>
 );

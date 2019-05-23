@@ -1,4 +1,5 @@
 import { notificationShow } from "./_notification";
+import { setSpacePrivate } from "../helpers/box";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
@@ -49,9 +50,9 @@ export const adminConnectWallet = (provider: any) => async (dispatch: any) => {
 export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   dispatch({ type: ADMIN_SUBMIT_SIGNUP_REQUEST });
   try {
-    // const { signUpForm } = getState().admin;
-    // const profile = { name: signUpForm.name, type: signUpForm.type };
-    // await setSpacePrivate("profile", profile);
+    const { signUpForm } = getState().admin;
+    const profile = { name: signUpForm.name, type: signUpForm.type };
+    await setSpacePrivate("profile", profile);
 
     // await apiSendEmailVerification(signUpForm.email)
 

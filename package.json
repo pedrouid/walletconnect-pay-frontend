@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "3box": "^1.7.1",
     "@walletconnect/browser": "^1.0.0-beta.24",
     "axios": "^0.18.0",
     "bignumber.js": "^8.1.1",

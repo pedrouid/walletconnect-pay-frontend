@@ -14,6 +14,7 @@ declare global {
     ethereum: any;
     web3: any;
     browserHistory: any;
+    Box: any;
   }
 }
 

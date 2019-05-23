@@ -54,7 +54,7 @@ const App = () => (
   <SLayout>
     <SHeader>
       <SLogo src={logo} alt="" />
-      <SBranding>{"Bufficorn Cafe"}</SBranding>
+      <SBranding>{"WalletConnect Pay"}</SBranding>
     </SHeader>
 
     <SContent>

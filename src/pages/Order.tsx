@@ -69,6 +69,7 @@ class Order extends React.Component<any, any> {
       payment,
       uri
     } = this.props;
+    const ratio = 60;
     return !this.props.loading ? (
       <React.Fragment>
         <SHeader>
@@ -76,7 +77,7 @@ class Order extends React.Component<any, any> {
           <SBranding>{businessData.name}</SBranding>
         </SHeader>
         <SColumnWrapper>
-          <SColumn width={items.length ? 70 : 100}>
+          <SColumn width={items.length ? ratio : 100}>
             <SColumnHeader>
               <STitle>{`Menu`}</STitle>
             </SColumnHeader>
@@ -92,7 +93,7 @@ class Order extends React.Component<any, any> {
                 ))}
             </SColumnList>
           </SColumn>
-          <SColumnOrder width={items.length ? 30 : 0}>
+          <SColumnOrder width={items.length ? 100 - ratio : 0}>
             <SColumnHeader>
               <STitle>{`Order`}</STitle>
             </SColumnHeader>

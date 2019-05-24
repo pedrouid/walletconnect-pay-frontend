@@ -332,6 +332,7 @@ const INITIAL_STATE = {
     taxInc: true,
     nativeCurrency: ""
   },
+  submitting: false,
   loading: false,
   submitted: false,
   items: [],
@@ -363,11 +364,16 @@ export default (state = INITIAL_STATE, action: any) => {
     case ORDER_LOAD_MENU_FAILURE:
       return { ...state, loading: false };
     case ORDER_SUBMIT_REQUEST:
-      return { ...state, loading: true };
+      return { ...state, submitting: true };
     case ORDER_SUBMIT_SUCCESS:
-      return { ...state, uri: action.payload, submitted: true, loading: false };
+      return {
+        ...state,
+        uri: action.payload,
+        submitted: true,
+        submitting: false
+      };
     case ORDER_SUBMIT_FAILURE:
-      return { ...state, loading: false };
+      return { ...state, submitting: false };
     case ORDER_PAYMENT_REQUEST:
       return { ...state, payment: null };
     case ORDER_PAYMENT_SUCCESS:

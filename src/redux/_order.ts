@@ -11,6 +11,7 @@ import { getMenu, formatCheckoutDetails } from "../helpers/order";
 import { notificationShow } from "./_notification";
 import { apiGetTransactionReceipt } from "../helpers/api";
 import { convertHexToNumber } from "../helpers/bignumber";
+import { getChainData } from "src/helpers/utilities";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -29,6 +30,8 @@ const ORDER_PAYMENT_SUCCESS = "order/ORDER_PAYMENT_SUCCESS";
 const ORDER_PAYMENT_FAILURE = "order/ORDER_PAYMENT_FAILURE";
 
 const ORDER_PAYMENT_UPDATE = "order/ORDER_PAYMENT_UPDATE";
+
+const ORDER_UPDATE_WARNING = "order/ORDER_UPDATE_WARNING";
 
 const ORDER_UNSUBMIT = "order/ORDER_UNSUBMIT";
 
@@ -112,6 +115,30 @@ export const orderRemoveItem = (item: IMenuItem) => (
   });
 };
 
+export const orderManageSession = (
+  payload: IJsonRpcRequest,
+  orderHash: string
+) => (dispatch: any, getState: any) => {
+  // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
+
+  const { businessData } = getState().order;
+  const { accounts, chainId } = payload.params[0];
+  const account = accounts[0];
+
+  if (chainId !== businessData.chainId) {
+    const chainData = getChainData(businessData.chainId);
+    dispatch(
+      orderUpdateWarning({
+        show: true,
+        message: `Please switch your Wallet to ${chainData.name}`
+      })
+    );
+  } else {
+    dispatch(orderUpdateWarning({ show: false, message: "" }));
+    dispatch(orderRequestPayment(account, orderHash));
+  }
+};
+
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
   // const { items, checkout } = getState().order;
 
@@ -144,12 +171,18 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
       if (error) {
         throw error;
       }
-      // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
-
-      const account = connector.accounts[0];
-
-      dispatch(orderRequestPayment(account, orderHash));
+      dispatch(orderManageSession(payload, orderHash));
     });
+
+    connector.on(
+      "session_update",
+      async (error: Error, payload: IJsonRpcRequest) => {
+        if (error) {
+          throw error;
+        }
+        dispatch(orderManageSession(payload, orderHash));
+      }
+    );
 
     connector.on(
       "disconnect",
@@ -262,6 +295,14 @@ export const orderUpdatePayment = (status: number) => (
   dispatch({ type: ORDER_PAYMENT_UPDATE, payload: updatedPayment });
 };
 
+export const orderUpdateWarning = (warning: {
+  show: boolean;
+  message: string;
+}) => ({
+  type: ORDER_UPDATE_WARNING,
+  payload: warning
+});
+
 export const orderUnsubmit = () => (dispatch: any, getState: any) => {
   const { payment, items } = getState().order;
   let updatedItems = [...items];
@@ -299,7 +340,11 @@ const INITIAL_STATE = {
     tax: 0,
     nettotal: 0
   },
-  payment: null
+  payment: null,
+  warning: {
+    show: false,
+    message: ""
+  }
 };
 
 export default (state = INITIAL_STATE, action: any) => {
@@ -338,6 +383,9 @@ export default (state = INITIAL_STATE, action: any) => {
       };
     case ORDER_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
+
+    case ORDER_UPDATE_WARNING:
+      return { ...state, warning: action.payload };
     default:
       return state;
   }

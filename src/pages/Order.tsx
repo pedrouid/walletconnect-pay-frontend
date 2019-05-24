@@ -14,6 +14,7 @@ import Button from "../components/Button";
 import PageWrapper from "../components/PageWrapper";
 import PaymentModal from "../components/PaymentModal";
 import Summary from "../components/Summary";
+import Modal from "../components/Modal";
 import Loader from "../components/Loader";
 import ListItem from "../components/ListItem";
 import {
@@ -60,6 +61,7 @@ class Order extends React.Component<any, any> {
   public render() {
     const {
       businessData,
+      warning,
       loading,
       submitted,
       items,
@@ -128,6 +130,10 @@ class Order extends React.Component<any, any> {
             uri={uri}
             orderUnsubmit={this.props.orderUnsubmit}
           />
+
+          <Modal show={warning.show}>
+            <h4>{warning.message}</h4>
+          </Modal>
         </SColumnWrapper>
       </React.Fragment>
     ) : (
@@ -140,6 +146,7 @@ class Order extends React.Component<any, any> {
 
 const reduxProps = (store: any) => ({
   businessData: store.order.businessData,
+  warning: store.order.warning,
   loading: store.order.loading,
   submitted: store.order.submitted,
   items: store.order.items,

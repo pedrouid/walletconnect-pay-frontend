@@ -227,7 +227,8 @@ export const orderRequestPayment = (
   } catch (error) {
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
-    dispatch({ type: ORDER_PAYMENT_FAILURE });
+    const payment: IPayment = { status: "failure", result: null };
+    dispatch({ type: ORDER_PAYMENT_FAILURE, payload: payment });
   }
 };
 
@@ -263,9 +264,19 @@ export const orderUpdatePayment = (status: number) => (
   dispatch({ type: ORDER_PAYMENT_UPDATE, payload: updatedPayment });
 };
 
-export const orderUnsubmit = () => (dispatch: any) => {
+export const orderUnsubmit = () => (dispatch: any, getState: any) => {
+  const { payment, items } = getState().order;
+  let updatedItems = [...items];
+  if (payment) {
+    if (payment.status === "pending") {
+      dispatch(notificationShow("Payment is still pending", true));
+      return;
+    } else if (payment.status === "success") {
+      updatedItems = [];
+    }
+  }
   killSession();
-  dispatch({ type: ORDER_UNSUBMIT });
+  dispatch({ type: ORDER_UNSUBMIT, payload: updatedItems });
 };
 
 export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
@@ -307,7 +318,6 @@ export default (state = INITIAL_STATE, action: any) => {
       return { ...state, loading: false, businessData: action.payload };
     case ORDER_LOAD_MENU_FAILURE:
       return { ...state, loading: false };
-
     case ORDER_SUBMIT_REQUEST:
       return { ...state, loading: true };
     case ORDER_SUBMIT_SUCCESS:
@@ -321,7 +331,13 @@ export default (state = INITIAL_STATE, action: any) => {
     case ORDER_PAYMENT_UPDATE:
       return { ...state, payment: action.payload };
     case ORDER_UNSUBMIT:
-      return { ...state, uri: "", payment: null, submitted: false };
+      return {
+        ...state,
+        uri: "",
+        payment: null,
+        submitted: false,
+        items: action.payload
+      };
     case ORDER_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
     default:

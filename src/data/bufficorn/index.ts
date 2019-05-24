@@ -90,7 +90,9 @@ const businessData: IBusinessData = {
   menu,
   taxRate: 11,
   taxInc: true,
-  currencySymbol: "USD"
+  taxDisplay: true,
+  currencySymbol: "USD",
+  paymentAddress: ""
 };
 
 export default businessData;

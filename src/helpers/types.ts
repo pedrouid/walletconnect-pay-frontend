@@ -61,5 +61,7 @@ export interface IBusinessData {
   menu: IMenuItem[];
   taxRate: number;
   taxInc: boolean;
+  taxDisplay: boolean;
   currencySymbol: string;
+  paymentAddress: string;
 }

@@ -39,13 +39,14 @@ export function isToken(asset: any) {
 }
 
 export async function formatTransaction(
-  account: string,
+  from: string,
+  to: string,
   amount: number,
   currency: string,
   symbol: string,
   chainId: number
 ) {
-  const from = account;
+  // const from = account;
   const asset = getAsset(symbol, chainId);
   const price = getAssetPrice(currency, symbol);
 
@@ -56,7 +57,7 @@ export async function formatTransaction(
     )
   );
 
-  let to: string = "";
+  // let to: string = "";
   let value: string | number = "";
   let data: string = "";
   let gasLimit: string | number = "";
@@ -66,18 +67,18 @@ export async function formatTransaction(
     value = "0x00";
     to = tokenAddress;
     data = getDataString(FUNCTIONS.TOKEN_TRANSFER, [
-      removeHexPrefix(account),
+      removeHexPrefix(to),
       removeHexPrefix(convertStringToHex(amount))
     ]);
     gasLimit = await apiGetGasLimit(tokenAddress, data);
   } else {
     value = amount;
-    to = account;
+    to = to;
     data = "0x";
     gasLimit = 21000;
   }
 
-  const nonce = await apiGetAccountNonce(account);
+  const nonce = await apiGetAccountNonce(from);
   const gasPrice = convertStringToNumber(
     convertAmountToRawNumber((await apiGetGasPrices()).average.price, 9)
   );

@@ -1,8 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
 import { colors, transitions } from "../styles";
-import { formatDisplayAmount } from "../helpers/utilities";
 import Loader from "../components/Loader";
+import Summary from "../components/Summary";
 
 import QRCodeDisplay from "../components/QRCodeDisplay";
 
@@ -10,8 +10,6 @@ import {
   STitle,
   SColumnHeader,
   SColumnFooter,
-  SColumnRowTitle,
-  SColumnRow,
   SListItemName,
   SListItemDescription
 } from "../components/common";
@@ -119,7 +117,7 @@ const PaymentModal = ({
   checkout,
   uri
 }: any) => (
-  <SModal show={submitted}>
+  <SModal show={submitted || payment}>
     <SModalHeader>
       <SBackButton onClick={orderUnsubmit}>
         <img src={arrow} alt="" />
@@ -163,33 +161,7 @@ const PaymentModal = ({
           </SModalColumn>
         )}
         <SModalFooter>
-          <SColumnRow>
-            <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
-          </SColumnRow>
-          <SColumnRow>
-            <div>{`Sub Total`}</div>
-            <div>
-              {formatDisplayAmount(
-                checkout.subtotal,
-                businessData.currencySymbol
-              )}
-            </div>
-          </SColumnRow>
-          <SColumnRow>
-            <div>{`Tax`}</div>
-            <div>
-              {formatDisplayAmount(checkout.tax, businessData.currencySymbol)}
-            </div>
-          </SColumnRow>
-          <SColumnRow>
-            <div>{`Net Total`}</div>
-            <div>
-              {formatDisplayAmount(
-                checkout.nettotal,
-                businessData.currencySymbol
-              )}
-            </div>
-          </SColumnRow>
+          <Summary checkout={checkout} businessData={businessData} />
         </SModalFooter>
       </SModalContainer>
     ) : (

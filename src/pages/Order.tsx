@@ -13,6 +13,7 @@ import {
 import Button from "../components/Button";
 import PageWrapper from "../components/PageWrapper";
 import PaymentModal from "../components/PaymentModal";
+import Summary from "../components/Summary";
 import Loader from "../components/Loader";
 import ListItem from "../components/ListItem";
 import {
@@ -22,11 +23,9 @@ import {
   SColumnHeader,
   SColumnFooter,
   SColumnList,
-  SColumnRowTitle,
   SColumnRow,
   STitle
 } from "../components/common";
-import { formatDisplayAmount } from "../helpers/utilities";
 
 const SHeader = styled.div`
   width: 100%;
@@ -68,7 +67,6 @@ class Order extends React.Component<any, any> {
       payment,
       uri
     } = this.props;
-    console.log("businessData", businessData); // tslint:disable-line
     return !this.props.loading ? (
       <React.Fragment>
         <SHeader>
@@ -111,38 +109,12 @@ class Order extends React.Component<any, any> {
               ))}
             </SColumnList>
             <SColumnFooter>
+              <Summary checkout={checkout} businessData={businessData} />
               <SColumnRow>
-                <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
-              </SColumnRow>
-              <SColumnRow>
-                <div>{`Sub Total`}</div>
-                <div>
-                  {formatDisplayAmount(
-                    checkout.subtotal,
-                    businessData.currencySymbol
-                  )}
-                </div>
-              </SColumnRow>
-              <SColumnRow>
-                <div>{`Tax`}</div>
-                <div>
-                  {formatDisplayAmount(
-                    checkout.tax,
-                    businessData.currencySymbol
-                  )}
-                </div>
-              </SColumnRow>
-              <SColumnRow>
-                <div>{`Net Total`}</div>
-                <div>
-                  {formatDisplayAmount(
-                    checkout.nettotal,
-                    businessData.currencySymbol
-                  )}
-                </div>
-              </SColumnRow>
-              <SColumnRow>
-                <Button onClick={this.props.orderSubmit}>{`Pay`}</Button>
+                <Button
+                  marginTop={12}
+                  onClick={this.props.orderSubmit}
+                >{`Pay`}</Button>
               </SColumnRow>
             </SColumnFooter>
           </SColumnOrder>

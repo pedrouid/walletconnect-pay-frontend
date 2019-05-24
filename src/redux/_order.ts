@@ -212,12 +212,16 @@ export const orderRequestPayment = (
     const { businessData } = getState().order;
     const { nettotal } = getState().order.checkout;
 
+    const from = account;
+    const to = businessData.paymentAddress || account;
+
     const symbol = "DAI";
     const chainId = 1;
     const currency = businessData.currencySymbol;
 
     const tx = await formatTransaction(
-      account,
+      from,
+      to,
       nettotal,
       currency,
       symbol,

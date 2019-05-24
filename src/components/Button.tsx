@@ -6,6 +6,8 @@ import { colors, fonts, shadows, transitions } from "../styles";
 interface IButtonStyleProps {
   fetching: boolean;
   outline: boolean;
+  marginTop?: number;
+  borderRadius?: number;
   type: "button" | "submit" | "reset";
   color: string;
   disabled: boolean;
@@ -55,7 +57,9 @@ const SButton = styled.button<IButtonStyleProps>`
   color: ${({ outline, color }) =>
     outline ? `rgb(${colors[color]})` : `rgb(${colors.white})`};
   box-shadow: ${({ outline }) => (outline ? "none" : `${shadows.soft}`)};
-  border-radius: 6px;
+  border-radius: ${({ borderRadius }) =>
+    borderRadius ? `${borderRadius}px` : "6px"};
+  margin-top: ${({ marginTop }) => (marginTop ? `${marginTop}px` : "0")};
   font-size: ${fonts.size.large};
   font-weight: ${fonts.weight.semibold};
   font-style: normal;

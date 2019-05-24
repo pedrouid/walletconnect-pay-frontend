@@ -190,7 +190,8 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
         if (error) {
           throw error;
         }
-        if (!getState().order.payment) {
+        const { payment } = getState().order;
+        if ((payment && payment.status === "failure") || !payment) {
           dispatch(orderUnsubmit());
         }
       }

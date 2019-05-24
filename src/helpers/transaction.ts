@@ -5,7 +5,7 @@ import {
 } from "../helpers/bignumber";
 import {
   apiGetAccountNonce,
-  apiGetGasLimit,
+  // apiGetGasLimit,
   apiGetGasPrices
 } from "../helpers/api";
 import {
@@ -67,7 +67,9 @@ export async function formatTransaction(
       removeHexPrefix(to),
       removeHexPrefix(convertStringToHex(amount))
     ]);
-    gasLimit = await apiGetGasLimit(tokenAddress, data, chainId);
+    // TODO: Fix Gas Limit estimation
+    // gasLimit = await apiGetGasLimit(tokenAddress, data, chainId);
+    gasLimit = 40000;
     to = tokenAddress;
   } else {
     value = amount;

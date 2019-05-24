@@ -59,6 +59,8 @@ export interface IBusinessData {
   name: string;
   logo: string;
   menu: IMenuItem[];
+  chainId: number;
+  assetSymbol: string;
   taxRate: number;
   taxInc: boolean;
   taxDisplay: boolean;

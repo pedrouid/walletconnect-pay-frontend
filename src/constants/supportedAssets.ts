@@ -22,7 +22,7 @@ const SUPPORTED_ASSETS: ISupportedAssets = {
     }
   },
   100: {
-    DAI: {
+    xDAI: {
       symbol: "xDAI",
       name: "xDAI",
       decimals: 18,

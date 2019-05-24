@@ -88,6 +88,8 @@ const businessData: IBusinessData = {
   name: "Bufficorn Cafe",
   logo,
   menu,
+  chainId: 1,
+  assetSymbol: "DAI",
   taxRate: 11,
   taxInc: true,
   taxDisplay: true,

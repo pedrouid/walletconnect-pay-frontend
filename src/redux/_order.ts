@@ -182,17 +182,13 @@ export const orderRequestPayment = (
     const from = account;
     const to = businessData.paymentAddress || account;
 
-    const symbol = "DAI";
-    const chainId = 1;
-    const currency = businessData.currencySymbol;
-
     const tx = await formatTransaction(
       from,
       to,
       nettotal,
-      currency,
-      symbol,
-      chainId
+      businessData.currencySymbol,
+      businessData.assetSymbol,
+      businessData.chainId
     );
 
     const txhash = await sendTransaction(tx);
@@ -235,12 +231,14 @@ export const orderRequestPayment = (
 let subscribeInterval: any;
 
 export const orderSubscribeToPayment = () => (dispatch: any, getState: any) => {
-  const { payment } = getState().order;
-  const chainId = 1;
+  const { payment, businessData } = getState().order;
   clearInterval(subscribeInterval);
   if (payment.status === "pending" && payment.result) {
     subscribeInterval = setInterval(async () => {
-      const result = await apiGetTransactionReceipt(payment.result, chainId);
+      const result = await apiGetTransactionReceipt(
+        payment.result,
+        businessData.chainId
+      );
       if (result) {
         clearInterval(subscribeInterval);
         const status = convertHexToNumber(result.status);

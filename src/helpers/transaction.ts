@@ -46,7 +46,6 @@ export async function formatTransaction(
   symbol: string,
   chainId: number
 ) {
-  // const from = account;
   const asset = getAsset(symbol, chainId);
   const price = getAssetPrice(currency, symbol);
 
@@ -77,9 +76,20 @@ export async function formatTransaction(
   }
 
   const nonce = await apiGetAccountNonce(from);
-  const gasPrice = convertStringToNumber(
-    convertAmountToRawNumber((await apiGetGasPrices()).average.price, 9)
-  );
+
+  let gasPrice;
+
+  if (chainId === 100) {
+    const fixedGasPrice = 1.1;
+    gasPrice = convertStringToNumber(
+      convertAmountToRawNumber(fixedGasPrice, 9)
+    );
+  } else {
+    const gasPrices = await apiGetGasPrices();
+    gasPrice = convertStringToNumber(
+      convertAmountToRawNumber(gasPrices.average.price, 9)
+    );
+  }
 
   const tx = {
     from: sanitizeHex(from),
@@ -92,8 +102,6 @@ export async function formatTransaction(
   };
 
   const parsedTx = parseTransactionData(tx);
-
-  // parsedTx.gasLimit = "0x";
 
   return parsedTx;
 }

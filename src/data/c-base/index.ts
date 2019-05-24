@@ -88,6 +88,8 @@ const businessData: IBusinessData = {
   name: "C-Base",
   logo,
   menu,
+  chainId: 100,
+  assetSymbol: "xDAI",
   taxRate: 20,
   taxInc: true,
   taxDisplay: false,

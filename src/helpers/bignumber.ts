@@ -53,6 +53,10 @@ export function convertHexToNumber(hex: string): number {
   return convertStringToNumber(convertHexToString(hex));
 }
 
+export function convertNumberToHex(value: string | number): string {
+  return convertStringToHex(convertNumberToString(value));
+}
+
 export function greaterThan(
   numberOne: number | string,
   numberTwo: number | string

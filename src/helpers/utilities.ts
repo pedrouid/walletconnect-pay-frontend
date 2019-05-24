@@ -1,13 +1,8 @@
 import { utils } from "ethers";
 import { ITxData } from "@walletconnect/types";
-import {
-  isValidAddress,
-  convertUtf8ToNumber,
-  convertNumberToHex,
-  convertHexToNumber
-} from "@walletconnect/utils";
+import { isValidAddress, convertHexToNumber } from "@walletconnect/utils";
 import { IChainData } from "./types";
-import { toFixed } from "./bignumber";
+import { toFixed, convertStringToHex, convertNumberToHex } from "./bignumber";
 import SUPPORTED_CHAINS from "../constants/chains";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 
@@ -104,9 +99,10 @@ export function parseTransactionData(
     if (value !== "") {
       if (!utils.isHexString(value)) {
         if (typeof value === "string") {
-          value = convertUtf8ToNumber(value);
+          result = sanitizeHex(convertStringToHex(value));
+        } else {
+          result = sanitizeHex(convertNumberToHex(value));
         }
-        result = convertNumberToHex(value);
       } else {
         if (typeof value === "string") {
           result = sanitizeHex(value);

@@ -1,9 +1,4 @@
-import {
-  IMenuItem,
-  IOrderItem,
-  ICheckoutDetails,
-  IBusinessData
-} from "../helpers/types";
+import { IMenuItem, IOrderItem, IPayment } from "../helpers/types";
 import { IJsonRpcRequest } from "@walletconnect/types";
 import {
   initWalletConnect,
@@ -11,9 +6,11 @@ import {
   killSession
 } from "../helpers/walletconnect";
 import { formatTransaction } from "../helpers/transaction";
-import menus from "../data";
-// import { setSpacePrivate, getSpacePrivate } from "src/helpers/box";
+import { getMenu, formatCheckoutDetails } from "../helpers/order";
+// import { setSpacePrivate, getSpacePrivate } from "../helpers/box";
 import { notificationShow } from "./_notification";
+import { apiGetTransactionReceipt } from "../helpers/api";
+import { convertHexToNumber } from "../helpers/bignumber";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -31,44 +28,13 @@ const ORDER_PAYMENT_REQUEST = "order/ORDER_PAYMENT_REQUEST";
 const ORDER_PAYMENT_SUCCESS = "order/ORDER_PAYMENT_SUCCESS";
 const ORDER_PAYMENT_FAILURE = "order/ORDER_PAYMENT_FAILURE";
 
+const ORDER_PAYMENT_UPDATE = "order/ORDER_PAYMENT_UPDATE";
+
 const ORDER_UNSUBMIT = "order/ORDER_UNSUBMIT";
 
 const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
-
-function formatCheckoutDetails(
-  rawtotal: number,
-  businessData: IBusinessData
-): ICheckoutDetails {
-  let checkout;
-  if (businessData.taxInc) {
-    const tax = rawtotal * (businessData.taxRate / 100);
-    checkout = {
-      rawtotal,
-      subtotal: rawtotal - tax,
-      tax,
-      nettotal: rawtotal
-    };
-  } else {
-    const tax = rawtotal * (businessData.taxRate / 100);
-    checkout = {
-      rawtotal,
-      subtotal: rawtotal,
-      tax,
-      nettotal: rawtotal + tax
-    };
-  }
-  return checkout;
-}
-
-function getMenu(bussinessName: string) {
-  let result = null;
-  if (menus[bussinessName]) {
-    result = menus[bussinessName] || null;
-  }
-  return result;
-}
 
 export const orderLoadMenu = (bussinessName: string) => (
   dispatch: any,
@@ -191,8 +157,9 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
         if (error) {
           throw error;
         }
-
-        dispatch(orderUnsubmit());
+        if (!getState().order.payment) {
+          dispatch(orderUnsubmit());
+        }
       }
     );
   } catch (error) {
@@ -247,17 +214,53 @@ export const orderRequestPayment = (
 
       // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
 
+      const payment: IPayment = { status: "pending", result: txhash };
+      await dispatch({ type: ORDER_PAYMENT_SUCCESS, payload: payment });
+
       killSession();
 
-      dispatch({ type: ORDER_PAYMENT_FAILURE, payload: txhash });
+      dispatch(orderSubscribeToPayment());
     } else {
-      dispatch({ type: ORDER_PAYMENT_FAILURE });
+      const payment: IPayment = { status: "failure", result: null };
+      dispatch({ type: ORDER_PAYMENT_FAILURE, payload: payment });
     }
   } catch (error) {
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_PAYMENT_FAILURE });
   }
+};
+
+let subscribeInterval: any;
+
+export const orderSubscribeToPayment = () => (dispatch: any, getState: any) => {
+  const { payment } = getState().order;
+  const chainId = 1;
+  clearInterval(subscribeInterval);
+  if (payment.status === "pending" && payment.result) {
+    subscribeInterval = setInterval(async () => {
+      const result = await apiGetTransactionReceipt(payment.result, chainId);
+      if (result) {
+        clearInterval(subscribeInterval);
+        const status = convertHexToNumber(result.status);
+        dispatch(orderUpdatePayment(status));
+      }
+    }, 1000);
+  }
+};
+
+export const orderUpdatePayment = (status: number) => (
+  dispatch: any,
+  getState: any
+) => {
+  const { payment } = getState().order;
+  let updatedPayment: any;
+  if (status === 1) {
+    updatedPayment = { ...payment, status: "success" };
+  } else {
+    updatedPayment = { ...payment, status: "failure" };
+  }
+  dispatch({ type: ORDER_PAYMENT_UPDATE, payload: updatedPayment });
 };
 
 export const orderUnsubmit = () => (dispatch: any) => {
@@ -314,9 +317,9 @@ export default (state = INITIAL_STATE, action: any) => {
     case ORDER_PAYMENT_REQUEST:
       return { ...state, payment: null };
     case ORDER_PAYMENT_SUCCESS:
-      return { ...state, payment: { success: true, result: action.payload } };
     case ORDER_PAYMENT_FAILURE:
-      return { ...state, payment: { success: false, result: null } };
+    case ORDER_PAYMENT_UPDATE:
+      return { ...state, payment: action.payload };
     case ORDER_UNSUBMIT:
       return { ...state, uri: "", payment: null, submitted: false };
     case ORDER_CLEAR_STATE:

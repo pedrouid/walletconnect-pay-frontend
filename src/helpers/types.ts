@@ -65,3 +65,8 @@ export interface IBusinessData {
   currencySymbol: string;
   paymentAddress: string;
 }
+
+export interface IPayment {
+  status: "pending" | "success" | "failure";
+  result: any;
+}

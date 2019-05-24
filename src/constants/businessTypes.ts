@@ -3,7 +3,7 @@ interface IBusinessTypeRef {
   display_type: string;
 }
 
-const bussinessTypes: IBusinessTypeRef[] = [
+const BUSINESS_TYPES: IBusinessTypeRef[] = [
   {
     type: "cafe",
     display_type: "Café"
@@ -46,4 +46,4 @@ const bussinessTypes: IBusinessTypeRef[] = [
   }
 ];
 
-export default bussinessTypes;
+export default BUSINESS_TYPES;

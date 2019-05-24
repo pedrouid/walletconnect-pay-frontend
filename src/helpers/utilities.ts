@@ -8,8 +8,8 @@ import {
 } from "@walletconnect/utils";
 import { IChainData } from "./types";
 import { toFixed } from "./bignumber";
-import supportedChains from "../constants/chains";
-import nativeCurrencies from "../constants/nativeCurrencies";
+import SUPPORTED_CHAINS from "../constants/chains";
+import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 
 export function capitalize(string: string): string {
   return string
@@ -154,7 +154,7 @@ export function payloadId(): number {
 }
 
 export function getChainData(chainId: number): IChainData {
-  const chainData = supportedChains.filter(
+  const chainData = SUPPORTED_CHAINS.filter(
     (chain: any) => chain.chain_id === chainId
   )[0];
 
@@ -168,7 +168,7 @@ export function getChainData(chainId: number): IChainData {
 export function getChainIdFromNetworkId(networkId: number): number | null {
   let result = null;
 
-  const chainData = supportedChains.filter(
+  const chainData = SUPPORTED_CHAINS.filter(
     (chain: any) => chain.network_id === networkId
   )[0];
 
@@ -203,7 +203,7 @@ export async function queryChainId(web3: any) {
 }
 
 export function getNativeCurrency(symbol: string) {
-  return nativeCurrencies[symbol] || null;
+  return NATIVE_CURRENCIES[symbol] || null;
 }
 
 export function formatDisplayAmount(amount: number, symbol: string) {

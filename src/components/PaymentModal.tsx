@@ -14,6 +14,8 @@ import {
   SListItemDescription
 } from "../components/common";
 
+import { IPayment } from "../helpers/types";
+
 import success from "../assets/success.png";
 import error from "../assets/error.png";
 import arrow from "../assets/arrow.png";
@@ -108,6 +110,71 @@ const SBackButton = styled.div`
   }
 `;
 
+const PAYMENT_COPY = {
+  success: {
+    title: "Success",
+    description: `Your payment went through and your order is being prepared.`
+  },
+  pending: {
+    title: "Payment Pending",
+    description: `We are waiting for a blockchain confirmation of your payment.`
+  },
+  failure: {
+    title: "Payment Failed",
+    description: `Please check your wallet to for any transaction information.`
+  }
+};
+
+const PaymentResult = (props: { payment: IPayment }) => {
+  switch (props.payment.status) {
+    case "success":
+      return (
+        <SModalColumn>
+          <SPaymentResult>
+            <div>
+              <img src={success} alt={PAYMENT_COPY.success.title} />
+            </div>
+          </SPaymentResult>
+          <SModalCallToAction>{PAYMENT_COPY.success.title}</SModalCallToAction>
+          <SModalDescription>
+            {PAYMENT_COPY.success.description}
+          </SModalDescription>
+        </SModalColumn>
+      );
+    case "pending":
+      return (
+        <SModalColumn>
+          <SPaymentResult>
+            <div>
+              <Loader />
+            </div>
+          </SPaymentResult>
+          <SModalCallToAction>{PAYMENT_COPY.pending.title}</SModalCallToAction>
+          <SModalDescription>
+            {PAYMENT_COPY.pending.description}
+          </SModalDescription>
+        </SModalColumn>
+      );
+
+    case "failure":
+      return (
+        <SModalColumn>
+          <SPaymentResult>
+            <div>
+              <img src={error} alt={PAYMENT_COPY.failure.title} />
+            </div>
+          </SPaymentResult>
+          <SModalCallToAction>{PAYMENT_COPY.failure.title}</SModalCallToAction>
+          <SModalDescription>
+            {PAYMENT_COPY.failure.description}
+          </SModalDescription>
+        </SModalColumn>
+      );
+    default:
+      return null;
+  }
+};
+
 const PaymentModal = ({
   loading,
   businessData,
@@ -117,7 +184,7 @@ const PaymentModal = ({
   checkout,
   uri
 }: any) => (
-  <SModal show={submitted || payment}>
+  <SModal show={submitted}>
     <SModalHeader>
       <SBackButton onClick={orderUnsubmit}>
         <img src={arrow} alt="" />
@@ -135,30 +202,8 @@ const PaymentModal = ({
               {`Scan this QR code with your WalletConnect-enabled mobile wallet to pay.`}
             </SModalDescription>
           </SModalColumn>
-        ) : payment && payment.success ? (
-          <SModalColumn>
-            <SPaymentResult>
-              <div>
-                <img src={success} alt="Success" />
-              </div>
-            </SPaymentResult>
-            <SModalCallToAction>{`Success`}</SModalCallToAction>
-            <SModalDescription>
-              {`Your payment went through and your order is being prepared.`}
-            </SModalDescription>
-          </SModalColumn>
         ) : (
-          <SModalColumn>
-            <SPaymentResult>
-              <div>
-                <img src={error} alt="Failed" />
-              </div>
-            </SPaymentResult>
-            <SModalCallToAction>{`Payment Failed`}</SModalCallToAction>
-            <SModalDescription>
-              {`Please check your wallet to for any transaction information.`}
-            </SModalDescription>
-          </SModalColumn>
+          <PaymentResult payment={payment} />
         )}
         <SModalFooter>
           <Summary checkout={checkout} businessData={businessData} />

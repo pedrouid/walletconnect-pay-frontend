@@ -57,7 +57,6 @@ export async function formatTransaction(
     )
   );
 
-  // let to: string = "";
   let value: string | number = "";
   let data: string = "";
   let gasLimit: string | number = "";
@@ -65,15 +64,14 @@ export async function formatTransaction(
   if (isToken(asset)) {
     const tokenAddress = asset ? asset.contractAddress : "";
     value = "0x00";
-    to = tokenAddress;
     data = getDataString(FUNCTIONS.TOKEN_TRANSFER, [
       removeHexPrefix(to),
       removeHexPrefix(convertStringToHex(amount))
     ]);
-    gasLimit = await apiGetGasLimit(tokenAddress, data);
+    gasLimit = await apiGetGasLimit(tokenAddress, data, chainId);
+    to = tokenAddress;
   } else {
     value = amount;
-    to = to;
     data = "0x";
     gasLimit = 21000;
   }

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { IGasPrices } from "./types";
+import { payloadId } from "@walletconnect/utils";
 
 const api: AxiosInstance = axios.create({
   baseURL: "https://ethereum-api.xyz",
@@ -27,12 +28,40 @@ export const apiGetGasPrices = async (): Promise<IGasPrices> => {
 
 export const apiGetGasLimit = async (
   contractAddress: string,
-  data: string
+  data: string,
+  chainId: number
 ): Promise<number> => {
-  const chainId = 1;
   const response = await api.get(
     `/gas-limit?contractAddress=${contractAddress}&data=${data}&chainId=${chainId}`
   );
+  const { result } = response.data;
+  return result;
+};
+
+export const apiGetTransactionByHash = async (
+  txHash: string,
+  chainId: number
+): Promise<any> => {
+  const response = await api.post(`/custom-request?chainId=${chainId}`, {
+    id: payloadId(),
+    jsonrpc: "2.0",
+    method: "eth_getTransactionByHash",
+    params: [txHash]
+  });
+  const { result } = response.data;
+  return result;
+};
+
+export const apiGetTransactionReceipt = async (
+  txHash: string,
+  chainId: number
+): Promise<any> => {
+  const response = await api.post(`/custom-request?chainId=${chainId}`, {
+    id: payloadId(),
+    jsonrpc: "2.0",
+    method: "eth_getTransactionReceipt",
+    params: [txHash]
+  });
   const { result } = response.data;
   return result;
 };

@@ -7,8 +7,8 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import { adminUpdateSignUpForm, adminSubmitSignUp } from "../redux/_admin";
-import businessTypes from "../constants/businessTypes";
-import countries from "src/constants/countries";
+import BUSINESS_TYPES from "../constants/businessTypes";
+import COUNTRIES from "../constants/countries";
 
 const SSubmitWrapper = styled.div`
   width: 100%;
@@ -56,7 +56,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
         <Dropdown
           label="Business Type"
           selected={this.props.type}
-          options={businessTypes}
+          options={BUSINESS_TYPES}
           displayKey={"display_type"}
           targetKey={"type"}
           onChange={(type: string) =>
@@ -78,7 +78,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
         <Dropdown
           label="Country"
           selected={this.props.country}
-          options={countries}
+          options={COUNTRIES}
           displayKey={"name"}
           targetKey={"code"}
           onChange={(country: string) =>

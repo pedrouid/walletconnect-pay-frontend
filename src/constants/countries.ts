@@ -3,7 +3,7 @@ interface ICountryRef {
   code: string;
 }
 
-const countries: ICountryRef[] = [
+const COUNTRIES: ICountryRef[] = [
   { name: "Afghanistan", code: "AF" },
   { name: "Åland Islands", code: "AX" },
   { name: "Albania", code: "AL" },
@@ -249,4 +249,4 @@ const countries: ICountryRef[] = [
   { name: "Zimbabwe", code: "ZW" }
 ];
 
-export default countries;
+export default COUNTRIES;

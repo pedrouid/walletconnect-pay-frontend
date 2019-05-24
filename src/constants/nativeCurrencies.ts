@@ -4,7 +4,7 @@ interface INativeCurrencies {
   [symbol: string]: INativeCurrency;
 }
 
-const nativeCurrencies: INativeCurrencies = {
+const NATIVE_CURRENCIES: INativeCurrencies = {
   USD: {
     symbol: "$",
     currency: "USD",
@@ -42,4 +42,4 @@ const nativeCurrencies: INativeCurrencies = {
   }
 };
 
-export default nativeCurrencies;
+export default NATIVE_CURRENCIES;

@@ -31,6 +31,7 @@ const SModal = styled.div<IModalStyleProps>`
   width: 100%;
   height: 100%;
   max-height: 100vh;
+  overflow-y: scroll;
   background-color: rgb(${colors.white});
   transform: ${({ show }) =>
     show ? "translate3d(0, 0, 0)" : "translate3d(100vw, 0, 0)"};

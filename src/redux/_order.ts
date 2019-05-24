@@ -376,9 +376,10 @@ export default (state = INITIAL_STATE, action: any) => {
     case ORDER_UNSUBMIT:
       return {
         ...state,
-        uri: "",
-        payment: null,
-        submitted: false,
+        uri: INITIAL_STATE.uri,
+        payment: INITIAL_STATE.payment,
+        submitted: INITIAL_STATE.submitted,
+        warning: INITIAL_STATE.warning,
         items: action.payload
       };
     case ORDER_CLEAR_STATE:

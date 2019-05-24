@@ -24,7 +24,7 @@ class Home extends React.Component<any, any> {
         </Card>
         <Card shadow margin={20}>
           <h4>{`Order Menu`}</h4>
-          <Link to="/order">
+          <Link to="/order/c-base">
             <Button>{"Demo"}</Button>
           </Link>
         </Card>

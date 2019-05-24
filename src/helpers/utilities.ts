@@ -1,6 +1,4 @@
 import { utils } from "ethers";
-import { IChainData } from "./types";
-import supportedChains from "./chains";
 import { ITxData } from "@walletconnect/types";
 import {
   isValidAddress,
@@ -8,6 +6,10 @@ import {
   convertNumberToHex,
   convertHexToNumber
 } from "@walletconnect/utils";
+import { IChainData } from "./types";
+import { toFixed } from "./bignumber";
+import supportedChains from "../constants/chains";
+import nativeCurrencies from "../constants/nativeCurrencies";
 
 export function capitalize(string: string): string {
   return string
@@ -198,4 +200,22 @@ export async function queryChainId(web3: any) {
     }
   }
   return chainId;
+}
+
+export function getNativeCurrency(symbol: string) {
+  return nativeCurrencies[symbol] || null;
+}
+
+export function formatDisplayAmount(amount: number, symbol: string) {
+  let result = toFixed(amount, 2);
+  const nativeCurrency = getNativeCurrency(symbol);
+  if (nativeCurrency) {
+    result =
+      nativeCurrency.alignment === "left"
+        ? `${nativeCurrency.symbol} ${toFixed(amount, nativeCurrency.decimals)}`
+        : `${toFixed(amount, nativeCurrency.decimals)} ${
+            nativeCurrency.symbol
+          }`;
+  }
+  return result;
 }

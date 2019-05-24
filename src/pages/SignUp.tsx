@@ -7,8 +7,8 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import { adminUpdateSignUpForm, adminSubmitSignUp } from "../redux/_admin";
-import businessTypes from "../ref/businessTypes";
-import countries from "src/ref/countries";
+import businessTypes from "../constants/businessTypes";
+import countries from "src/constants/countries";
 
 const SSubmitWrapper = styled.div`
   width: 100%;

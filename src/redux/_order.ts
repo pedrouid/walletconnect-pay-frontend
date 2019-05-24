@@ -1,4 +1,9 @@
-import { IMenuItem, IOrderItem } from "../helpers/types";
+import {
+  IMenuItem,
+  IOrderItem,
+  ICheckoutDetails,
+  IBusinessData
+} from "../helpers/types";
 import { IJsonRpcRequest } from "@walletconnect/types";
 import {
   initWalletConnect,
@@ -32,20 +37,28 @@ const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
 
-const TAX_RATE = 0.11;
-
-interface ICheckoutDetails {
-  subtotal: number;
-  tax: number;
-  nettotal: number;
-}
-
-function formatCheckoutDetails(subtotal: number): ICheckoutDetails {
-  const checkout = {
-    subtotal,
-    tax: subtotal * TAX_RATE,
-    nettotal: subtotal * (1 + TAX_RATE)
-  };
+function formatCheckoutDetails(
+  rawtotal: number,
+  businessData: IBusinessData
+): ICheckoutDetails {
+  let checkout;
+  if (businessData.taxInc) {
+    const tax = rawtotal * (businessData.taxRate / 100);
+    checkout = {
+      rawtotal,
+      subtotal: rawtotal - tax,
+      tax,
+      nettotal: rawtotal
+    };
+  } else {
+    const tax = rawtotal * (businessData.taxRate / 100);
+    checkout = {
+      rawtotal,
+      subtotal: rawtotal,
+      tax,
+      nettotal: rawtotal + tax
+    };
+  }
   return checkout;
 }
 
@@ -77,8 +90,9 @@ export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
+  const { businessData } = getState().order;
   let { items } = getState().order;
-  let { subtotal } = getState().order.checkout;
+  let { rawtotal } = getState().order.checkout;
 
   let newItem = true;
 
@@ -86,7 +100,7 @@ export const orderAddItem = (item: IMenuItem) => (
     if (orderItem.name === item.name) {
       newItem = false;
       orderItem.quantity += 1;
-      subtotal += item.price;
+      rawtotal += item.price;
     }
     return orderItem;
   });
@@ -96,12 +110,12 @@ export const orderAddItem = (item: IMenuItem) => (
       ...item,
       quantity: 1
     });
-    subtotal += item.price;
+    rawtotal += item.price;
   }
 
   dispatch({
     type: ORDER_UPDATE_ITEMS,
-    payload: { items, checkout: formatCheckoutDetails(subtotal) }
+    payload: { items, checkout: formatCheckoutDetails(rawtotal, businessData) }
   });
 };
 
@@ -109,14 +123,15 @@ export const orderRemoveItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
+  const { businessData } = getState().order;
   let { items } = getState().order;
-  let { subtotal } = getState().order.checkout;
+  let { rawtotal } = getState().order.checkout;
 
   items = items
     .map((orderItem: IOrderItem) => {
       if (orderItem.name === item.name) {
         orderItem.quantity -= 1;
-        subtotal -= item.price;
+        rawtotal -= item.price;
       }
       if (orderItem.quantity > 0) {
         return orderItem;
@@ -127,21 +142,21 @@ export const orderRemoveItem = (item: IMenuItem) => (
 
   dispatch({
     type: ORDER_UPDATE_ITEMS,
-    payload: { items, checkout: formatCheckoutDetails(subtotal) }
+    payload: { items, checkout: formatCheckoutDetails(rawtotal, businessData) }
   });
 };
 
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
   // const { items, checkout } = getState().order;
 
-  // const { subtotal, tax, nettotal } = checkout;
+  // const { rawtotal, tax, nettotal } = checkout;
 
   dispatch({ type: ORDER_SUBMIT_REQUEST });
 
   // const orderJson = {
   //   timestamp: Date.now(),
   //   items,
-  //   subtotal,
+  //   rawtotal,
   //   tax,
   //   nettotal,
   //   receipt: ""
@@ -194,11 +209,12 @@ export const orderRequestPayment = (
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
+    const { businessData } = getState().order;
     const { nettotal } = getState().order.checkout;
 
     const symbol = "DAI";
     const chainId = 1;
-    const currency = "USD";
+    const currency = businessData.currencySymbol;
 
     const tx = await formatTransaction(
       account,
@@ -249,17 +265,21 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
-  // businessData: {
-  //   logo: "",
-  //   menu: null
-  // },
-  businessData: menus.bufficorn,
+  businessData: {
+    id: "",
+    name: "",
+    logo: "",
+    menu: null,
+    taxRate: 0,
+    taxInc: true,
+    nativeCurrency: ""
+  },
   loading: false,
   submitted: false,
   items: [],
   uri: "",
   checkout: {
-    subtotal: 0,
+    rawtotal: 0,
     tax: 0,
     nettotal: 0
   },

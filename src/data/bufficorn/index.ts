@@ -1,18 +1,18 @@
-import { IMenuItem } from "../../helpers/types";
+import { IMenuItem, IBusinessData } from "../../helpers/types";
 
 import logo from "./logo.png";
 
-import espresso from "./menu/espresso.jpg";
-import doubleEspresso from "./menu/double-espresso.jpg";
-import americano from "./menu/americano.jpg";
-import latte from "./menu/latte.jpg";
-import cappuccino from "./menu/cappuccino.jpg";
-import tea from "./menu/tea.jpg";
-import blueberryMuffin from "./menu/blueberry-muffin.jpg";
-import chocolateMuffin from "./menu/chocolate-muffin.jpg";
-import scone from "./menu/scone.jpg";
-import croissant from "./menu/croissant.jpg";
-import almondCroissant from "./menu/almond-croissant.jpg";
+import espresso from "./images/espresso.jpg";
+import doubleEspresso from "./images/double-espresso.jpg";
+import americano from "./images/americano.jpg";
+import latte from "./images/latte.jpg";
+import cappuccino from "./images/cappuccino.jpg";
+import tea from "./images/tea.jpg";
+import blueberryMuffin from "./images/blueberry-muffin.jpg";
+import chocolateMuffin from "./images/chocolate-muffin.jpg";
+import scone from "./images/scone.jpg";
+import croissant from "./images/croissant.jpg";
+import almondCroissant from "./images/almond-croissant.jpg";
 
 const menu: IMenuItem[] = [
   {
@@ -83,6 +83,14 @@ const menu: IMenuItem[] = [
   }
 ];
 
-const name = "Bufficorn Cafe";
+const businessData: IBusinessData = {
+  id: "bufficorn",
+  name: "Bufficorn Cafe",
+  logo,
+  menu,
+  taxRate: 11,
+  taxInc: true,
+  currencySymbol: "USD"
+};
 
-export default { name, logo, menu };
+export default businessData;

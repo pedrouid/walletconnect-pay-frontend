@@ -14,48 +14,9 @@ import {
   sanitizeHex,
   parseTransactionData
 } from "../helpers/utilities";
-
-const TOKEN_TRANSFER = "0xa9059cbb";
-
-const SUPPORTED_ASSETS = {
-  1: {
-    ETH: {
-      symbol: "ETH",
-      name: "Ethereum",
-      decimals: 18,
-      contractAddress: ""
-    },
-    DAI: {
-      symbol: "DAI",
-      name: "DAI Stablecoin v1.0",
-      decimals: 18,
-      contractAddress: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
-    }
-  },
-  100: {
-    DAI: {
-      symbol: "xDAI",
-      name: "xDAI",
-      decimals: 18,
-      contractAddress: ""
-    }
-  }
-};
-
-const ASSET_PRICE = {
-  USD: {
-    DAI: 1.0,
-    ETH: 250
-  },
-  EUR: {
-    DAI: 0.9,
-    ETH: 225
-  },
-  GBP: {
-    DAI: 0.8,
-    ETH: 200
-  }
-};
+import FUNCTIONS from "../constants/functions";
+import SUPPORTED_ASSETS from "../constants/supportedAssets";
+import ASSET_PRICES from "../constants/assetPrices";
 
 export function getAsset(symbol: string, chainId: number) {
   let result = null;
@@ -67,8 +28,8 @@ export function getAsset(symbol: string, chainId: number) {
 
 export function getAssetPrice(currency: string, symbol: string) {
   let result = null;
-  if (ASSET_PRICE[currency]) {
-    result = ASSET_PRICE[currency][symbol] || null;
+  if (ASSET_PRICES[currency]) {
+    result = ASSET_PRICES[currency][symbol] || null;
   }
   return result;
 }
@@ -89,7 +50,10 @@ export async function formatTransaction(
   const price = getAssetPrice(currency, symbol);
 
   amount = convertStringToNumber(
-    convertAmountToRawNumber(amount * price, asset.decimals)
+    convertAmountToRawNumber(
+      price ? amount * (1 / price) : amount,
+      asset ? asset.decimals : 18
+    )
   );
 
   let to: string = "";
@@ -98,13 +62,14 @@ export async function formatTransaction(
   let gasLimit: string | number = "";
 
   if (isToken(asset)) {
+    const tokenAddress = asset ? asset.contractAddress : "";
     value = "0x00";
-    to = asset.contractAddress;
-    data = getDataString(TOKEN_TRANSFER, [
+    to = tokenAddress;
+    data = getDataString(FUNCTIONS.TOKEN_TRANSFER, [
       removeHexPrefix(account),
       removeHexPrefix(convertStringToHex(amount))
     ]);
-    gasLimit = await apiGetGasLimit(asset.contractAddress, data);
+    gasLimit = await apiGetGasLimit(tokenAddress, data);
   } else {
     value = amount;
     to = account;

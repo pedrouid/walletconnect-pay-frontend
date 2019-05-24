@@ -1,88 +1,96 @@
-import { IMenuItem } from "../../helpers/types";
+import { IMenuItem, IBusinessData } from "../../helpers/types";
 
 import logo from "./logo.png";
 
-import espresso from "./menu/espresso.jpg";
-import doubleEspresso from "./menu/double-espresso.jpg";
-import americano from "./menu/americano.jpg";
-import latte from "./menu/latte.jpg";
-import cappuccino from "./menu/cappuccino.jpg";
-import tea from "./menu/tea.jpg";
-import blueberryMuffin from "./menu/blueberry-muffin.jpg";
-import chocolateMuffin from "./menu/chocolate-muffin.jpg";
-import scone from "./menu/scone.jpg";
-import croissant from "./menu/croissant.jpg";
-import almondCroissant from "./menu/almond-croissant.jpg";
+import club_mate from "./images/club_mate.jpg";
+import flora from "./images/flora.jpg";
+import premium from "./images/premium.jpg";
+import spezi from "./images/spezi.jpg";
+import rhubarb from "./images/rhubarb.jpg";
+import selters_classic from "./images/selters_classic.jpg";
+import selters_naturell from "./images/selters_naturell.jpg";
+import kraftmalz from "./images/kraftmalz.jpg";
+import obc_strong from "./images/obc_strong.jpg";
+import berliner from "./images/berliner.jpg";
+import laschak from "./images/laschak.jpg";
 
 const menu: IMenuItem[] = [
   {
-    name: "Espresso",
-    description: "Small cup with 1 shot",
-    price: 2.5,
-    image: espresso
+    name: "Club Mate",
+    description: "",
+    image: club_mate,
+    price: 2.3
   },
   {
-    name: "Double Espresso",
-    description: "Small cup with 2 shots",
-    price: 3.0,
-    image: doubleEspresso
+    name: "Flora Power (Mate)",
+    description: "",
+    image: flora,
+    price: 2.3
   },
   {
-    name: "Americano",
-    description: "Large cup with 1 shot and hot water",
-    price: 3.0,
-    image: americano
+    name: "Premium Cola",
+    description: "",
+    image: premium,
+    price: 2.3
   },
   {
-    name: "Latte",
-    description: "Large cup with 1 shot and milk",
-    price: 3.5,
-    image: latte
+    name: "Spezi",
+    description: "",
+    image: spezi,
+    price: 2.3
   },
   {
-    name: "Cappuccino",
-    description: "Large cup with 1 shot and foam",
-    price: 3.5,
-    image: cappuccino
+    name: "rhubarb",
+    description: "",
+    image: rhubarb,
+    price: 2.3
   },
   {
-    name: "Tea",
-    description: "Large cup with loose leaf tea",
-    price: 2.5,
-    image: tea
+    name: "Selters classic",
+    description: "",
+    image: selters_classic,
+    price: 2.0
   },
   {
-    name: "Blueberry Muffin",
-    description: "Muffin with blueberries",
-    price: 2.5,
-    image: blueberryMuffin
+    name: "Selters naturell",
+    description: "",
+    image: selters_naturell,
+    price: 2.0
   },
   {
-    name: "Chocolate Muffin",
-    description: "Muffin with chocolate chips",
-    price: 2.5,
-    image: chocolateMuffin
+    name: "KraftMalz",
+    description: "",
+    image: kraftmalz,
+    price: 2.3
   },
   {
-    name: "Scone",
-    description: "Plain scope with jam",
-    price: 2.5,
-    image: scone
+    name: "OBC strong",
+    description: "",
+    image: obc_strong,
+    price: 3.0
   },
   {
-    name: "Croissant",
-    description: "Plain croissant",
-    price: 2.5,
-    image: croissant
+    name: "Berliner Pilsner",
+    description: "",
+    image: berliner,
+    price: 3.0
   },
   {
-    name: "Almond Croissant",
-    description: "Croissant with almond filling",
-    price: 2.5,
-    image: almondCroissant
+    name: "720 (light lager)",
+    description: "",
+    image: laschak,
+    price: 3.0
   }
 ];
 
-const name = "C-Base";
+const businessData: IBusinessData = {
+  id: "c-base",
+  name: "C-Base",
+  logo,
+  menu,
+  taxRate: 20,
+  taxInc: true,
+  currencySymbol: "EUR"
+};
 
-export default { name, logo, menu };
+export default businessData;

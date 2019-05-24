@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { colors, transitions } from "../styles";
-import { toFixed } from "../helpers/bignumber";
+import { formatDisplayAmount } from "../helpers/utilities";
 import Loader from "../components/Loader";
 
 import QRCodeDisplay from "../components/QRCodeDisplay";
@@ -112,6 +112,7 @@ const SBackButton = styled.div`
 
 const PaymentModal = ({
   loading,
+  businessData,
   submitted,
   payment,
   orderUnsubmit,
@@ -167,15 +168,27 @@ const PaymentModal = ({
           </SColumnRow>
           <SColumnRow>
             <div>{`Sub Total`}</div>
-            <div>{`$ ${toFixed(checkout.subtotal, 2)}`}</div>
+            <div>
+              {formatDisplayAmount(
+                checkout.subtotal,
+                businessData.currencySymbol
+              )}
+            </div>
           </SColumnRow>
           <SColumnRow>
             <div>{`Tax`}</div>
-            <div>{`$ ${toFixed(checkout.tax, 2)}`}</div>
+            <div>
+              {formatDisplayAmount(checkout.tax, businessData.currencySymbol)}
+            </div>
           </SColumnRow>
           <SColumnRow>
             <div>{`Net Total`}</div>
-            <div>{`$ ${toFixed(checkout.nettotal, 2)}`}</div>
+            <div>
+              {formatDisplayAmount(
+                checkout.nettotal,
+                businessData.currencySymbol
+              )}
+            </div>
           </SColumnRow>
         </SModalFooter>
       </SModalContainer>

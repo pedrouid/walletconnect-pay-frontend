@@ -1,8 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
 import { colors, fonts, shadows, transitions } from "../styles";
-import { IMenuItem, IOrderItem } from "../helpers/types";
-import { toFixed } from "../helpers/bignumber";
+import { IMenuItem, IOrderItem, IBusinessData } from "../helpers/types";
+import { formatDisplayAmount } from "../helpers/utilities";
 import {
   SListItemImage,
   SListItemText,
@@ -109,6 +109,7 @@ interface IListItemAction {
 
 interface IListItemProps {
   item: IOrderItem | IMenuItem;
+  businessData: IBusinessData;
   actions?: IListItemAction[];
   noImage?: boolean;
   onClick?: any;
@@ -116,6 +117,7 @@ interface IListItemProps {
 
 const ListItem = ({
   item,
+  businessData,
   actions,
   noImage,
   onClick,
@@ -138,14 +140,18 @@ const ListItem = ({
         <SListItemDetails alignRight>
           <SListItemText>
             <SListItemQuantity>{`x ${item.quantity}`}</SListItemQuantity>
-            <SListItemSubtotal>{`$ ${toFixed(
-              item.price * item.quantity,
-              2
-            )}`}</SListItemSubtotal>
+            <SListItemSubtotal>
+              {formatDisplayAmount(
+                item.price * item.quantity,
+                businessData.currencySymbol
+              )}
+            </SListItemSubtotal>
           </SListItemText>
         </SListItemDetails>
       ) : (
-        <SListItemPrice>{`$ ${toFixed(item.price, 2)}`}</SListItemPrice>
+        <SListItemPrice>
+          {formatDisplayAmount(item.price, businessData.currencySymbol)}
+        </SListItemPrice>
       )}
     </SListItemContainer>
     {actions && actions.length && (

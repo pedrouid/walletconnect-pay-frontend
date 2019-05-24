@@ -1,6 +1,6 @@
 export interface IMenuItem {
   name: string;
-  description: string;
+  description?: string;
   price: number;
   image: string;
 }
@@ -24,7 +24,7 @@ export interface IGasPrices {
 export interface IAssetData {
   symbol: string;
   name: string;
-  decimals: string;
+  decimals: number;
   contractAddress: string;
   balance?: string;
 }
@@ -37,4 +37,29 @@ export interface IChainData {
   chain_id: number;
   network_id: number;
   rpc_url: string;
+}
+
+export interface ICheckoutDetails {
+  rawtotal: number;
+  subtotal: number;
+  tax: number;
+  nettotal: number;
+}
+
+export interface INativeCurrency {
+  symbol: string;
+  currency: string;
+  decimals: number;
+  alignment: string;
+  assetLimit: number;
+}
+
+export interface IBusinessData {
+  id: string;
+  name: string;
+  logo: string;
+  menu: IMenuItem[];
+  taxRate: number;
+  taxInc: boolean;
+  currencySymbol: string;
 }

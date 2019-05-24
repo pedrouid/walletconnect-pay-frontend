@@ -26,7 +26,7 @@ import {
   SColumnRow,
   STitle
 } from "../components/common";
-import { toFixed } from "../helpers/bignumber";
+import { formatDisplayAmount } from "../helpers/utilities";
 
 const SHeader = styled.div`
   width: 100%;
@@ -73,7 +73,7 @@ class Order extends React.Component<any, any> {
       <React.Fragment>
         <SHeader>
           {businessData.logo && <SLogo src={businessData.logo} alt="" />}
-          <SBranding>{"Bufficorn Cafe"}</SBranding>
+          <SBranding>{businessData.name}</SBranding>
         </SHeader>
         <SColumnWrapper>
           <SColumn width={items.length ? 70 : 100}>
@@ -86,6 +86,7 @@ class Order extends React.Component<any, any> {
                   <ListItem
                     key={`menu-${item.name}`}
                     item={item}
+                    businessData={businessData}
                     onClick={() => this.props.orderAddItem(item)}
                   />
                 ))}
@@ -101,6 +102,7 @@ class Order extends React.Component<any, any> {
                   noImage
                   key={`order-${item.name}`}
                   item={item}
+                  businessData={businessData}
                   actions={[
                     { label: "Remove", callback: this.props.orderRemoveItem },
                     { label: "Add", callback: this.props.orderAddItem }
@@ -114,15 +116,30 @@ class Order extends React.Component<any, any> {
               </SColumnRow>
               <SColumnRow>
                 <div>{`Sub Total`}</div>
-                <div>{`$ ${toFixed(checkout.subtotal, 2)}`}</div>
+                <div>
+                  {formatDisplayAmount(
+                    checkout.subtotal,
+                    businessData.currencySymbol
+                  )}
+                </div>
               </SColumnRow>
               <SColumnRow>
                 <div>{`Tax`}</div>
-                <div>{`$ ${toFixed(checkout.tax, 2)}`}</div>
+                <div>
+                  {formatDisplayAmount(
+                    checkout.tax,
+                    businessData.currencySymbol
+                  )}
+                </div>
               </SColumnRow>
               <SColumnRow>
                 <div>{`Net Total`}</div>
-                <div>{`$ ${toFixed(checkout.nettotal, 2)}`}</div>
+                <div>
+                  {formatDisplayAmount(
+                    checkout.nettotal,
+                    businessData.currencySymbol
+                  )}
+                </div>
               </SColumnRow>
               <SColumnRow>
                 <Button onClick={this.props.orderSubmit}>{`Pay`}</Button>
@@ -132,6 +149,7 @@ class Order extends React.Component<any, any> {
 
           <PaymentModal
             loading={loading}
+            businessData={businessData}
             submitted={submitted}
             payment={payment}
             checkout={checkout}

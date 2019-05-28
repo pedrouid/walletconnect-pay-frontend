@@ -59,8 +59,7 @@ interface ICloseButtonStyleProps {
   onClick?: any;
 }
 
-const SCloseButtonStyleTypes = styled.div<ICloseButtonStyleProps>``;
-const SCloseButton = styled(SCloseButtonStyleTypes)`
+const SCloseButton = styled.div<ICloseButtonStyleProps>`
   transition: ${transitions.short};
   position: absolute;
   width: ${({ size }) => `${size}px`};
@@ -99,6 +98,13 @@ const SCard = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+`;
+
+const SModalContent = styled.div`
+  position: relative;
+  width: 100%;
+  position: relative;
+  word-wrap: break-word;
 `;
 
 interface IModalState {
@@ -158,7 +164,7 @@ class Modal extends React.Component<IModalProps, IModalState> {
 
   public render() {
     const { offset } = this.state;
-    const { children, show, opacity, toggleModal } = this.props;
+    const { children, show, opacity, toggleModal, ...props } = this.props;
     return (
       <SLightbox
         show={show}
@@ -177,7 +183,7 @@ class Modal extends React.Component<IModalProps, IModalState> {
                 onClick={this.toggleModal}
               />
             )}
-            <div>{children}</div>
+            <SModalContent {...props}>{children}</SModalContent>
           </SCard>
         </SModalContainer>
       </SLightbox>

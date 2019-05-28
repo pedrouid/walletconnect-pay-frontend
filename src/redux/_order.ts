@@ -1,4 +1,9 @@
-import { IMenuItem, IOrderItem, IPayment } from "../helpers/types";
+import {
+  IMenuItem,
+  IOrderItem,
+  IPayment,
+  IPaymentMethod
+} from "../helpers/types";
 import { IJsonRpcRequest } from "@walletconnect/types";
 import {
   initWalletConnect,
@@ -11,7 +16,7 @@ import { getMenu, formatCheckoutDetails } from "../helpers/order";
 import { notificationShow } from "./_notification";
 import { apiGetTransactionReceipt } from "../helpers/api";
 import { convertHexToNumber } from "../helpers/bignumber";
-import { getChainData } from "src/helpers/utilities";
+import { getChainData, uuid } from "src/helpers/utilities";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -28,6 +33,10 @@ const ORDER_SUBMIT_FAILURE = "order/ORDER_SUBMIT_FAILURE";
 const ORDER_PAYMENT_REQUEST = "order/ORDER_PAYMENT_REQUEST";
 const ORDER_PAYMENT_SUCCESS = "order/ORDER_PAYMENT_SUCCESS";
 const ORDER_PAYMENT_FAILURE = "order/ORDER_PAYMENT_FAILURE";
+
+const ORDER_CHOOSE_PAYMENT_REQUEST = "order/ORDER_CHOOSE_PAYMENT_REQUEST";
+const ORDER_CHOOSE_PAYMENT_SUCCESS = "order/ORDER_CHOOSE_PAYMENT_SUCCESS";
+const ORDER_CHOOSE_PAYMENT_FAILURE = "order/ORDER_CHOOSE_PAYMENT_FAILURE";
 
 const ORDER_PAYMENT_UPDATE = "order/ORDER_PAYMENT_UPDATE";
 
@@ -47,7 +56,15 @@ export const orderLoadMenu = (bussinessName: string) => (
   const businessData = getMenu(bussinessName);
 
   if (businessData) {
-    dispatch({ type: ORDER_LOAD_MENU_SUCCESS, payload: businessData });
+    const paymentMethod =
+      businessData.paymentMethods.length === 1
+        ? businessData.paymentMethods[0]
+        : null;
+    const paymentAddress = businessData.paymentAddress || "";
+    dispatch({
+      type: ORDER_LOAD_MENU_SUCCESS,
+      payload: { businessData, paymentMethod, paymentAddress }
+    });
   } else {
     const error = new Error(`Menu doesn't exist for ${bussinessName}`);
     dispatch(notificationShow(error.message, true));
@@ -121,12 +138,12 @@ export const orderManageSession = (
 ) => (dispatch: any, getState: any) => {
   // await setSpacePrivate(orderHash, JSON.stringify(orderJson));
 
-  const { businessData } = getState().order;
+  const { paymentMethod } = getState().order;
   const { accounts, chainId } = payload.params[0];
   const account = accounts[0];
 
-  if (chainId !== businessData.chainId) {
-    const chainData = getChainData(businessData.chainId);
+  if (chainId !== paymentMethod.chainId) {
+    const chainData = getChainData(paymentMethod.chainId);
     dispatch(
       orderUpdateWarning({
         show: true,
@@ -139,8 +156,24 @@ export const orderManageSession = (
   }
 };
 
+export const orderShowPaymentMethods = () => ({
+  type: ORDER_CHOOSE_PAYMENT_REQUEST
+});
+
+export const orderChoosePaymentMethod = (
+  paymentMethod?: IPaymentMethod
+) => async (dispatch: any) => {
+  if (paymentMethod) {
+    dispatch({ type: ORDER_CHOOSE_PAYMENT_SUCCESS, payload: paymentMethod });
+    dispatch(orderSubmit());
+  } else {
+    dispatch({ type: ORDER_CHOOSE_PAYMENT_FAILURE });
+  }
+};
+
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
   // const { items, checkout } = getState().order;
+  const { paymentMethod } = getState().order;
 
   // const { rawtotal, tax, nettotal } = checkout;
 
@@ -156,8 +189,22 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
   // };
 
   // const orderHash = keccak256(JSON.stringify(orderJson));
-  const orderHash = "";
 
+  const orderHash = uuid();
+
+  if (paymentMethod.type === "walletconnect") {
+    dispatch(orderSubmitWalletConnect(orderHash));
+  } else if (paymentMethod.type === "burner") {
+    dispatch(orderSubmitBurnerWallet(orderHash));
+  } else {
+    dispatch(orderUnsubmit());
+  }
+};
+
+export const orderSubmitWalletConnect = (orderHash: string) => async (
+  dispatch: any,
+  getState: any
+) => {
   try {
     if (localStorage.getItem("walletconnect")) {
       localStorage.removeItem("walletconnect");
@@ -165,7 +212,10 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
 
     const connector = await initWalletConnect();
 
-    dispatch({ type: ORDER_SUBMIT_SUCCESS, payload: connector.uri });
+    dispatch({
+      type: ORDER_SUBMIT_SUCCESS,
+      payload: { uri: connector.uri, orderHash }
+    });
 
     connector.on("connect", async (error: Error, payload: IJsonRpcRequest) => {
       if (error) {
@@ -203,6 +253,13 @@ export const orderSubmit = () => async (dispatch: any, getState: any) => {
   }
 };
 
+export const orderSubmitBurnerWallet = (orderHash: string) => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch({ type: ORDER_SUBMIT_SUCCESS, payload: { uri: "", orderHash } });
+};
+
 export const orderRequestPayment = (
   account: string,
   orderHash: string
@@ -210,19 +267,19 @@ export const orderRequestPayment = (
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
-    const { businessData } = getState().order;
+    const { businessData, paymentMethod, paymentAddress } = getState().order;
     const { nettotal } = getState().order.checkout;
 
     const from = account;
-    const to = businessData.paymentAddress || account;
+    const to = paymentAddress || account;
 
     const tx = await formatTransaction(
       from,
       to,
       nettotal,
       businessData.currencySymbol,
-      businessData.assetSymbol,
-      businessData.chainId
+      paymentMethod.chainId,
+      paymentMethod.assetSymbol
     );
 
     const txhash = await sendTransaction(tx);
@@ -265,13 +322,13 @@ export const orderRequestPayment = (
 let subscribeInterval: any;
 
 export const orderSubscribeToPayment = () => (dispatch: any, getState: any) => {
-  const { payment, businessData } = getState().order;
+  const { payment, paymentMethod } = getState().order;
   clearInterval(subscribeInterval);
   if (payment.status === "pending" && payment.result) {
     subscribeInterval = setInterval(async () => {
       const result = await apiGetTransactionReceipt(
         payment.result,
-        businessData.chainId
+        paymentMethod.chainId
       );
       if (result) {
         clearInterval(subscribeInterval);
@@ -332,11 +389,15 @@ const INITIAL_STATE = {
     taxInc: true,
     nativeCurrency: ""
   },
+  choosePayment: false,
+  paymentAddress: "",
+  paymentMethod: null,
   submitting: false,
   loading: false,
   submitted: false,
   items: [],
   uri: "",
+  orderHash: "",
   checkout: {
     rawtotal: 0,
     tax: 0,
@@ -350,6 +411,13 @@ const INITIAL_STATE = {
 };
 
 export default (state = INITIAL_STATE, action: any) => {
+  // tslint:disable-next-line
+  console.log("\n------------------------ ACTION -------------------------");
+  console.log("action.type", action.type); // tslint:disable-line
+  console.log("action.payload", action.payload); // tslint:disable-line
+  // tslint:disable-next-line
+  console.log("---------------------------------------------------------\n");
+
   switch (action.type) {
     case ORDER_UPDATE_ITEMS:
       return {
@@ -360,15 +428,28 @@ export default (state = INITIAL_STATE, action: any) => {
     case ORDER_LOAD_MENU_REQUEST:
       return { ...state, loading: true };
     case ORDER_LOAD_MENU_SUCCESS:
-      return { ...state, loading: false, businessData: action.payload };
+      return {
+        ...state,
+        loading: false,
+        businessData: action.payload.businessData,
+        paymentMethod: action.payload.paymentMethod,
+        paymentAddress: action.payload.paymentAddress
+      };
     case ORDER_LOAD_MENU_FAILURE:
       return { ...state, loading: false };
+    case ORDER_CHOOSE_PAYMENT_REQUEST:
+      return { ...state, choosePayment: true };
+    case ORDER_CHOOSE_PAYMENT_SUCCESS:
+      return { ...state, choosePayment: false, paymentMethod: action.payload };
+    case ORDER_CHOOSE_PAYMENT_FAILURE:
+      return { ...state, choosePayment: false };
     case ORDER_SUBMIT_REQUEST:
-      return { ...state, submitting: true };
+      return { ...state, submitting: true, choosePayment: false };
     case ORDER_SUBMIT_SUCCESS:
       return {
         ...state,
-        uri: action.payload,
+        uri: action.payload.uri,
+        orderHash: action.payload.orderHash,
         submitted: true,
         submitting: false
       };
@@ -380,10 +461,13 @@ export default (state = INITIAL_STATE, action: any) => {
     case ORDER_PAYMENT_FAILURE:
     case ORDER_PAYMENT_UPDATE:
       return { ...state, payment: action.payload };
+
     case ORDER_UNSUBMIT:
       return {
         ...state,
         uri: INITIAL_STATE.uri,
+        orderHash: INITIAL_STATE.orderHash,
+        paymentMethod: INITIAL_STATE.paymentMethod,
         payment: INITIAL_STATE.payment,
         submitted: INITIAL_STATE.submitted,
         warning: INITIAL_STATE.warning,

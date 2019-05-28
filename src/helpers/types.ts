@@ -54,13 +54,18 @@ export interface INativeCurrency {
   assetLimit: number;
 }
 
+export interface IPaymentMethod {
+  type: string;
+  chainId: number;
+  assetSymbol: string;
+}
+
 export interface IBusinessData {
   id: string;
   name: string;
   logo: string;
   menu: IMenuItem[];
-  chainId: number;
-  assetSymbol: string;
+  paymentMethods: IPaymentMethod[];
   taxRate: number;
   taxInc: boolean;
   taxDisplay: boolean;

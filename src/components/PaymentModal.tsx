@@ -176,46 +176,75 @@ const PaymentResult = (props: { payment: IPayment }) => {
   }
 };
 
+function formatBurnerUrl(
+  paymentAddress: string,
+  amount: string,
+  orderHash: string
+) {
+  const url = `https://xdai.io/${paymentAddress};${amount};${orderHash};Order`;
+  return url;
+}
+
 const PaymentModal = ({
   loading,
   businessData,
   submitted,
   payment,
+  paymentMethod,
+  paymentAddress,
   orderUnsubmit,
   checkout,
-  uri
-}: any) => (
-  <SModal show={submitted}>
-    <SModalHeader>
-      <SBackButton onClick={orderUnsubmit}>
-        <img src={arrow} alt="" />
-        <span>{`Back`}</span>
-      </SBackButton>
-      <STitle>{`Payment`}</STitle>
-    </SModalHeader>
-    {!loading ? (
-      <SModalContainer>
-        {!payment ? (
-          <SModalColumn>
-            <QRCodeDisplay data={uri} />
-            <SModalCallToAction>{`Scan with WalletConnect`}</SModalCallToAction>
-            <SModalDescription>
-              {`Scan this QR code with your WalletConnect-enabled mobile wallet to pay.`}
-            </SModalDescription>
-          </SModalColumn>
-        ) : (
-          <PaymentResult payment={payment} />
-        )}
-        <SModalFooter>
-          <Summary checkout={checkout} businessData={businessData} />
-        </SModalFooter>
-      </SModalContainer>
-    ) : (
-      <SModalContainer>
-        <Loader />
-      </SModalContainer>
-    )}
-  </SModal>
-);
+  uri,
+  orderHash
+}: any) => {
+  if (!paymentMethod) {
+    return null;
+  }
+  paymentAddress =
+    paymentAddress || "0x9b7b2B4f7a391b6F14A81221AE0920A9735B67Fb";
+  const qrcode =
+    paymentMethod.type === "walletconnect"
+      ? uri
+      : formatBurnerUrl(paymentAddress, checkout.nettotal, orderHash);
+  const title =
+    paymentMethod.type === "walletconnect"
+      ? `Scan with WalletConnect`
+      : `Scan with Burner Wallet`;
+  const description =
+    paymentMethod.type === "walletconnect"
+      ? `Scan this QR code with your WalletConnect-enabled mobile wallet to pay.`
+      : `Scan this QR code with your Burner wallet to pay.`;
+  return (
+    <SModal show={submitted}>
+      <SModalHeader>
+        <SBackButton onClick={orderUnsubmit}>
+          <img src={arrow} alt="" />
+          <span>{`Back`}</span>
+        </SBackButton>
+        <STitle>{`Payment`}</STitle>
+      </SModalHeader>
+      {!loading ? (
+        <SModalContainer>
+          {!payment ? (
+            <SModalColumn>
+              <QRCodeDisplay data={qrcode} />
+              <SModalCallToAction>{title}</SModalCallToAction>
+              <SModalDescription>{description}</SModalDescription>
+            </SModalColumn>
+          ) : (
+            <PaymentResult payment={payment} />
+          )}
+          <SModalFooter>
+            <Summary checkout={checkout} businessData={businessData} />
+          </SModalFooter>
+        </SModalContainer>
+      ) : (
+        <SModalContainer>
+          <Loader />
+        </SModalContainer>
+      )}
+    </SModal>
+  );
+};
 
 export default PaymentModal;

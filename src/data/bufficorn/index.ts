@@ -1,4 +1,4 @@
-import { IMenuItem, IBusinessData } from "../../helpers/types";
+import { IMenuItem, IBusinessData, IPaymentMethod } from "../../helpers/types";
 
 import logo from "./logo.png";
 
@@ -83,13 +83,35 @@ const menu: IMenuItem[] = [
   }
 ];
 
+const paymentMethods: IPaymentMethod[] = [
+  {
+    type: "burner",
+    chainId: 100,
+    assetSymbol: "xDAI"
+  },
+  {
+    type: "walletconnect",
+    chainId: 1,
+    assetSymbol: "ETH"
+  },
+  {
+    type: "walletconnect",
+    chainId: 1,
+    assetSymbol: "DAI"
+  },
+  {
+    type: "walletconnect",
+    chainId: 100,
+    assetSymbol: "xDAI"
+  }
+];
+
 const businessData: IBusinessData = {
   id: "bufficorn",
   name: "Bufficorn Cafe",
   logo,
   menu,
-  chainId: 1,
-  assetSymbol: "DAI",
+  paymentMethods,
   taxRate: 11,
   taxInc: true,
   taxDisplay: true,

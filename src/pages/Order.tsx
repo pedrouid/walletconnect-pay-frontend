@@ -2,9 +2,11 @@ import * as React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { colors } from "../styles";
-import { IMenuItem, IOrderItem } from "../helpers/types";
+import { IMenuItem, IOrderItem, IPaymentMethod } from "../helpers/types";
 import {
   orderLoadMenu,
+  orderShowPaymentMethods,
+  orderChoosePaymentMethod,
   orderAddItem,
   orderRemoveItem,
   orderSubmit,
@@ -13,6 +15,7 @@ import {
 import Button from "../components/Button";
 import PageWrapper from "../components/PageWrapper";
 import PaymentModal from "../components/PaymentModal";
+import PaymentMethods from "../components/PaymentMethods";
 import Summary from "../components/Summary";
 import Modal from "../components/Modal";
 import Loader from "../components/Loader";
@@ -58,16 +61,31 @@ class Order extends React.Component<any, any> {
       this.props.orderLoadMenu(businessName);
     }
   }
+
+  public onSubmit = () => {
+    if (this.props.paymentMethod) {
+      this.props.orderSubmit();
+    } else {
+      this.props.orderShowPaymentMethods();
+    }
+  };
+
+  public onChoosePayment = (paymentMethod?: IPaymentMethod) =>
+    this.props.orderChoosePaymentMethod(paymentMethod);
+
   public render() {
     const {
       businessData,
+      choosePayment,
+      paymentMethod,
       warning,
       loading,
       submitted,
       items,
       checkout,
       payment,
-      uri
+      uri,
+      orderHash
     } = this.props;
     const ratio = 60;
     return !this.props.loading ? (
@@ -114,10 +132,7 @@ class Order extends React.Component<any, any> {
             <SColumnFooter>
               <Summary checkout={checkout} businessData={businessData} />
               <SColumnRow>
-                <Button
-                  marginTop={12}
-                  onClick={this.props.orderSubmit}
-                >{`Pay`}</Button>
+                <Button marginTop={12} onClick={this.onSubmit}>{`Pay`}</Button>
               </SColumnRow>
             </SColumnFooter>
           </SColumnOrder>
@@ -127,9 +142,17 @@ class Order extends React.Component<any, any> {
             businessData={businessData}
             submitted={submitted}
             payment={payment}
+            paymentMethod={paymentMethod}
             checkout={checkout}
             uri={uri}
+            orderHash={orderHash}
             orderUnsubmit={this.props.orderUnsubmit}
+          />
+
+          <PaymentMethods
+            show={choosePayment}
+            callback={this.onChoosePayment}
+            businessData={businessData}
           />
 
           <Modal show={warning.show}>
@@ -147,16 +170,27 @@ class Order extends React.Component<any, any> {
 
 const reduxProps = (store: any) => ({
   businessData: store.order.businessData,
+  choosePayment: store.order.choosePayment,
+  paymentMethod: store.order.paymentMethod,
   warning: store.order.warning,
   loading: store.order.loading,
   submitted: store.order.submitted,
   items: store.order.items,
   checkout: store.order.checkout,
   uri: store.order.uri,
+  orderHash: store.order.orderHash,
   payment: store.order.payment
 });
 
 export default connect(
   reduxProps,
-  { orderLoadMenu, orderAddItem, orderRemoveItem, orderSubmit, orderUnsubmit }
+  {
+    orderLoadMenu,
+    orderShowPaymentMethods,
+    orderChoosePaymentMethod,
+    orderAddItem,
+    orderRemoveItem,
+    orderSubmit,
+    orderUnsubmit
+  }
 )(Order);

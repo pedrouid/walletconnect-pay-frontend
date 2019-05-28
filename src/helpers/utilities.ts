@@ -1,8 +1,7 @@
 import { utils } from "ethers";
-import { ITxData } from "@walletconnect/types";
-import { isValidAddress, convertHexToNumber } from "@walletconnect/utils";
+import { convertHexToNumber } from "@walletconnect/utils";
 import { IChainData } from "./types";
-import { toFixed, convertStringToHex, convertNumberToHex } from "./bignumber";
+import { toFixed } from "./bignumber";
 import SUPPORTED_CHAINS from "../constants/chains";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 
@@ -85,61 +84,6 @@ export function removeHexPrefix(hex: string): string {
     return hex.substring(2);
   }
   return hex;
-}
-
-export function parseTransactionData(
-  txData: Partial<ITxData>
-): Partial<ITxData> {
-  if (typeof txData.from === "undefined" || !isValidAddress(txData.from)) {
-    throw new Error(`Transaction object must include a valid 'from' value.`);
-  }
-
-  function parseHexValues(value: number | string) {
-    let result = value;
-    if (value !== "") {
-      if (!utils.isHexString(value)) {
-        if (typeof value === "string") {
-          result = sanitizeHex(convertStringToHex(value));
-        } else {
-          result = sanitizeHex(convertNumberToHex(value));
-        }
-      } else {
-        if (typeof value === "string") {
-          result = sanitizeHex(value);
-        }
-      }
-    }
-    return result;
-  }
-
-  const txDataRPC = {
-    from: sanitizeHex(txData.from),
-    to: typeof txData.to === "undefined" ? "" : sanitizeHex(txData.to),
-    gasPrice:
-      typeof txData.gasPrice === "undefined"
-        ? ""
-        : parseHexValues(txData.gasPrice),
-    gasLimit:
-      typeof txData.gasLimit === "undefined"
-        ? typeof txData.gas === "undefined"
-          ? ""
-          : parseHexValues(txData.gas)
-        : parseHexValues(txData.gasLimit),
-    value:
-      typeof txData.value === "undefined" ? "" : parseHexValues(txData.value),
-    nonce:
-      typeof txData.nonce === "undefined" ? "" : parseHexValues(txData.nonce),
-    data: typeof txData.data === "undefined" ? "" : sanitizeHex(txData.data)
-  };
-
-  const prunable = ["gasPrice", "gasLimit", "value", "nonce"];
-  Object.keys(txDataRPC).forEach((key: string) => {
-    if (!txDataRPC[key].trim().length && prunable.includes(key)) {
-      delete txDataRPC[key];
-    }
-  });
-
-  return txDataRPC;
 }
 
 export function payloadId(): number {

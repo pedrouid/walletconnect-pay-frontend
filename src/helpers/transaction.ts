@@ -1,8 +1,5 @@
-import {
-  convertAmountToRawNumber,
-  convertStringToHex,
-  convertStringToNumber
-} from "../helpers/bignumber";
+import { convertNumberToHex, convertUtf8ToNumber } from "@walletconnect/utils";
+import { convertAmountToRawNumber } from "../helpers/bignumber";
 import {
   apiGetAccountNonce,
   // apiGetGasLimit,
@@ -11,8 +8,7 @@ import {
 import {
   getDataString,
   removeHexPrefix,
-  sanitizeHex,
-  parseTransactionData
+  sanitizeHex
 } from "../helpers/utilities";
 import FUNCTIONS from "../constants/functions";
 import SUPPORTED_ASSETS from "../constants/supportedAssets";
@@ -49,7 +45,7 @@ export async function formatTransaction(
   const asset = getAsset(symbol, chainId);
   const price = getAssetPrice(currency, symbol);
 
-  amount = convertStringToNumber(
+  amount = convertUtf8ToNumber(
     convertAmountToRawNumber(
       price ? amount * (1 / price) : amount,
       asset ? asset.decimals : 18
@@ -65,7 +61,7 @@ export async function formatTransaction(
     value = "0x00";
     data = getDataString(FUNCTIONS.TOKEN_TRANSFER, [
       removeHexPrefix(to),
-      removeHexPrefix(convertStringToHex(amount))
+      removeHexPrefix(convertNumberToHex(amount))
     ]);
     // TODO: Fix Gas Limit estimation
     // gasLimit = await apiGetGasLimit(tokenAddress, data, chainId);
@@ -83,12 +79,10 @@ export async function formatTransaction(
 
   if (chainId === 100) {
     const fixedGasPrice = 1.1;
-    gasPrice = convertStringToNumber(
-      convertAmountToRawNumber(fixedGasPrice, 9)
-    );
+    gasPrice = convertUtf8ToNumber(convertAmountToRawNumber(fixedGasPrice, 9));
   } else {
     const gasPrices = await apiGetGasPrices();
-    gasPrice = convertStringToNumber(
+    gasPrice = convertUtf8ToNumber(
       convertAmountToRawNumber(gasPrices.average.price, 9)
     );
   }
@@ -103,7 +97,5 @@ export async function formatTransaction(
     data: data || "0x"
   };
 
-  const parsedTx = parseTransactionData(tx);
-
-  return parsedTx;
+  return tx;
 }

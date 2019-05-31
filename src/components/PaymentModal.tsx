@@ -179,9 +179,9 @@ const PaymentResult = (props: { payment: IPayment }) => {
 function formatBurnerUrl(
   paymentAddress: string,
   amount: string,
-  orderHash: string
+  orderId: string
 ) {
-  const url = `https://xdai.io/${paymentAddress};${amount};${orderHash};Order`;
+  const url = `https://xdai.io/${paymentAddress};${amount};${orderId};Order`;
   return url;
 }
 
@@ -195,7 +195,7 @@ const PaymentModal = ({
   orderUnsubmit,
   checkout,
   uri,
-  orderHash
+  orderId
 }: any) => {
   if (!paymentMethod) {
     return null;
@@ -205,7 +205,7 @@ const PaymentModal = ({
   const qrcode =
     paymentMethod.type === "walletconnect"
       ? uri
-      : formatBurnerUrl(paymentAddress, checkout.nettotal, orderHash);
+      : formatBurnerUrl(paymentAddress, checkout.nettotal, orderId);
   const title =
     paymentMethod.type === "walletconnect"
       ? `Scan with WalletConnect`

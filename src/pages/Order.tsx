@@ -85,7 +85,7 @@ class Order extends React.Component<any, any> {
       checkout,
       payment,
       uri,
-      orderHash
+      orderId
     } = this.props;
     const ratio = 60;
     return !this.props.loading ? (
@@ -145,7 +145,7 @@ class Order extends React.Component<any, any> {
             paymentMethod={paymentMethod}
             checkout={checkout}
             uri={uri}
-            orderHash={orderHash}
+            orderId={orderId}
             orderUnsubmit={this.props.orderUnsubmit}
           />
 
@@ -178,7 +178,7 @@ const reduxProps = (store: any) => ({
   items: store.order.items,
   checkout: store.order.checkout,
   uri: store.order.uri,
-  orderHash: store.order.orderHash,
+  orderId: store.order.orderId,
   payment: store.order.payment
 });
 

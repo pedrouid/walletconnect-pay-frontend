@@ -14,9 +14,10 @@ import { formatTransaction } from "../helpers/transaction";
 import {
   // createOrderJson,
   // updateOrderJson,
-  getDemoBusinessData,
-  formatCheckoutDetails
+  formatCheckoutDetails,
+  defaultCheckoutDetails
 } from "../helpers/order";
+import { getDemoBusiness, defaultBusinessData } from "../helpers/business";
 import { notificationShow } from "./_notification";
 import { apiGetTransactionReceipt } from "../helpers/api";
 import { convertHexToNumber } from "../helpers/bignumber";
@@ -57,17 +58,21 @@ export const orderLoadMenu = (businessName: string) => (
   getState: any
 ) => {
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
-  const businessData = getDemoBusinessData(businessName);
+  const demo = getDemoBusiness(businessName);
 
-  if (businessData) {
+  if (demo) {
+    const { data, menu } = demo;
     const paymentMethod =
-      businessData.payment.methods.length === 1
-        ? businessData.payment.methods[0]
-        : null;
-    const paymentAddress = businessData.payment.address || "";
+      data.payment.methods.length === 1 ? data.payment.methods[0] : null;
+    const paymentAddress = data.payment.address || "";
     dispatch({
       type: ORDER_LOAD_MENU_SUCCESS,
-      payload: { businessData, paymentMethod, paymentAddress }
+      payload: {
+        businessData: data,
+        businessMenu: menu,
+        paymentMethod,
+        paymentAddress
+      }
     });
   } else {
     const error = new Error(`Menu doesn't exist for ${businessName}`);
@@ -105,7 +110,10 @@ export const orderAddItem = (item: IMenuItem) => (
 
   dispatch({
     type: ORDER_UPDATE_ITEMS,
-    payload: { items, checkout: formatCheckoutDetails(rawtotal, businessData) }
+    payload: {
+      items,
+      checkout: formatCheckoutDetails(rawtotal, businessData.tax)
+    }
   });
 };
 
@@ -132,7 +140,10 @@ export const orderRemoveItem = (item: IMenuItem) => (
 
   dispatch({
     type: ORDER_UPDATE_ITEMS,
-    payload: { items, checkout: formatCheckoutDetails(rawtotal, businessData) }
+    payload: {
+      items,
+      checkout: formatCheckoutDetails(rawtotal, businessData.tax)
+    }
   });
 };
 
@@ -371,28 +382,8 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
-  businessData: {
-    profile: {
-      id: "",
-      name: "",
-      logo: "",
-      type: "",
-      country: "",
-      email: "",
-      phone: ""
-    },
-    menu: null,
-    tax: {
-      rate: 0,
-      included: true,
-      display: false
-    },
-    payment: {
-      methods: [],
-      currency: "USD",
-      address: ""
-    }
-  },
+  businessData: defaultBusinessData,
+  businessMenu: null,
   choosePayment: false,
   paymentAddress: "",
   paymentMethod: null,
@@ -402,12 +393,7 @@ const INITIAL_STATE = {
   items: [],
   uri: "",
   orderId: "",
-  checkout: {
-    rawtotal: 0,
-    subtotal: 0,
-    tax: 0,
-    nettotal: 0
-  },
+  checkout: defaultCheckoutDetails,
   payment: null,
   warning: {
     show: false,
@@ -430,6 +416,7 @@ export default (state = INITIAL_STATE, action: any) => {
         ...state,
         loading: false,
         businessData: action.payload.businessData,
+        businessMenu: action.payload.businessMenu,
         paymentMethod: action.payload.paymentMethod,
         paymentAddress: action.payload.paymentAddress
       };

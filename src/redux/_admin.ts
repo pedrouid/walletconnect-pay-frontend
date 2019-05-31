@@ -2,6 +2,7 @@ import Web3 from "web3";
 import { init3Box, setSpacePrivate } from "../helpers/box";
 import { queryChainId } from "../helpers/utilities";
 import { notificationShow } from "./_notification";
+import { BUSINESS_PROFILE } from "../constants/space";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
@@ -49,7 +50,7 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   try {
     const { businessProfile } = getState().admin;
     const profile = { name: businessProfile.name, type: businessProfile.type };
-    await setSpacePrivate("profile", profile);
+    await setSpacePrivate(BUSINESS_PROFILE, profile);
 
     // await apiSendEmailVerification(businessProfile.email)
 

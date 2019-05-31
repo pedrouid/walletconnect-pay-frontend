@@ -1,7 +1,7 @@
 import { utils } from "ethers";
 import { convertHexToNumber } from "@walletconnect/utils";
 import { IChainData } from "./types";
-import { toFixed } from "./bignumber";
+import { convertStringToNumber, toFixed } from "./bignumber";
 import SUPPORTED_CHAINS from "../constants/chains";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 
@@ -175,4 +175,16 @@ export function formatDisplayAmount(amount: number, symbol: string) {
           }`;
   }
   return result;
+}
+
+export function getAppVersion() {
+  let version = process.env.REACT_APP_VERSION || "0.0.1";
+  if (version) {
+    const arr = version.split(".").slice(0, 2);
+    if (convertStringToNumber(arr[0]) >= 1) {
+      arr[1] = "x";
+    }
+    version = arr.join(".");
+  }
+  return version;
 }

@@ -1,21 +1,27 @@
 import {
   ICheckoutDetails,
-  IBusinessData,
+  IBusinessTax,
   IOrderItem,
   IOrderJson
 } from "../helpers/types";
 import { getSpacePrivate, setSpacePrivate } from "./box";
 import { uuid } from "../helpers/utilities";
+import { WC_ORDER } from "../constants/space";
 
-import menus from "../data";
+export const defaultCheckoutDetails: ICheckoutDetails = {
+  rawtotal: 0,
+  subtotal: 0,
+  tax: 0,
+  nettotal: 0
+};
 
 export function formatCheckoutDetails(
   rawtotal: number,
-  businessData: IBusinessData
+  businessTax: IBusinessTax
 ): ICheckoutDetails {
   let checkout;
-  const tax = rawtotal * (businessData.tax.rate / 100);
-  if (businessData.tax.included) {
+  const tax = rawtotal * (businessTax.rate / 100);
+  if (businessTax.included) {
     checkout = {
       rawtotal,
       subtotal: rawtotal - tax,
@@ -33,12 +39,8 @@ export function formatCheckoutDetails(
   return checkout;
 }
 
-export function getDemoBusinessData(bussinessName: string) {
-  let result = null;
-  if (menus[bussinessName]) {
-    result = menus[bussinessName] || null;
-  }
-  return result;
+function formatOrderKey(orderId: string): string {
+  return `${WC_ORDER}:${orderId}`;
 }
 
 export async function createOrderJson(orderDetails: {
@@ -58,7 +60,9 @@ export async function createOrderJson(orderDetails: {
     }
   };
 
-  await setSpacePrivate(orderId, JSON.stringify(orderJson));
+  const key = formatOrderKey(orderId);
+
+  await setSpacePrivate(key, JSON.stringify(orderJson));
 
   return orderId;
 }
@@ -67,12 +71,14 @@ export async function updateOrderJson(
   orderId: string,
   updatedOrderJson: any
 ): Promise<void> {
-  const orderJson = await getSpacePrivate(orderId);
+  const key = formatOrderKey(orderId);
+
+  const orderJson = await getSpacePrivate(key);
 
   const newOrderJson: IOrderJson = {
     ...orderJson,
     ...updatedOrderJson
   };
 
-  await setSpacePrivate(orderId, JSON.stringify(newOrderJson));
+  await setSpacePrivate(key, JSON.stringify(newOrderJson));
 }

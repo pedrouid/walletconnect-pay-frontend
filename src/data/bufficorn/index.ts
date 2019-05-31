@@ -1,5 +1,5 @@
 import {
-  IMenuItem,
+  IBusinessMenu,
   IBusinessData,
   IPaymentMethod,
   IBusinessProfile,
@@ -21,7 +21,7 @@ import scone from "./images/scone.jpg";
 import croissant from "./images/croissant.jpg";
 import almondCroissant from "./images/almond-croissant.jpg";
 
-const menu: IMenuItem[] = [
+const menu: IBusinessMenu = [
   {
     name: "Espresso",
     description: "Small cup with 1 shot",
@@ -135,11 +135,10 @@ const payment: IBusinessPayment = {
   address: ""
 };
 
-const businessData: IBusinessData = {
+const data: IBusinessData = {
   profile,
-  menu,
   tax,
   payment
 };
 
-export default businessData;
+export default { data, menu };

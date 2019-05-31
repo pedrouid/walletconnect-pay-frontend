@@ -60,11 +60,23 @@ export interface IPaymentMethod {
   assetSymbol: string;
 }
 
+export type IBusinessType =
+  | "cafe"
+  | "bar"
+  | "fast_food"
+  | "bistro"
+  | "diner"
+  | "buffet"
+  | "food_truck"
+  | "casual_restaurant"
+  | "fine_dining"
+  | "popup_restaurant";
+
 export interface IBusinessProfile {
   id: string;
   name: string;
   logo: string;
-  type: string;
+  type: IBusinessType;
   country: string;
   email: string;
   phone: string;
@@ -82,15 +94,18 @@ export interface IBusinessPayment {
   address: string;
 }
 
+export type IBusinessMenu = IMenuItem[];
+
 export interface IBusinessData {
   profile: IBusinessProfile;
-  menu: IMenuItem[];
   tax: IBusinessTax;
   payment: IBusinessPayment;
 }
 
+export type IPaymentStatus = "pending" | "success" | "failure";
+
 export interface IPayment {
-  status: "pending" | "success" | "failure";
+  status: IPaymentStatus;
   result: any;
 }
 

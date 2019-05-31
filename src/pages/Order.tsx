@@ -76,6 +76,7 @@ class Order extends React.Component<any, any> {
   public render() {
     const {
       businessData,
+      businessMenu,
       choosePayment,
       paymentMethod,
       warning,
@@ -102,8 +103,8 @@ class Order extends React.Component<any, any> {
               <STitle>{`Menu`}</STitle>
             </SColumnHeader>
             <SColumnList>
-              {businessData.menu &&
-                businessData.menu.map((item: IMenuItem) => (
+              {businessMenu &&
+                businessMenu.map((item: IMenuItem) => (
                   <ListItem
                     key={`menu-${item.name}`}
                     item={item}
@@ -172,6 +173,7 @@ class Order extends React.Component<any, any> {
 
 const reduxProps = (store: any) => ({
   businessData: store.order.businessData,
+  businessMenu: store.order.businessMenu,
   choosePayment: store.order.choosePayment,
   paymentMethod: store.order.paymentMethod,
   warning: store.order.warning,

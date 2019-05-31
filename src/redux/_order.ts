@@ -59,14 +59,11 @@ export const orderLoadMenu = (businessName: string) => (
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
   const businessData = getDemoBusinessData(businessName);
 
-  console.log("businessData", businessData); // tslint:disable-line
-
   if (businessData) {
     const paymentMethod =
       businessData.payment.methods.length === 1
         ? businessData.payment.methods[0]
         : null;
-    console.log("paymentMethod", paymentMethod); // tslint:disable-line
     const paymentAddress = businessData.payment.address || "";
     dispatch({
       type: ORDER_LOAD_MENU_SUCCESS,
@@ -169,7 +166,6 @@ export const orderChoosePaymentMethod = (
   paymentMethod?: IPaymentMethod
 ) => async (dispatch: any) => {
   if (paymentMethod) {
-    console.log("[orderChoosePaymentMethod] paymentMethod", paymentMethod); // tslint:disable-line
     dispatch({ type: ORDER_CHOOSE_PAYMENT_SUCCESS, payload: paymentMethod });
     dispatch(orderSubmit());
   } else {

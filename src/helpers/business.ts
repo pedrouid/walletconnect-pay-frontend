@@ -1,6 +1,6 @@
 import { IBusinessData } from "../helpers/types";
-import { setSpacePrivate, getSpacePrivate } from "./box";
-import { BUSINESS_PROFILE } from "../constants/space";
+import { openBox, openSpace, setSpacePrivate, getSpacePrivate } from "./box";
+import { BUSINESS_DATA } from "../constants/space";
 
 import demo from "../data";
 
@@ -46,12 +46,32 @@ export function formatBusinessData(
 
 export async function setBusinessData(
   partialBusinessData: Partial<IBusinessData>
-): Promise<void> {
+): Promise<IBusinessData> {
   const businessData = formatBusinessData(partialBusinessData);
-  await setSpacePrivate(BUSINESS_PROFILE, businessData);
+  await setSpacePrivate(BUSINESS_DATA, businessData);
+  return businessData;
 }
 
 export async function getBusinessData(): Promise<IBusinessData> {
-  const businessData = await getSpacePrivate(BUSINESS_PROFILE);
+  const businessData = await getSpacePrivate(BUSINESS_DATA);
   return businessData;
+}
+
+export async function openBusinessBox(
+  address: string,
+  provider: any
+): Promise<IBusinessData> {
+  let result = null;
+
+  await openBox(address, provider);
+
+  await openSpace();
+
+  const businessData = await getSpacePrivate(BUSINESS_DATA);
+
+  if (businessData) {
+    result = businessData;
+  }
+
+  return result;
 }

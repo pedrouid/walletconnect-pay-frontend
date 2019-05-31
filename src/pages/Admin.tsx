@@ -5,21 +5,23 @@ import PageWrapper from "../components/PageWrapper";
 
 class Admin extends React.Component<any, any> {
   public static propTypes = {
-    businessName: PropTypes.string.isRequired
+    businessData: PropTypes.string.isRequired
   };
 
   public render() {
     return (
       <PageWrapper>
         <h4>{`Admin`}</h4>
-        <p>{this.props.businessName}</p>
+        <p>
+          {this.props.businessData ? this.props.businessData.profile.name : ""}
+        </p>
       </PageWrapper>
     );
   }
 }
 
 const reduxProps = (store: any) => ({
-  businessName: store.admin.businessName
+  businessData: store.admin.businessData
 });
 
 export default connect(

@@ -1,8 +1,11 @@
 import Web3 from "web3";
-import { init3Box, setSpacePrivate } from "../helpers/box";
 import { queryChainId } from "../helpers/utilities";
+import {
+  openBusinessBox,
+  setBusinessData,
+  defaultBusinessData
+} from "../helpers/business";
 import { notificationShow } from "./_notification";
-import { BUSINESS_PROFILE } from "../constants/space";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
@@ -26,16 +29,19 @@ export const adminConnectWallet = (provider: any) => async (dispatch: any) => {
 
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
-    const businessName = await init3Box(address, provider);
+    const businessData = await openBusinessBox(address, provider);
 
-    if (businessName) {
+    if (businessData) {
       dispatch({
         type: ADMIN_CONNECT_SUCCESS,
-        payload: { web3, address, chainId, businessName }
+        payload: { web3, address, chainId, businessData }
       });
       window.browserHistory.push("/admin");
     } else {
-      dispatch({ type: ADMIN_CONNECT_FAILURE });
+      dispatch({
+        type: ADMIN_CONNECT_FAILURE,
+        payload: { web3, address, chainId }
+      });
       window.browserHistory.push("/signup");
     }
   } catch (error) {
@@ -49,12 +55,11 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   dispatch({ type: ADMIN_SUBMIT_SIGNUP_REQUEST });
   try {
     const { businessProfile } = getState().admin;
-    const profile = { name: businessProfile.name, type: businessProfile.type };
-    await setSpacePrivate(BUSINESS_PROFILE, profile);
+    const businessData = await setBusinessData({ profile: businessProfile });
 
     // await apiSendEmailVerification(businessProfile.email)
 
-    dispatch({ type: ADMIN_SUBMIT_SIGNUP_SUCCESS });
+    dispatch({ type: ADMIN_SUBMIT_SIGNUP_SUCCESS, payload: businessData });
 
     window.browserHistory.push("/admin");
   } catch (error) {
@@ -83,7 +88,7 @@ const INITIAL_STATE = {
   web3: null,
   address: "",
   chainId: 1,
-  businessName: "",
+  businessData: defaultBusinessData,
   businessProfile: {
     id: "",
     name: "",
@@ -106,12 +111,20 @@ export default (state = INITIAL_STATE, action: any) => {
         web3: action.payload.web3,
         address: action.payload.address,
         chainId: action.payload.chainId,
-        businessName: action.payload.businessName
+        businessData: action.payload.businessData
       };
     case ADMIN_CONNECT_FAILURE:
-      return { ...state, loading: false };
+      return {
+        ...state,
+        loading: false,
+        web3: action.payload.web3 || INITIAL_STATE.web3,
+        address: action.payload.address || INITIAL_STATE.address,
+        chainId: action.payload.chainId || INITIAL_STATE.chainId
+      };
     case ADMIN_UPDATE_BUSINESS_PROFILE:
       return { ...state, businessProfile: action.payload };
+    case ADMIN_SUBMIT_SIGNUP_SUCCESS:
+      return { ...state, businessData: action.payload };
     case ADMIN_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
     default:

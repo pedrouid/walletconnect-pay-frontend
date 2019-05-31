@@ -184,7 +184,7 @@ export function getAppVersion() {
     if (convertStringToNumber(arr[0]) >= 1) {
       arr[1] = "x";
     }
-    version = arr.join(".");
+    version = arr.join("_");
   }
   return version;
 }

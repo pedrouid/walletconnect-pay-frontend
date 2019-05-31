@@ -1,4 +1,4 @@
-import { SPACE_ID } from '../constants/space'
+import { SPACE_ID } from "../constants/space";
 
 const Box =
   typeof window !== "undefined" && typeof window.Box !== "undefined"
@@ -6,22 +6,6 @@ const Box =
     : null;
 
 let box: any | null = null;
-
-export async function init3Box(address: string, provider: any) {
-  let result = null;
-
-  await openBox(address, provider);
-
-  await openSpace();
-
-  const profile = await getSpacePrivate("profile");
-
-  if (profile) {
-    result = profile.name;
-  }
-
-  return result;
-}
 
 export async function getProfile(address: string) {
   if (!Box) {

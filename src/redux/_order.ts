@@ -12,10 +12,10 @@ import {
 } from "../helpers/walletconnect";
 import { formatTransaction } from "../helpers/transaction";
 import {
-  getMenu,
-  formatCheckoutDetails,
-  createOrderJson,
-  updateOrderJson
+  // createOrderJson,
+  // updateOrderJson,
+  getDemoBusinessData,
+  formatCheckoutDetails
 } from "../helpers/order";
 import { notificationShow } from "./_notification";
 import { apiGetTransactionReceipt } from "../helpers/api";
@@ -52,25 +52,28 @@ const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
 
-export const orderLoadMenu = (bussinessName: string) => (
+export const orderLoadMenu = (businessName: string) => (
   dispatch: any,
   getState: any
 ) => {
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
-  const businessData = getMenu(bussinessName);
+  const businessData = getDemoBusinessData(businessName);
+
+  console.log("businessData", businessData); // tslint:disable-line
 
   if (businessData) {
     const paymentMethod =
-      businessData.paymentMethods.length === 1
-        ? businessData.paymentMethods[0]
+      businessData.payment.methods.length === 1
+        ? businessData.payment.methods[0]
         : null;
-    const paymentAddress = businessData.paymentAddress || "";
+    console.log("paymentMethod", paymentMethod); // tslint:disable-line
+    const paymentAddress = businessData.payment.address || "";
     dispatch({
       type: ORDER_LOAD_MENU_SUCCESS,
       payload: { businessData, paymentMethod, paymentAddress }
     });
   } else {
-    const error = new Error(`Menu doesn't exist for ${bussinessName}`);
+    const error = new Error(`Menu doesn't exist for ${businessName}`);
     dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_LOAD_MENU_FAILURE });
   }
@@ -166,6 +169,7 @@ export const orderChoosePaymentMethod = (
   paymentMethod?: IPaymentMethod
 ) => async (dispatch: any) => {
   if (paymentMethod) {
+    console.log("[orderChoosePaymentMethod] paymentMethod", paymentMethod); // tslint:disable-line
     dispatch({ type: ORDER_CHOOSE_PAYMENT_SUCCESS, payload: paymentMethod });
     dispatch(orderSubmit());
   } else {
@@ -174,11 +178,16 @@ export const orderChoosePaymentMethod = (
 };
 
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
-  const { paymentMethod, items, checkout } = getState().order;
+  const {
+    // items,
+    // checkout,
+    paymentMethod
+  } = getState().order;
 
   dispatch({ type: ORDER_SUBMIT_REQUEST });
 
-  const orderId = await createOrderJson({ items, checkout });
+  // const orderId = await createOrderJson({ items, checkout });
+  const orderId = "test-order-id";
 
   if (paymentMethod.type === "walletconnect") {
     dispatch(orderSubmitWalletConnect(orderId));
@@ -255,19 +264,24 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
-    const { businessData, paymentMethod, paymentAddress } = getState().order;
-    const { nettotal } = getState().order.checkout;
+    const {
+      businessData,
+      checkout,
+      paymentMethod,
+      paymentAddress
+    } = getState().order;
 
     const from = account;
     const to = paymentAddress || account;
+    const amount = checkout.nettotal;
 
     const tx = await formatTransaction(
       from,
       to,
-      nettotal,
-      businessData.currencySymbol,
-      paymentMethod.chainId,
-      paymentMethod.assetSymbol
+      amount,
+      businessData.payment.currency,
+      paymentMethod.assetSymbol,
+      paymentMethod.chainId
     );
 
     const txhash = await sendTransaction(tx);
@@ -275,7 +289,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
     if (txhash) {
       const payment: IPayment = { status: "pending", result: txhash };
 
-      await updateOrderJson(orderId, { payment });
+      // await updateOrderJson(orderId, { payment });
 
       await dispatch({ type: ORDER_PAYMENT_SUCCESS, payload: payment });
 
@@ -285,14 +299,14 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
     } else {
       const payment: IPayment = { status: "failure", result: null };
 
-      await updateOrderJson(orderId, { payment });
+      // await updateOrderJson(orderId, { payment });
 
       dispatch({ type: ORDER_PAYMENT_FAILURE, payload: payment });
     }
   } catch (error) {
     const payment: IPayment = { status: "failure", result: null };
 
-    await updateOrderJson(orderId, { payment });
+    // await updateOrderJson(orderId, { payment });
 
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
@@ -362,13 +376,26 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
   businessData: {
-    id: "",
-    name: "",
-    logo: "",
+    profile: {
+      id: "",
+      name: "",
+      logo: "",
+      type: "",
+      country: "",
+      email: "",
+      phone: ""
+    },
     menu: null,
-    taxRate: 0,
-    taxInc: true,
-    nativeCurrency: ""
+    tax: {
+      rate: 0,
+      included: true,
+      display: false
+    },
+    payment: {
+      methods: [],
+      currency: "USD",
+      address: ""
+    }
   },
   choosePayment: false,
   paymentAddress: "",
@@ -393,13 +420,6 @@ const INITIAL_STATE = {
 };
 
 export default (state = INITIAL_STATE, action: any) => {
-  // tslint:disable-next-line
-  console.log("\n------------------------ ACTION -------------------------");
-  console.log("action.type", action.type); // tslint:disable-line
-  console.log("action.payload", action.payload); // tslint:disable-line
-  // tslint:disable-next-line
-  console.log("---------------------------------------------------------\n");
-
   switch (action.type) {
     case ORDER_UPDATE_ITEMS:
       return {

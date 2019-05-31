@@ -10,21 +10,21 @@ const Summary = (props: any) => {
       <SColumnRow>
         <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
       </SColumnRow>
-      {businessData.taxDisplay ? (
+      {businessData.tax.display ? (
         <React.Fragment>
           <SColumnRow>
             <div>{`Sub Total`}</div>
             <div>
               {formatDisplayAmount(
                 checkout.subtotal,
-                businessData.currencySymbol
+                businessData.payment.currency
               )}
             </div>
           </SColumnRow>
           <SColumnRow>
             <div>{`Tax`}</div>
             <div>
-              {formatDisplayAmount(checkout.tax, businessData.currencySymbol)}
+              {formatDisplayAmount(checkout.tax, businessData.payment.currency)}
             </div>
           </SColumnRow>
           <SColumnRow>
@@ -32,7 +32,7 @@ const Summary = (props: any) => {
             <div>
               {formatDisplayAmount(
                 checkout.nettotal,
-                businessData.currencySymbol
+                businessData.payment.currency
               )}
             </div>
           </SColumnRow>
@@ -43,7 +43,7 @@ const Summary = (props: any) => {
           <div>
             {formatDisplayAmount(
               checkout.rawtotal,
-              businessData.currencySymbol
+              businessData.payment.currency
             )}
           </div>
         </SColumnRow>

@@ -1,4 +1,11 @@
-import { IMenuItem, IBusinessData, IPaymentMethod } from "../../helpers/types";
+import {
+  IMenuItem,
+  IBusinessData,
+  IPaymentMethod,
+  IBusinessProfile,
+  IBusinessTax,
+  IBusinessPayment
+} from "../../helpers/types";
 
 import logo from "./logo.png";
 
@@ -83,7 +90,7 @@ const menu: IMenuItem[] = [
   }
 ];
 
-const paymentMethods: IPaymentMethod[] = [
+const methods: IPaymentMethod[] = [
   {
     type: "burner",
     chainId: 100,
@@ -106,17 +113,33 @@ const paymentMethods: IPaymentMethod[] = [
   }
 ];
 
-const businessData: IBusinessData = {
+const profile: IBusinessProfile = {
   id: "c-base",
   name: "C-Base",
   logo,
+  type: "cafe",
+  country: "DE",
+  email: "",
+  phone: ""
+};
+
+const tax: IBusinessTax = {
+  rate: 19,
+  included: true,
+  display: false
+};
+
+const payment: IBusinessPayment = {
+  methods,
+  currency: "EUR",
+  address: ""
+};
+
+const businessData: IBusinessData = {
+  profile,
   menu,
-  paymentMethods,
-  taxRate: 20,
-  taxInc: true,
-  taxDisplay: false,
-  currencySymbol: "EUR",
-  paymentAddress: ""
+  tax,
+  payment
 };
 
 export default businessData;

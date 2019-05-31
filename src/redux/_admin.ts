@@ -8,7 +8,7 @@ const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
 const ADMIN_CONNECT_SUCCESS = "admin/ADMIN_CONNECT_SUCCESS";
 const ADMIN_CONNECT_FAILURE = "admin/ADMIN_CONNECT_FAILURE";
 
-const ADMIN_UPDATE_SIGNUP_FORM = "admin/ADMIN_UPDATE_SIGNUP_FORM";
+const ADMIN_UPDATE_BUSINESS_PROFILE = "admin/ADMIN_UPDATE_BUSINESS_PROFILE";
 
 const ADMIN_SUBMIT_SIGNUP_REQUEST = "admin/ADMIN_SUBMIT_SIGNUP_REQUEST";
 const ADMIN_SUBMIT_SIGNUP_SUCCESS = "admin/ADMIN_SUBMIT_SIGNUP_SUCCESS";
@@ -47,11 +47,11 @@ export const adminConnectWallet = (provider: any) => async (dispatch: any) => {
 export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   dispatch({ type: ADMIN_SUBMIT_SIGNUP_REQUEST });
   try {
-    const { signUpForm } = getState().admin;
-    const profile = { name: signUpForm.name, type: signUpForm.type };
+    const { businessProfile } = getState().admin;
+    const profile = { name: businessProfile.name, type: businessProfile.type };
     await setSpacePrivate("profile", profile);
 
-    // await apiSendEmailVerification(signUpForm.email)
+    // await apiSendEmailVerification(businessProfile.email)
 
     dispatch({ type: ADMIN_SUBMIT_SIGNUP_SUCCESS });
 
@@ -63,16 +63,15 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   }
 };
 
-export const adminUpdateSignUpForm = (updatedSignUpForm: any) => async (
-  dispatch: any,
-  getState: any
-) => {
-  let { signUpForm } = getState().admin;
-  signUpForm = {
-    ...signUpForm,
-    ...updatedSignUpForm
+export const adminUpdateBusinessProfile = (
+  updatedBusinessProfile: any
+) => async (dispatch: any, getState: any) => {
+  let { businessProfile } = getState().admin;
+  businessProfile = {
+    ...businessProfile,
+    ...updatedBusinessProfile
   };
-  dispatch({ type: ADMIN_UPDATE_SIGNUP_FORM, payload: signUpForm });
+  dispatch({ type: ADMIN_UPDATE_BUSINESS_PROFILE, payload: businessProfile });
 };
 
 export const adminClearState = () => ({ type: ADMIN_CLEAR_STATE });
@@ -84,11 +83,14 @@ const INITIAL_STATE = {
   address: "",
   chainId: 1,
   businessName: "",
-  signUpForm: {
+  businessProfile: {
+    id: "",
     name: "",
+    logo: "",
     type: "cafe",
     country: "DE",
-    email: ""
+    email: "",
+    phone: ""
   }
 };
 
@@ -107,8 +109,8 @@ export default (state = INITIAL_STATE, action: any) => {
       };
     case ADMIN_CONNECT_FAILURE:
       return { ...state, loading: false };
-    case ADMIN_UPDATE_SIGNUP_FORM:
-      return { ...state, signUpForm: action.payload };
+    case ADMIN_UPDATE_BUSINESS_PROFILE:
+      return { ...state, businessProfile: action.payload };
     case ADMIN_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
     default:

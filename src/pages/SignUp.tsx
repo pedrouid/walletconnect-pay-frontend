@@ -6,7 +6,7 @@ import PageWrapper from "../components/PageWrapper";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
-import { adminUpdateSignUpForm, adminSubmitSignUp } from "../redux/_admin";
+import { adminUpdateBusinessProfile, adminSubmitSignUp } from "../redux/_admin";
 import BUSINESS_TYPES from "../constants/businessTypes";
 import COUNTRIES from "../constants/countries";
 
@@ -19,7 +19,7 @@ const SSubmitWrapper = styled.div`
 `;
 
 interface ISignUpProps {
-  adminUpdateSignUpForm: (updatedSignUpForm: any) => void;
+  adminUpdateBusinessProfile: (updatedBusinessProfile: any) => void;
   adminSubmitSignUp: () => void;
   name: string;
   type: string;
@@ -29,7 +29,7 @@ interface ISignUpProps {
 
 class SignUp extends React.Component<any, ISignUpProps> {
   public static propTypes = {
-    adminUpdateSignUpForm: PropTypes.func.isRequired,
+    adminUpdateBusinessProfile: PropTypes.func.isRequired,
     adminSubmitSignUp: PropTypes.func.isRequired,
     name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
@@ -49,7 +49,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
           value={this.props.name}
           disabled={false}
           onChange={(e: any) =>
-            this.props.adminUpdateSignUpForm({ name: e.target.value })
+            this.props.adminUpdateBusinessProfile({ name: e.target.value })
           }
         />
 
@@ -60,7 +60,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
           displayKey={"display_type"}
           targetKey={"type"}
           onChange={(type: string) =>
-            this.props.adminUpdateSignUpForm({ type })
+            this.props.adminUpdateBusinessProfile({ type })
           }
         />
 
@@ -71,7 +71,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
           value={this.props.email}
           disabled={false}
           onChange={(e: any) =>
-            this.props.adminUpdateSignUpForm({ email: e.target.value })
+            this.props.adminUpdateBusinessProfile({ email: e.target.value })
           }
         />
 
@@ -82,7 +82,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
           displayKey={"name"}
           targetKey={"code"}
           onChange={(country: string) =>
-            this.props.adminUpdateSignUpForm({ country })
+            this.props.adminUpdateBusinessProfile({ country })
           }
         />
         <SSubmitWrapper>
@@ -94,13 +94,13 @@ class SignUp extends React.Component<any, ISignUpProps> {
 }
 
 const reduxProps = (store: any) => ({
-  name: store.admin.signUpForm.name,
-  type: store.admin.signUpForm.type,
-  country: store.admin.signUpForm.country,
-  email: store.admin.signUpForm.email
+  name: store.admin.businessProfile.name,
+  type: store.admin.businessProfile.type,
+  country: store.admin.businessProfile.country,
+  email: store.admin.businessProfile.email
 });
 
 export default connect(
   reduxProps,
-  { adminUpdateSignUpForm, adminSubmitSignUp }
+  { adminUpdateBusinessProfile, adminSubmitSignUp }
 )(SignUp);

@@ -143,14 +143,14 @@ const ListItem = ({
             <SListItemSubtotal>
               {formatDisplayAmount(
                 item.price * item.quantity,
-                businessData.currencySymbol
+                businessData.payment.currency
               )}
             </SListItemSubtotal>
           </SListItemText>
         </SListItemDetails>
       ) : (
         <SListItemPrice>
-          {formatDisplayAmount(item.price, businessData.currencySymbol)}
+          {formatDisplayAmount(item.price, businessData.payment.currency)}
         </SListItemPrice>
       )}
     </SListItemContainer>

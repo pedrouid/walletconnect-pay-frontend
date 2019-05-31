@@ -27,30 +27,36 @@ const SButton = styled(Button)`
 
 const PaymentMethods = (props: any) => {
   const { show, businessData, callback } = props;
-
+  if (
+    !(
+      businessData &&
+      businessData.payment &&
+      businessData.payment.methods &&
+      businessData.payment.methods.length
+    )
+  ) {
+    return null;
+  }
   return (
     <SModal show={show} toggleModal={callback}>
-      {businessData &&
-        businessData.paymentMethods &&
-        businessData.paymentMethods.length &&
-        businessData.paymentMethods.map((paymentMethod: IPaymentMethod) => {
-          if (paymentMethod.type === "walletconnect") {
-            return (
-              <SButton
-                key={`${paymentMethod.type}-${paymentMethod.chainId}`}
-                onClick={() => callback(paymentMethod)}
-              >{`Pay with ${paymentMethod.assetSymbol}`}</SButton>
-            );
-          } else if (paymentMethod.type === "burner") {
-            return (
-              <SButton
-                key={`${paymentMethod.type}-${paymentMethod.chainId}`}
-                onClick={() => callback(paymentMethod)}
-              >{`Pay with Burner`}</SButton>
-            );
-          }
-          return null;
-        })}
+      {businessData.payment.methods.map((method: IPaymentMethod) => {
+        if (method.type === "walletconnect") {
+          return (
+            <SButton
+              key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
+              onClick={() => callback(method)}
+            >{`Pay with ${method.assetSymbol}`}</SButton>
+          );
+        } else if (method.type === "burner") {
+          return (
+            <SButton
+              key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
+              onClick={() => callback(method)}
+            >{`Pay with Burner`}</SButton>
+          );
+        }
+        return null;
+      })}
     </SModal>
   );
 };

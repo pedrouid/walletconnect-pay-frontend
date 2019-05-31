@@ -87,12 +87,14 @@ class Order extends React.Component<any, any> {
       uri,
       orderId
     } = this.props;
-    const ratio = 60;
+    const ratio = 66;
     return !this.props.loading ? (
       <React.Fragment>
         <SHeader>
-          {businessData.logo && <SLogo src={businessData.logo} alt="" />}
-          <SBranding>{businessData.name}</SBranding>
+          {businessData.profile.logo && (
+            <SLogo src={businessData.profile.logo} alt="" />
+          )}
+          <SBranding>{businessData.profile.name}</SBranding>
         </SHeader>
         <SColumnWrapper>
           <SColumn width={items.length ? ratio : 100}>

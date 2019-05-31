@@ -1,4 +1,9 @@
-import { ICheckoutDetails, IBusinessData } from "../helpers/types";
+import {
+  ICheckoutDetails,
+  IBusinessData,
+  IOrderItem,
+  IOrderJson
+} from "../helpers/types";
 import { getSpacePrivate, setSpacePrivate } from "./box";
 import { uuid } from "../helpers/utilities";
 
@@ -9,8 +14,8 @@ export function formatCheckoutDetails(
   businessData: IBusinessData
 ): ICheckoutDetails {
   let checkout;
-  const tax = rawtotal * (businessData.taxRate / 100);
-  if (businessData.taxInc) {
+  const tax = rawtotal * (businessData.tax.rate / 100);
+  if (businessData.tax.included) {
     checkout = {
       rawtotal,
       subtotal: rawtotal - tax,
@@ -28,7 +33,7 @@ export function formatCheckoutDetails(
   return checkout;
 }
 
-export function getMenu(bussinessName: string) {
+export function getDemoBusinessData(bussinessName: string) {
   let result = null;
   if (menus[bussinessName]) {
     result = menus[bussinessName] || null;
@@ -37,12 +42,12 @@ export function getMenu(bussinessName: string) {
 }
 
 export async function createOrderJson(orderDetails: {
-  items: any[];
+  items: IOrderItem[];
   checkout: ICheckoutDetails;
 }): Promise<string> {
   const orderId = uuid();
 
-  const orderJson = {
+  const orderJson: IOrderJson = {
     id: orderId,
     timestamp: Date.now(),
     items: orderDetails.items,
@@ -64,7 +69,7 @@ export async function updateOrderJson(
 ): Promise<void> {
   const orderJson = await getSpacePrivate(orderId);
 
-  const newOrderJson = {
+  const newOrderJson: IOrderJson = {
     ...orderJson,
     ...updatedOrderJson
   };

@@ -60,20 +60,44 @@ export interface IPaymentMethod {
   assetSymbol: string;
 }
 
-export interface IBusinessData {
+export interface IBusinessProfile {
   id: string;
   name: string;
   logo: string;
+  type: string;
+  country: string;
+  email: string;
+  phone: string;
+}
+
+export interface IBusinessTax {
+  rate: number;
+  included: boolean;
+  display: boolean;
+}
+
+export interface IBusinessPayment {
+  methods: IPaymentMethod[];
+  currency: string;
+  address: string;
+}
+
+export interface IBusinessData {
+  profile: IBusinessProfile;
   menu: IMenuItem[];
-  paymentMethods: IPaymentMethod[];
-  taxRate: number;
-  taxInc: boolean;
-  taxDisplay: boolean;
-  currencySymbol: string;
-  paymentAddress: string;
+  tax: IBusinessTax;
+  payment: IBusinessPayment;
 }
 
 export interface IPayment {
   status: "pending" | "success" | "failure";
   result: any;
+}
+
+export interface IOrderJson {
+  id: string;
+  timestamp: number;
+  items: IOrderItem[];
+  checkout: ICheckoutDetails;
+  payment: IPayment;
 }

@@ -2,6 +2,6 @@ import bufficorn from "./bufficorn/index";
 import cBase from "./c-base/index";
 
 export default {
-  [bufficorn.id]: bufficorn,
-  [cBase.id]: cBase
+  [bufficorn.profile.id]: bufficorn,
+  [cBase.profile.id]: cBase
 };

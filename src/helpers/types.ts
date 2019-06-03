@@ -75,6 +75,7 @@ export type IBusinessType =
 export interface IBusinessProfile {
   id: string;
   name: string;
+  description: string;
   logo: string;
   type: IBusinessType;
   country: string;

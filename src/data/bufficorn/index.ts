@@ -115,7 +115,8 @@ const methods: IPaymentMethod[] = [
 
 const profile: IBusinessProfile = {
   id: "bufficorn",
-  name: "Bufficorn Cafe",
+  name: "Bufficorn Café",
+  description: "Local roasted café in Denver",
   logo,
   type: "cafe",
   country: "DE",

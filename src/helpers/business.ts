@@ -16,6 +16,7 @@ export const defaultBusinessData: IBusinessData = {
   profile: {
     id: "",
     name: "",
+    description: "",
     logo: "",
     type: "cafe",
     country: "",

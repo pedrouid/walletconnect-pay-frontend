@@ -116,6 +116,7 @@ const methods: IPaymentMethod[] = [
 const profile: IBusinessProfile = {
   id: "c-base",
   name: "C-Base",
+  description: "",
   logo,
   type: "cafe",
   country: "DE",

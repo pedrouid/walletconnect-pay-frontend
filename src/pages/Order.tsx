@@ -1,6 +1,8 @@
 import * as React from "react";
+import Helmet from "react-helmet";
 import { connect } from "react-redux";
 import styled from "styled-components";
+
 import { colors } from "../styles";
 import { IMenuItem, IOrderItem, IPaymentMethod } from "../helpers/types";
 import {
@@ -88,9 +90,19 @@ class Order extends React.Component<any, any> {
       uri,
       orderId
     } = this.props;
-    const ratio = 66;
+    const ratio = 100 * (2 / 3);
     return !this.props.loading ? (
       <React.Fragment>
+        <Helmet>
+          <title>{businessData.profile.name}</title>
+          <meta name="description" content={businessData.profile.description} />
+          <link
+            rel="shortcut icon"
+            type="image/png"
+            href={businessData.profile.logo}
+            sizes="16x16"
+          />
+        </Helmet>
         <SHeader>
           {businessData.profile.logo && (
             <SLogo src={businessData.profile.logo} alt="" />

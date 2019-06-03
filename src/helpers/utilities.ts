@@ -1,9 +1,10 @@
 import { utils } from "ethers";
 import { convertHexToNumber } from "@walletconnect/utils";
 import { IChainData } from "./types";
-import { toFixed } from "./bignumber";
+import { convertStringToNumber, toFixed } from "./bignumber";
 import SUPPORTED_CHAINS from "../constants/chains";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
+import COUNTRIES from "../constants/countries";
 
 export function capitalize(string: string): string {
   return string
@@ -112,7 +113,7 @@ export function uuid(): string {
 
 export function getChainData(chainId: number): IChainData {
   const chainData = SUPPORTED_CHAINS.filter(
-    (chain: any) => chain.chain_id === chainId
+    (chain: any) => chain.code === chainId
   )[0];
 
   if (!chainData) {
@@ -175,4 +176,32 @@ export function formatDisplayAmount(amount: number, symbol: string) {
           }`;
   }
   return result;
+}
+
+export function getCountryName(code: string): string {
+  let name = "";
+
+  if (code.trim()) {
+    const country = COUNTRIES.filter((chain: any) => chain.code === code)[0];
+
+    if (!country) {
+      throw new Error("Country missing or not supported");
+    }
+
+    name = country.name;
+  }
+
+  return name;
+}
+
+export function getAppVersion() {
+  let version = process.env.REACT_APP_VERSION || "0.0.1";
+  if (version) {
+    const arr = version.split(".").slice(0, 2);
+    if (convertStringToNumber(arr[0]) >= 1) {
+      arr[1] = "x";
+    }
+    version = arr.join("_");
+  }
+  return version;
 }

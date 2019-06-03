@@ -1,5 +1,5 @@
 import {
-  IMenuItem,
+  IBusinessMenu,
   IBusinessData,
   IPaymentMethod,
   IBusinessProfile,
@@ -21,7 +21,7 @@ import obc_strong from "./images/obc_strong.jpg";
 import berliner from "./images/berliner.jpg";
 import laschak from "./images/laschak.jpg";
 
-const menu: IMenuItem[] = [
+const menu: IBusinessMenu = [
   {
     name: "Club Mate",
     description: "",
@@ -116,6 +116,7 @@ const methods: IPaymentMethod[] = [
 const profile: IBusinessProfile = {
   id: "c-base",
   name: "C-Base",
+  description: "",
   logo,
   type: "cafe",
   country: "DE",
@@ -135,11 +136,10 @@ const payment: IBusinessPayment = {
   address: ""
 };
 
-const businessData: IBusinessData = {
+const data: IBusinessData = {
   profile,
-  menu,
   tax,
   payment
 };
 
-export default businessData;
+export default { data, menu };

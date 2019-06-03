@@ -1,6 +1,8 @@
 import * as React from "react";
+import Helmet from "react-helmet";
 import { connect } from "react-redux";
 import styled from "styled-components";
+
 import { colors } from "../styles";
 import { IMenuItem, IOrderItem, IPaymentMethod } from "../helpers/types";
 import {
@@ -76,6 +78,7 @@ class Order extends React.Component<any, any> {
   public render() {
     const {
       businessData,
+      businessMenu,
       choosePayment,
       paymentMethod,
       warning,
@@ -87,9 +90,19 @@ class Order extends React.Component<any, any> {
       uri,
       orderId
     } = this.props;
-    const ratio = 66;
+    const ratio = 100 * (2 / 3);
     return !this.props.loading ? (
       <React.Fragment>
+        <Helmet>
+          <title>{businessData.profile.name}</title>
+          <meta name="description" content={businessData.profile.description} />
+          <link
+            rel="shortcut icon"
+            type="image/png"
+            href={businessData.profile.logo}
+            sizes="16x16"
+          />
+        </Helmet>
         <SHeader>
           {businessData.profile.logo && (
             <SLogo src={businessData.profile.logo} alt="" />
@@ -102,8 +115,8 @@ class Order extends React.Component<any, any> {
               <STitle>{`Menu`}</STitle>
             </SColumnHeader>
             <SColumnList>
-              {businessData.menu &&
-                businessData.menu.map((item: IMenuItem) => (
+              {businessMenu &&
+                businessMenu.map((item: IMenuItem) => (
                   <ListItem
                     key={`menu-${item.name}`}
                     item={item}
@@ -172,6 +185,7 @@ class Order extends React.Component<any, any> {
 
 const reduxProps = (store: any) => ({
   businessData: store.order.businessData,
+  businessMenu: store.order.businessMenu,
   choosePayment: store.order.choosePayment,
   paymentMethod: store.order.paymentMethod,
   warning: store.order.warning,

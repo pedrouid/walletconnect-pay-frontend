@@ -1,25 +1,11 @@
+import { SPACE_ID } from "../constants/space";
+
 const Box =
   typeof window !== "undefined" && typeof window.Box !== "undefined"
     ? window.Box
     : null;
 
 let box: any | null = null;
-
-export async function init3Box(address: string, provider: any) {
-  let result = null;
-
-  await openBox(address, provider);
-
-  await openSpace();
-
-  const profile = await getSpacePrivate("profile");
-
-  if (profile) {
-    result = profile.name;
-  }
-
-  return result;
-}
 
 export async function getProfile(address: string) {
   if (!Box) {
@@ -95,8 +81,6 @@ export async function removePrivate(key: string) {
   }
   await box.private.remove(key);
 }
-
-const SPACE_ID: string = "WALLETCONNECT_PAY_V1";
 
 let space: any = null;
 

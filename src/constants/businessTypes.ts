@@ -1,5 +1,7 @@
+import { IBusinessType } from "../helpers/types";
+
 interface IBusinessTypeRef {
-  type: string;
+  type: IBusinessType;
   display_type: string;
 }
 

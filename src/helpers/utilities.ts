@@ -1,10 +1,12 @@
 import { utils } from "ethers";
 import { convertHexToNumber } from "@walletconnect/utils";
 import { IChainData } from "./types";
-import { convertStringToNumber, toFixed } from "./bignumber";
+import { convertStringToNumber, handleSignificantDecimals } from "./bignumber";
 import SUPPORTED_CHAINS from "../constants/chains";
+import BUSINESS_TYPES from "../constants/businessTypes";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 import COUNTRIES from "../constants/countries";
+import { IPFS_GATEWAY } from "../constants/ipfs";
 
 export function capitalize(string: string): string {
   return string
@@ -87,6 +89,36 @@ export function removeHexPrefix(hex: string): string {
   return hex;
 }
 
+export function getUrlProtocol(url: string): string {
+  const protocolRegex = new RegExp(/(?:\w+):\/\//);
+
+  let protocol = "";
+
+  const matches = protocolRegex.exec(url);
+
+  if (matches) {
+    protocol = matches[0];
+  }
+
+  return protocol;
+}
+
+export function sanitizeUrl(url: string): string {
+  const protocol = getUrlProtocol(url);
+
+  if (protocol) {
+    url = url.replace(protocol, "");
+  }
+
+  let result = url.replace(/\/+/g, "/").replace(/\/+$/, "");
+
+  if (protocol) {
+    result = protocol + result;
+  }
+
+  return result;
+}
+
 export function payloadId(): number {
   const datePart: number = new Date().getTime() * Math.pow(10, 3);
   const extraPart: number = Math.floor(Math.random() * Math.pow(10, 3));
@@ -113,7 +145,7 @@ export function uuid(): string {
 
 export function getChainData(chainId: number): IChainData {
   const chainData = SUPPORTED_CHAINS.filter(
-    (chain: any) => chain.code === chainId
+    (chain: any) => chain.chain_id === chainId
   )[0];
 
   if (!chainData) {
@@ -165,15 +197,15 @@ export function getNativeCurrency(symbol: string) {
 }
 
 export function formatDisplayAmount(amount: number, symbol: string) {
-  let result = toFixed(amount, 2);
   const nativeCurrency = getNativeCurrency(symbol);
+  let decimals = 2;
+  let result = handleSignificantDecimals(`${amount}`, decimals);
   if (nativeCurrency) {
+    decimals = nativeCurrency.decimals;
+    const { symbol, alignment } = nativeCurrency;
+    const _amount = handleSignificantDecimals(`${amount}`, decimals);
     result =
-      nativeCurrency.alignment === "left"
-        ? `${nativeCurrency.symbol} ${toFixed(amount, nativeCurrency.decimals)}`
-        : `${toFixed(amount, nativeCurrency.decimals)} ${
-            nativeCurrency.symbol
-          }`;
+      alignment === "left" ? `${symbol} ${_amount}` : `${_amount} ${symbol}`;
   }
   return result;
 }
@@ -194,6 +226,24 @@ export function getCountryName(code: string): string {
   return name;
 }
 
+export function getBusinessType(type: string): string {
+  let name = "";
+
+  if (type.trim()) {
+    const businessType = BUSINESS_TYPES.filter(
+      (chain: any) => chain.type === type
+    )[0];
+
+    if (!businessType) {
+      throw new Error("Business type missing or not supported");
+    }
+
+    name = businessType.display_name;
+  }
+
+  return name;
+}
+
 export function getAppVersion() {
   let version = process.env.REACT_APP_VERSION || "0.0.1";
   if (version) {
@@ -204,4 +254,14 @@ export function getAppVersion() {
     version = arr.join("_");
   }
   return version;
+}
+
+export function getIpfsUrl(fileHash: string) {
+  const result = `${IPFS_GATEWAY}${fileHash}`;
+  return result;
+}
+
+export function getIpfsHash(url: string) {
+  const result = url.replace(IPFS_GATEWAY, "");
+  return result;
 }

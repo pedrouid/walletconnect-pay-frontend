@@ -19,7 +19,7 @@ const SListItem = styled.div<IListItemStyleProps>`
 
   border-radius: 6px;
   border: 1px solid rgb(${colors.lightGrey});
-  margin-bottom: 16px;
+  background: rgb(${colors.white});
 
   transform: translate3d(0, 0, 0);
   box-shadow: ${shadows.base};
@@ -72,18 +72,22 @@ const SListItemButton = styled.div`
 `;
 
 interface IListItemDetailsStyleProps {
+  minWidth?: number;
   alignRight?: boolean;
+  flex?: number;
 }
 
 const SListItemDetails = styled.div<IListItemDetailsStyleProps>`
   width: 100%;
+  min-width: ${({ minWidth }) => (minWidth ? `${minWidth}px` : "inherit")};
   display: flex;
   align-items: center;
   justify-content: ${({ alignRight }) =>
     alignRight ? "flex-end" : "flex-start"};
+  flex: ${({ flex }) => flex || "auto"};
 `;
 
-const SListItemPrice = styled.div`
+const SListItemSmallDetails = styled.div`
   width: 100%;
   text-align: right;
   font-size: ${fonts.size.large};
@@ -92,7 +96,12 @@ const SListItemPrice = styled.div`
   justify-content: flex-end;
 `;
 
-const SListItemQuantity = styled(SListItemPrice)``;
+const SListItemPrice = styled(SListItemSmallDetails)`
+  flex: 1;
+  min-width: 55px;
+`;
+
+const SListItemQuantity = styled(SListItemSmallDetails)``;
 
 const SListItemSubtotal = styled(SListItemDescription)`
   text-align: right;
@@ -125,7 +134,7 @@ const ListItem = ({
 }: IListItemProps) => (
   <SListItem onClick={onClick} {...props}>
     <SListItemContainer>
-      <SListItemDetails>
+      <SListItemDetails flex={3}>
         {!!item.image && !noImage && (
           <SListItemImage>
             <img src={item.image} alt={item.name} />
@@ -137,7 +146,7 @@ const ListItem = ({
         </SListItemText>
       </SListItemDetails>
       {isOrderItem(item) ? (
-        <SListItemDetails alignRight>
+        <SListItemDetails alignRight flex={1} minWidth={55}>
           <SListItemText>
             <SListItemQuantity>{`x ${item.quantity}`}</SListItemQuantity>
             <SListItemSubtotal>

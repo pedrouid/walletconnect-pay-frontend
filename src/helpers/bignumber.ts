@@ -172,6 +172,17 @@ export function handleSignificantDecimals(
   decimals: number,
   buffer?: number
 ): string | null {
+  const result = formatSignificantDecimals(value, decimals, buffer);
+  return new BigNumber(`${result}`).dp() <= 2
+    ? new BigNumber(`${result}`).toFormat(2)
+    : new BigNumber(`${result}`).toFormat();
+}
+
+export function formatSignificantDecimals(
+  value: string,
+  decimals: number,
+  buffer?: number
+): string | null {
   if (
     !new BigNumber(`${decimals}`).isInteger() ||
     (buffer && !new BigNumber(`${buffer}`).isInteger())
@@ -189,9 +200,7 @@ export function handleSignificantDecimals(
   }
   let result = new BigNumber(`${value}`).toFixed(decimals);
   result = new BigNumber(`${result}`).toString();
-  return new BigNumber(`${result}`).dp() <= 2
-    ? new BigNumber(`${result}`).toFormat(2)
-    : new BigNumber(`${result}`).toFormat();
+  return result;
 }
 
 export function formatFixedDecimals(value: string, decimals: number): string {

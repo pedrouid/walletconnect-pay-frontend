@@ -7,17 +7,18 @@ interface IPageWrapperStyleProps {
   row?: boolean;
   maxWidth?: number;
   noPadding?: boolean;
+  noScroll?: boolean;
 }
 
 const SPageWrapper = styled.div<IPageWrapperStyleProps>`
   position: relative;
   width: 100%;
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "inherit")};
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "initial")};
   height: 100%;
-  max-height: 100vh;
+  max-height: ${({ noScroll }) => (noScroll ? "100vh" : "initial")};
   margin: 0 auto;
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: ${({ noScroll }) => (noScroll ? "hidden" : "initial")};
   display: flex;
   flex-direction: ${({ row }) => (row ? "row" : "column")};
   align-items: center;
@@ -30,7 +31,13 @@ interface IPageWrapperProps extends IPageWrapperStyleProps {
 }
 
 const PageWrapper = (props: IPageWrapperProps) => (
-  <SPageWrapper center={props.center} row={props.row} maxWidth={props.maxWidth}>
+  <SPageWrapper
+    center={props.center}
+    row={props.row}
+    maxWidth={props.maxWidth}
+    noPadding={props.noPadding}
+    noScroll={props.noScroll}
+  >
     {props.children}
   </SPageWrapper>
 );

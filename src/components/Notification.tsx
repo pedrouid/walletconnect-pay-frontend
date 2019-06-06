@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { colors, shadows, responsive, transitions } from "../styles";
@@ -39,20 +38,15 @@ const SNotification = styled.div<INotificationStyleProps>`
   }
 `;
 
-const Notification = (props: any) => {
-  const { show, error, message } = props;
-  return (
-    <SNotification show={show} error={error} {...props}>
-      {message}
-    </SNotification>
-  );
-};
+interface INotificationProps extends INotificationStyleProps {
+  message: string;
+}
 
-Notification.propTypes = {
-  show: PropTypes.bool.isRequired,
-  error: PropTypes.bool.isRequired,
-  message: PropTypes.string.isRequired
-};
+const Notification = (props: INotificationProps) => (
+  <SNotification show={props.show} error={props.error}>
+    {props.message}
+  </SNotification>
+);
 
 const reduxProps = (store: any) => ({
   error: store.notification.error,

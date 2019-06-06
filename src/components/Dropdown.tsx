@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { colors, fonts, shadows, transitions } from "../styles";
 import ClickOutside from "./ClickOutside";
+import { SLabel } from "./common";
 
 const SDropdownWrapper = styled.div`
   width: 100%;
@@ -11,19 +12,6 @@ const SDropdownWrapper = styled.div`
   align-items: center;
   & > div {
     width: 100%;
-  }
-`;
-
-const SLabel = styled.label`
-  color: rgb(${colors.grey});
-  font-size: ${fonts.size.small};
-  font-weight: ${fonts.weight.semibold};
-  width: 100%;
-  margin-top: 16px;
-
-  & ~ input,
-  & ~ div {
-    margin-top: 8px;
   }
 `;
 

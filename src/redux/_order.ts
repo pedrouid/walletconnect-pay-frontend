@@ -19,9 +19,25 @@ import {
 } from "../helpers/order";
 import { getDemoBusiness, defaultBusinessData } from "../helpers/business";
 import { notificationShow } from "./_notification";
+import { modalShow, modalHide } from "./_modal";
 import { apiGetTransactionReceipt } from "../helpers/api";
 import { convertHexToNumber } from "../helpers/bignumber";
 import { getChainData } from "../helpers/utilities";
+import {
+  PAYMENT_METHODS_MODAL,
+  PLAIN_MESSAGE_MODAL
+} from "../constants/modals";
+import {
+  WALLETCONNECT_LOCALSTORAGE,
+  SESSION_UPDATE_EVENT,
+  CONNECT_EVENT,
+  DISCONNECT_EVENT
+} from "../constants/walletConnect";
+import {
+  PAYMENT_SUCCESS,
+  PAYMENT_PENDING,
+  PAYMENT_FAILURE
+} from "../constants/paymentStatus";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -39,13 +55,9 @@ const ORDER_PAYMENT_REQUEST = "order/ORDER_PAYMENT_REQUEST";
 const ORDER_PAYMENT_SUCCESS = "order/ORDER_PAYMENT_SUCCESS";
 const ORDER_PAYMENT_FAILURE = "order/ORDER_PAYMENT_FAILURE";
 
-const ORDER_CHOOSE_PAYMENT_REQUEST = "order/ORDER_CHOOSE_PAYMENT_REQUEST";
-const ORDER_CHOOSE_PAYMENT_SUCCESS = "order/ORDER_CHOOSE_PAYMENT_SUCCESS";
-const ORDER_CHOOSE_PAYMENT_FAILURE = "order/ORDER_CHOOSE_PAYMENT_FAILURE";
+const ORDER_UPDATE_PAYMENT_METHOD = "order/ORDER_UPDATE_PAYMENT_METHOD";
 
 const ORDER_PAYMENT_UPDATE = "order/ORDER_PAYMENT_UPDATE";
-
-const ORDER_UPDATE_WARNING = "order/ORDER_UPDATE_WARNING";
 
 const ORDER_UNSUBMIT = "order/ORDER_UNSUBMIT";
 
@@ -169,18 +181,22 @@ export const orderManageSession = (
   }
 };
 
-export const orderShowPaymentMethods = () => ({
-  type: ORDER_CHOOSE_PAYMENT_REQUEST
-});
+export const orderShowPaymentMethods = () => (dispatch: any, getState: any) => {
+  const { businessData } = getState().order;
+  const callback = (paymentMethod?: IPaymentMethod) =>
+    dispatch(orderChoosePaymentMethod(paymentMethod));
+  dispatch(modalShow(PAYMENT_METHODS_MODAL, { businessData, callback }));
+};
 
 export const orderChoosePaymentMethod = (
   paymentMethod?: IPaymentMethod
 ) => async (dispatch: any) => {
   if (paymentMethod) {
-    dispatch({ type: ORDER_CHOOSE_PAYMENT_SUCCESS, payload: paymentMethod });
+    dispatch({ type: ORDER_UPDATE_PAYMENT_METHOD, payload: paymentMethod });
+    dispatch(modalHide());
     dispatch(orderSubmit());
   } else {
-    dispatch({ type: ORDER_CHOOSE_PAYMENT_FAILURE });
+    dispatch(modalHide());
   }
 };
 
@@ -210,8 +226,8 @@ export const orderSubmitWalletConnect = (orderId: string) => async (
   getState: any
 ) => {
   try {
-    if (localStorage.getItem("walletconnect")) {
-      localStorage.removeItem("walletconnect");
+    if (localStorage.getItem(WALLETCONNECT_LOCALSTORAGE)) {
+      localStorage.removeItem(WALLETCONNECT_LOCALSTORAGE);
     }
 
     const connector = await initWalletConnect();
@@ -221,15 +237,8 @@ export const orderSubmitWalletConnect = (orderId: string) => async (
       payload: { uri: connector.uri, orderId }
     });
 
-    connector.on("connect", async (error: Error, payload: IJsonRpcRequest) => {
-      if (error) {
-        throw error;
-      }
-      dispatch(orderManageSession(payload, orderId));
-    });
-
     connector.on(
-      "session_update",
+      CONNECT_EVENT,
       async (error: Error, payload: IJsonRpcRequest) => {
         if (error) {
           throw error;
@@ -239,13 +248,23 @@ export const orderSubmitWalletConnect = (orderId: string) => async (
     );
 
     connector.on(
-      "disconnect",
+      SESSION_UPDATE_EVENT,
+      async (error: Error, payload: IJsonRpcRequest) => {
+        if (error) {
+          throw error;
+        }
+        dispatch(orderManageSession(payload, orderId));
+      }
+    );
+
+    connector.on(
+      DISCONNECT_EVENT,
       async (error: Error, payload: IJsonRpcRequest) => {
         if (error) {
           throw error;
         }
         const { payment } = getState().order;
-        if ((payment && payment.status === "failure") || !payment) {
+        if ((payment && payment.status === PAYMENT_FAILURE) || !payment) {
           dispatch(orderUnsubmit());
         }
       }
@@ -294,7 +313,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
     const txhash = await sendTransaction(tx);
 
     if (txhash) {
-      const payment: IPayment = { status: "pending", result: txhash };
+      const payment: IPayment = { status: PAYMENT_PENDING, result: txhash };
 
       // await updateOrderJson(orderId, { payment });
 
@@ -304,14 +323,14 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
 
       dispatch(orderSubscribeToPayment());
     } else {
-      const payment: IPayment = { status: "failure", result: null };
+      const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
 
       // await updateOrderJson(orderId, { payment });
 
       dispatch({ type: ORDER_PAYMENT_FAILURE, payload: payment });
     }
   } catch (error) {
-    const payment: IPayment = { status: "failure", result: null };
+    const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
 
     // await updateOrderJson(orderId, { payment });
 
@@ -326,7 +345,7 @@ let subscribeInterval: any;
 export const orderSubscribeToPayment = () => (dispatch: any, getState: any) => {
   const { payment, paymentMethod } = getState().order;
   clearInterval(subscribeInterval);
-  if (payment.status === "pending" && payment.result) {
+  if (payment.status === PAYMENT_PENDING && payment.result) {
     subscribeInterval = setInterval(async () => {
       const result = await apiGetTransactionReceipt(
         payment.result,
@@ -348,9 +367,9 @@ export const orderUpdatePayment = (status: number) => (
   const { payment } = getState().order;
   let updatedPayment: any;
   if (status === 1) {
-    updatedPayment = { ...payment, status: "success" };
+    updatedPayment = { ...payment, status: PAYMENT_SUCCESS };
   } else {
-    updatedPayment = { ...payment, status: "failure" };
+    updatedPayment = { ...payment, status: PAYMENT_FAILURE };
   }
   dispatch({ type: ORDER_PAYMENT_UPDATE, payload: updatedPayment });
 };
@@ -358,22 +377,28 @@ export const orderUpdatePayment = (status: number) => (
 export const orderUpdateWarning = (warning: {
   show: boolean;
   message: string;
-}) => ({
-  type: ORDER_UPDATE_WARNING,
-  payload: warning
-});
+}) => (dispatch: any, getState: any) => {
+  if (warning.show) {
+    dispatch(
+      modalShow(PLAIN_MESSAGE_MODAL, { message: warning.message }, true)
+    );
+  } else {
+    dispatch(modalHide());
+  }
+};
 
 export const orderUnsubmit = () => (dispatch: any, getState: any) => {
   const { payment, items } = getState().order;
   let updatedItems = [...items];
   if (payment) {
-    if (payment.status === "pending") {
+    if (payment.status === PAYMENT_PENDING) {
       dispatch(notificationShow("Payment is still pending", true));
       return;
-    } else if (payment.status === "success") {
+    } else if (payment.status === PAYMENT_SUCCESS) {
       updatedItems = [];
     }
   }
+  dispatch(modalHide());
   killSession();
   dispatch({ type: ORDER_UNSUBMIT, payload: updatedItems });
 };
@@ -384,7 +409,6 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 const INITIAL_STATE = {
   businessData: defaultBusinessData,
   businessMenu: null,
-  choosePayment: false,
   paymentAddress: "",
   paymentMethod: null,
   submitting: false,
@@ -394,11 +418,7 @@ const INITIAL_STATE = {
   uri: "",
   orderId: "",
   checkout: defaultCheckoutDetails,
-  payment: null,
-  warning: {
-    show: false,
-    message: ""
-  }
+  payment: null
 };
 
 export default (state = INITIAL_STATE, action: any) => {
@@ -422,14 +442,12 @@ export default (state = INITIAL_STATE, action: any) => {
       };
     case ORDER_LOAD_MENU_FAILURE:
       return { ...state, loading: false };
-    case ORDER_CHOOSE_PAYMENT_REQUEST:
-      return { ...state, choosePayment: true };
-    case ORDER_CHOOSE_PAYMENT_SUCCESS:
-      return { ...state, choosePayment: false, paymentMethod: action.payload };
-    case ORDER_CHOOSE_PAYMENT_FAILURE:
-      return { ...state, choosePayment: false };
+
+    case ORDER_UPDATE_PAYMENT_METHOD:
+      return { ...state, paymentMethod: action.payload };
+
     case ORDER_SUBMIT_REQUEST:
-      return { ...state, submitting: true, choosePayment: false };
+      return { ...state, submitting: true };
     case ORDER_SUBMIT_SUCCESS:
       return {
         ...state,
@@ -455,14 +473,11 @@ export default (state = INITIAL_STATE, action: any) => {
         paymentMethod: INITIAL_STATE.paymentMethod,
         payment: INITIAL_STATE.payment,
         submitted: INITIAL_STATE.submitted,
-        warning: INITIAL_STATE.warning,
         items: action.payload
       };
     case ORDER_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
 
-    case ORDER_UPDATE_WARNING:
-      return { ...state, warning: action.payload };
     default:
       return state;
   }

@@ -1,3 +1,3 @@
 # walletconnect-pay-frontend
 
-WalletConnect Pay - Ethereum Point-of-Sale System with WalletConnect support
+WalletConnect Pay - Ethereum POS System with WalletConnect support

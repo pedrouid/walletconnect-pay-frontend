@@ -4,9 +4,10 @@ export const colors = {
   dark: "45, 42, 42",
   darkGrey: "113, 119, 138",
   grey: "155, 177, 187",
-  lightGrey: "242, 242, 251",
+  lightGrey: "234, 235, 238",
   blue: "101, 127, 230",
-  lightBlue: "64, 153, 255",
+  lightBlue: "82, 210, 255",
+  darkBlue: "16, 28, 56",
   yellow: "250, 188, 45",
   orange: "246, 133, 27",
   green: "41, 203, 174",
@@ -102,7 +103,7 @@ export const globalStyle = `
     font-stretch: normal;
     font-weight: ${fonts.weight.normal};
     font-size: ${fonts.size.medium};
-    background-color: rgb(${colors.white});
+    background-color: rgb(${colors.lightGrey});
     color: rgb(${colors.dark});
     overflow-y:auto;
     text-rendering: optimizeLegibility;

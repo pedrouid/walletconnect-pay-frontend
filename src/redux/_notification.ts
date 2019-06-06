@@ -5,12 +5,18 @@ const NOTIFICATION_HIDE = "notification/NOTIFICATION_HIDE";
 // -- Actions --------------------------------------------------------------- //
 let timeoutHide: any;
 
-export const notificationShow = (message: string, error = false) => (
-  dispatch: any
-) => {
+export const notificationShow = (
+  message: string,
+  error: boolean | undefined = false
+) => (dispatch: any) => {
   clearTimeout(timeoutHide);
+
   dispatch({ type: NOTIFICATION_SHOW, payload: { message, error } });
-  timeoutHide = setTimeout(() => dispatch({ type: NOTIFICATION_HIDE }), 15000);
+
+  timeoutHide = setTimeout(
+    () => dispatch({ type: NOTIFICATION_HIDE }),
+    8000 // 8 secs
+  );
 };
 
 // -- Reducer --------------------------------------------------------------- //

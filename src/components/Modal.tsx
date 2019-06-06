@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import styled from "styled-components";
+import { SCenterColumn } from "../components/common";
 import { colors, transitions } from "../styles";
 
 interface ILightboxStyleProps {
@@ -100,11 +101,10 @@ const SCard = styled.div`
   align-items: center;
 `;
 
-const SModalContent = styled.div`
-  position: relative;
-  width: 100%;
+const SModalContent = styled(SCenterColumn)`
   position: relative;
   word-wrap: break-word;
+  padding: 20px;
 `;
 
 interface IModalState {

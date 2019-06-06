@@ -2,6 +2,7 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import styled from "styled-components";
 import { colors, fonts, shadows } from "../styles";
+import { SLabel } from "./common";
 
 interface IInputWrapperStyleProps {
   disabled: boolean;
@@ -13,19 +14,6 @@ const SInputWrapper = styled.div<IInputWrapperStyleProps>`
   justify-content: flex-end;
   width: 100%;
   opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
-`;
-
-const SLabel = styled.label`
-  color: rgb(${colors.grey});
-  font-size: ${fonts.size.small};
-  font-weight: ${fonts.weight.semibold};
-  width: 100%;
-  margin-top: 16px;
-
-  & ~ input,
-  & ~ div {
-    margin-top: 8px;
-  }
 `;
 
 interface IInputStyleProps {

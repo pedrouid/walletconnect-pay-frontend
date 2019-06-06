@@ -78,39 +78,26 @@ export const apiGetAssetPrice = async (symbol: string) => {
   console.log("apiGetDaiPrice response.data", response.data); // tslint:disable-line
 };
 
-export const apiPinFile = async (data: any): Promise<string | null> => {
-  const response = await axios.post(
-    "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-    data,
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
-        pinata_secret_api_key: process.env.REACT_APP_PINATA_SECRET_API_KEY
-      }
+export const apiPinFile = async (
+  formData: FormData
+): Promise<string | null> => {
+  const response = await axios.post("/ipfs", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
     }
-  );
+  });
 
-  let result = null;
-
-  if (response.data.IpfsHash) {
-    result = response.data.IpfsHash;
-  }
-
+  const { result } = response.data;
   return result;
 };
 
 export const apiFetchFile = async (fileHash: string): Promise<any> => {
-  const response = await axios.get(
-    `https://gateway.pinata.cloud/ipfs/${fileHash}`,
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+  const response = await axios.get(`/ipfs?fileHash=${fileHash}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
     }
-  );
+  });
 
   let data = null;
 
@@ -119,4 +106,41 @@ export const apiFetchFile = async (fileHash: string): Promise<any> => {
   }
 
   return data;
+};
+
+export const apiSendEmail = async (email: string): Promise<boolean> => {
+  const response = await axios.post(
+    "/send-email",
+    { email },
+    {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  const result = response.data.result;
+
+  return result;
+};
+
+export const apiVerifyEmail = async (
+  email: string,
+  id: string
+): Promise<boolean> => {
+  const response = await axios.post(
+    "/verify-email",
+    { email, id },
+    {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  const result = response.data.result;
+
+  return result;
 };

@@ -4,21 +4,12 @@ import { IPaymentMethod } from "../helpers/types";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 
-// import burner from "../assets/burner.png";
-// import xdai from "../assets/xdai.png";
-// import dai from "../assets/dai.png";
-// import eth from "../assets/eth.png";
+// import burner from "../assets/payment-methods/burner.png";
+// import xdai from "../assets/payment-methods/xdai.png";
+// import dai from "../assets/payment-methods/dai.png";
+// import eth from "../assets/payment-methods/eth.png";
 
 // const iconMap = { burner, xdai, dai, eth };
-
-const SModal = styled(Modal)`
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
 
 const SButton = styled(Button)`
   margin: 10px auto;
@@ -38,7 +29,7 @@ const PaymentMethods = (props: any) => {
     return null;
   }
   return (
-    <SModal show={show} toggleModal={callback}>
+    <Modal show={show} toggleModal={callback}>
       {businessData.payment.methods.map((method: IPaymentMethod) => {
         if (method.type === "walletconnect") {
           return (
@@ -57,7 +48,7 @@ const PaymentMethods = (props: any) => {
         }
         return null;
       })}
-    </SModal>
+    </Modal>
   );
 };
 

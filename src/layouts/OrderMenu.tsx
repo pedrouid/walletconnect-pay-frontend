@@ -1,5 +1,4 @@
 import * as React from "react";
-import Helmet from "react-helmet";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { colors } from "../styles";
@@ -59,16 +58,6 @@ const OrderMenu = (props: any) => {
   const ratio = 70;
   return (
     <React.Fragment>
-      <Helmet>
-        <title>{businessData.profile.name}</title>
-        <meta name="description" content={businessData.profile.description} />
-        <link
-          rel="shortcut icon"
-          type="image/png"
-          href={businessData.profile.logo}
-          sizes="16x16"
-        />
-      </Helmet>
       <SHeader>
         <Link style={{ display: "flex" }} to="/admin">
           {businessData.profile.logo && (

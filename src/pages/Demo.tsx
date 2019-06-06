@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import {
-  orderLoadMenu,
+  orderLoadDemo,
   orderShowPaymentMethods,
   orderChoosePaymentMethod,
   orderAddItem,
@@ -14,18 +14,14 @@ import Checkout from "../layouts/Checkout";
 import Loader from "../components/Loader";
 import OrderMenu from "../layouts/OrderMenu";
 import { revertPageMeta, updatePageMeta } from "../helpers/utilities";
-import { getIpfsUrl } from "../helpers/utilities";
 
 class Order extends React.Component<any, any> {
   public componentDidMount() {
-    this.props.orderLoadMenu();
-    this.updatePageMeta();
-  }
-
-  public componentDidUpdate(prevProps: any) {
-    if (prevProps.businessData.name !== this.props.businessData.name) {
-      this.updatePageMeta();
+    const businessName = this.props.match.params.businessName;
+    if (businessName) {
+      this.props.orderLoadDemo(businessName);
     }
+    this.updatePageMeta();
   }
 
   public updatePageMeta() {
@@ -33,7 +29,7 @@ class Order extends React.Component<any, any> {
     updatePageMeta({
       title: businessData.profile.name,
       description: businessData.profile.description,
-      favicon: getIpfsUrl(businessData.profile.logo)
+      favicon: businessData.profile.logo
     });
   }
 
@@ -109,7 +105,7 @@ const reduxProps = (store: any) => ({
 export default connect(
   reduxProps,
   {
-    orderLoadMenu,
+    orderLoadDemo,
     orderShowPaymentMethods,
     orderChoosePaymentMethod,
     orderAddItem,

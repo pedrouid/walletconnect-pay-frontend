@@ -7,6 +7,7 @@ import BUSINESS_TYPES from "../constants/businessTypes";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 import COUNTRIES from "../constants/countries";
 import { IPFS_GATEWAY } from "../constants/ipfs";
+import { APP_DESCRIPTION, APP_NAME } from "src/constants/appMeta";
 
 export function capitalize(string: string): string {
   return string
@@ -264,4 +265,40 @@ export function getIpfsUrl(fileHash: string) {
 export function getIpfsHash(url: string) {
   const result = url.replace(IPFS_GATEWAY, "");
   return result;
+}
+
+export function updateTitle(title: string) {
+  if (typeof document !== "undefined") {
+    document.title = title;
+  }
+}
+
+export function updateMetaTag(name: string, attribute: string, value: string) {
+  const meta = document.querySelector(`meta[name="${name}"]`);
+  if (meta) {
+    meta.setAttribute(attribute, value);
+  }
+}
+
+export function updateFavicon(href: string) {
+  if (typeof document !== "undefined") {
+    const link: any =
+      document.querySelector("link[rel*='icon']") ||
+      document.createElement("link");
+    link.rel = "shortcut icon";
+    link.href = href;
+    document.getElementsByTagName("head")[0].appendChild(link);
+  }
+}
+
+export function updatePageMeta(meta: any) {
+  updateTitle(meta.title);
+  updateMetaTag("description", "content", meta.description);
+  updateFavicon(meta.favicon);
+}
+
+export function revertPageMeta() {
+  updateTitle(APP_NAME);
+  updateMetaTag("description", "content", APP_DESCRIPTION);
+  updateFavicon("/favicon.ico");
 }

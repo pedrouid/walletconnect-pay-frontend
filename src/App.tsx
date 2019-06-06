@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { connect } from "react-redux";
 import Home from "./pages/Home";
+import Demo from "./pages/Demo";
 import Order from "./pages/Order";
 import Admin from "./pages/Admin";
 import SignUp from "./pages/SignUp";
@@ -48,8 +49,8 @@ class App extends React.Component<any, any> {
         <SContent>
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route exact path="/order/:businessName" component={Order} />
-            {/* <Route
+            <Route exact path="/demo/:businessName" component={Demo} />
+            <Route
               exact
               path="/order"
               render={routerProps => {
@@ -58,7 +59,7 @@ class App extends React.Component<any, any> {
                 // }
                 return <Order {...routerProps} />;
               }}
-            /> */}
+            />
             <Route
               exact
               path="/signup"

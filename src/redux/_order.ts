@@ -65,18 +65,22 @@ const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
 
-export const orderLoadMenu = (businessName: string) => (
+export const orderLoadDemo = (businessName: string) => (
   dispatch: any,
   getState: any
 ) => {
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
+
   const demo = getDemoBusiness(businessName);
 
   if (demo) {
     const { data, menu } = demo;
+
     const paymentMethod =
       data.payment.methods.length === 1 ? data.payment.methods[0] : null;
+
     const paymentAddress = data.payment.address || "";
+
     dispatch({
       type: ORDER_LOAD_MENU_SUCCESS,
       payload: {
@@ -91,6 +95,29 @@ export const orderLoadMenu = (businessName: string) => (
     dispatch(notificationShow(error.message, true));
     dispatch({ type: ORDER_LOAD_MENU_FAILURE });
   }
+};
+
+export const orderLoadMenu = () => (dispatch: any, getState: any) => {
+  const { businessData, businessMenu } = getState().order;
+
+  dispatch({ type: ORDER_LOAD_MENU_REQUEST });
+
+  const paymentMethod =
+    businessData.payment.methods.length === 1
+      ? businessData.payment.methods[0]
+      : null;
+
+  const paymentAddress = businessData.payment.address || "";
+
+  dispatch({
+    type: ORDER_LOAD_MENU_SUCCESS,
+    payload: {
+      businessData,
+      businessMenu,
+      paymentMethod,
+      paymentAddress
+    }
+  });
 };
 
 export const orderAddItem = (item: IMenuItem) => (

@@ -3,6 +3,8 @@ import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Route, Switch, Redirect } from "react-router-dom";
 import Dashboard from "../../layouts/Dashboard";
+import { adminRequestAuthentication } from "../../redux/_admin";
+
 import Overview from "./Overview";
 import Inventory from "./Inventory";
 import Orders from "./Orders";
@@ -14,6 +16,12 @@ class Admin extends React.Component<any, any> {
     businessData: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired
   };
+
+  public componentDidMount() {
+    if (!this.props.address) {
+      this.props.adminRequestAuthentication();
+    }
+  }
 
   public render() {
     const { businessData, match } = this.props;
@@ -41,10 +49,11 @@ class Admin extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
+  address: store.admin.address,
   businessData: store.admin.businessData
 });
 
 export default connect(
   reduxProps,
-  null
+  { adminRequestAuthentication }
 )(Admin);

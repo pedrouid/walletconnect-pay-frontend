@@ -24,6 +24,15 @@ class Order extends React.Component<any, any> {
     this.updatePageMeta();
   }
 
+  public componentDidUpdate(prevProps: any) {
+    if (
+      prevProps.businessData.profile.name !==
+      this.props.businessData.profile.name
+    ) {
+      this.updatePageMeta();
+    }
+  }
+
   public updatePageMeta() {
     const { businessData } = this.props;
     updatePageMeta({
@@ -90,8 +99,8 @@ class Order extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
-  businessData: store.order.businessData,
-  businessMenu: store.order.businessMenu,
+  businessData: store.admin.businessData,
+  businessMenu: store.admin.businessMenu,
   paymentMethod: store.order.paymentMethod,
   loading: store.order.loading,
   submitted: store.order.submitted,

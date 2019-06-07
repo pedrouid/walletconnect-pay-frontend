@@ -17,7 +17,7 @@ import {
   formatCheckoutDetails,
   defaultCheckoutDetails
 } from "../helpers/order";
-import { getDemoBusiness, defaultBusinessData } from "../helpers/business";
+import { getDemoBusiness } from "../helpers/business";
 import { notificationShow } from "./_notification";
 import { modalShow, modalHide } from "./_modal";
 import { apiGetTransactionReceipt } from "../helpers/api";
@@ -38,6 +38,7 @@ import {
   PAYMENT_PENDING,
   PAYMENT_FAILURE
 } from "../constants/paymentStatus";
+import { adminUpdateBusinessData, adminUpdateBusinessMenu } from "./_admin";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -81,11 +82,12 @@ export const orderLoadDemo = (businessName: string) => (
 
     const paymentAddress = data.payment.address || "";
 
+    dispatch(adminUpdateBusinessData(data));
+    dispatch(adminUpdateBusinessMenu(menu));
+
     dispatch({
       type: ORDER_LOAD_MENU_SUCCESS,
       payload: {
-        businessData: data,
-        businessMenu: menu,
         paymentMethod,
         paymentAddress
       }
@@ -98,7 +100,7 @@ export const orderLoadDemo = (businessName: string) => (
 };
 
 export const orderLoadMenu = () => (dispatch: any, getState: any) => {
-  const { businessData, businessMenu } = getState().order;
+  const { businessData, businessMenu } = getState().admin;
 
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
 
@@ -109,11 +111,12 @@ export const orderLoadMenu = () => (dispatch: any, getState: any) => {
 
   const paymentAddress = businessData.payment.address || "";
 
+  dispatch(adminUpdateBusinessData(businessData));
+  dispatch(adminUpdateBusinessMenu(businessMenu));
+
   dispatch({
     type: ORDER_LOAD_MENU_SUCCESS,
     payload: {
-      businessData,
-      businessMenu,
       paymentMethod,
       paymentAddress
     }
@@ -124,7 +127,7 @@ export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  const { businessData } = getState().order;
+  const { businessData } = getState().admin;
   let { items } = getState().order;
   let { rawtotal } = getState().order.checkout;
 
@@ -160,7 +163,7 @@ export const orderRemoveItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  const { businessData } = getState().order;
+  const { businessData } = getState().admin;
   let { items } = getState().order;
   let { rawtotal } = getState().order.checkout;
 
@@ -209,7 +212,7 @@ export const orderManageSession = (
 };
 
 export const orderShowPaymentMethods = () => (dispatch: any, getState: any) => {
-  const { businessData } = getState().order;
+  const { businessData } = getState().admin;
   const callback = (paymentMethod?: IPaymentMethod) =>
     dispatch(orderChoosePaymentMethod(paymentMethod));
   dispatch(modalShow(PAYMENT_METHODS_MODAL, { businessData, callback }));
@@ -317,12 +320,9 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
-    const {
-      businessData,
-      checkout,
-      paymentMethod,
-      paymentAddress
-    } = getState().order;
+    const { businessData } = getState().admin;
+
+    const { checkout, paymentMethod, paymentAddress } = getState().order;
 
     const from = account;
     const to = paymentAddress || account;
@@ -434,8 +434,6 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
-  businessData: defaultBusinessData,
-  businessMenu: null,
   paymentAddress: "",
   paymentMethod: null,
   submitting: false,
@@ -462,8 +460,6 @@ export default (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         loading: false,
-        businessData: action.payload.businessData,
-        businessMenu: action.payload.businessMenu,
         paymentMethod: action.payload.paymentMethod,
         paymentAddress: action.payload.paymentAddress
       };

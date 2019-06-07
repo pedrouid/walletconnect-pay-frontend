@@ -1,5 +1,9 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import Checkout from "../layouts/Checkout";
+import OrderMenu from "../layouts/OrderMenu";
+import PageWrapper from "../components/PageWrapper";
+import Loader from "../components/Loader";
 import {
   orderLoadMenu,
   orderShowPaymentMethods,
@@ -9,21 +13,24 @@ import {
   orderSubmit,
   orderUnsubmit
 } from "../redux/_order";
-import PageWrapper from "../components/PageWrapper";
-import Checkout from "../layouts/Checkout";
-import Loader from "../components/Loader";
-import OrderMenu from "../layouts/OrderMenu";
+import { adminRequestAuthentication } from "../redux/_admin";
 import { revertPageMeta, updatePageMeta } from "../helpers/utilities";
 import { getIpfsUrl } from "../helpers/utilities";
 
 class Order extends React.Component<any, any> {
   public componentDidMount() {
+    if (!this.props.address) {
+      this.props.adminRequestAuthentication();
+    }
     this.props.orderLoadMenu();
     this.updatePageMeta();
   }
 
   public componentDidUpdate(prevProps: any) {
-    if (prevProps.businessData.name !== this.props.businessData.name) {
+    if (
+      prevProps.businessData.profile.name !==
+      this.props.businessData.profile.name
+    ) {
       this.updatePageMeta();
     }
   }
@@ -94,8 +101,9 @@ class Order extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
-  businessData: store.order.businessData,
-  businessMenu: store.order.businessMenu,
+  address: store.admin.address,
+  businessData: store.admin.businessData,
+  businessMenu: store.admin.businessMenu,
   paymentMethod: store.order.paymentMethod,
   loading: store.order.loading,
   submitted: store.order.submitted,
@@ -115,6 +123,7 @@ export default connect(
     orderAddItem,
     orderRemoveItem,
     orderSubmit,
-    orderUnsubmit
+    orderUnsubmit,
+    adminRequestAuthentication
   }
 )(Order);

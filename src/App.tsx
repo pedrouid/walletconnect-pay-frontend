@@ -50,35 +50,9 @@ class App extends React.Component<any, any> {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/demo/:businessName" component={Demo} />
-            <Route
-              exact
-              path="/order"
-              render={routerProps => {
-                // if (!this.props.address) {
-                //   return <Redirect to="/" />;
-                // }
-                return <Order {...routerProps} />;
-              }}
-            />
-            <Route
-              exact
-              path="/signup"
-              render={routerProps => {
-                // if (!this.props.address) {
-                //   return <Redirect to="/" />;
-                // }
-                return <SignUp {...routerProps} />;
-              }}
-            />
-            <Route
-              path="/admin"
-              render={routerProps => {
-                // if (!this.props.address) {
-                //   return <Redirect to="/" />;
-                // }
-                return <Admin {...routerProps} />;
-              }}
-            />
+            <Route exact path="/order" component={Order} />
+            <Route exact path="/signup" component={SignUp} />
+            <Route path="/admin" component={Admin} />
             <Route component={NotFound} />
           </Switch>
         </SContent>

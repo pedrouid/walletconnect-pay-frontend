@@ -8,7 +8,11 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import UploadToIpfs from "../components/UploadToIpfs";
-import { adminUpdateBusinessProfile, adminSubmitSignUp } from "../redux/_admin";
+import {
+  adminRequestAuthentication,
+  adminUpdateBusinessProfile,
+  adminSubmitSignUp
+} from "../redux/_admin";
 import BUSINESS_TYPES from "../constants/businessTypes";
 import COUNTRIES from "../constants/countries";
 
@@ -38,6 +42,12 @@ class SignUp extends React.Component<any, ISignUpProps> {
     country: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired
   };
+
+  public componentDidMount() {
+    if (!this.props.address) {
+      this.props.adminRequestAuthentication();
+    }
+  }
 
   public render() {
     return (
@@ -106,6 +116,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
 }
 
 const reduxProps = (store: any) => ({
+  address: store.admin.address,
   name: store.admin.businessProfile.name,
   type: store.admin.businessProfile.type,
   country: store.admin.businessProfile.country,
@@ -114,5 +125,5 @@ const reduxProps = (store: any) => ({
 
 export default connect(
   reduxProps,
-  { adminUpdateBusinessProfile, adminSubmitSignUp }
+  { adminRequestAuthentication, adminUpdateBusinessProfile, adminSubmitSignUp }
 )(SignUp);

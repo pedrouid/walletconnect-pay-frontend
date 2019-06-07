@@ -1,7 +1,7 @@
 {
   "name": "walletconnect-pay-frontend",
   "description": "WalletConnect Pay - Ethereum POS System with WalletConnect support",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "author": "WalletConnect Pay <walletconnectpay@gmail.com>",
   "license": "GPL-3.0",

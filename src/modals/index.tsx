@@ -1,13 +1,16 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import Modal from "../components/Modal";
-import PaymentMethods from "./PaymentMethods";
-import PlainMessage from "./PlainMessage";
 import { modalHide } from "../redux/_modal";
 import {
   PAYMENT_METHODS_MODAL,
-  PLAIN_MESSAGE_MODAL
+  PLAIN_MESSAGE_MODAL,
+  ADMIN_AUTHENTICATION_MODAL
 } from "../constants/modals";
+
+import PaymentMethods from "./PaymentMethods";
+import PlainMessage from "./PlainMessage";
+import AdminAuthentication from "./AdminAuthentication";
 
 class ModalController extends React.Component<any, any> {
   public renderModal() {
@@ -17,6 +20,8 @@ class ModalController extends React.Component<any, any> {
         return <PaymentMethods {...modalProps} />;
       case PLAIN_MESSAGE_MODAL:
         return <PlainMessage {...modalProps} />;
+      case ADMIN_AUTHENTICATION_MODAL:
+        return <AdminAuthentication {...modalProps} />;
       default:
         return <div />;
     }

@@ -25,20 +25,17 @@ class Order extends React.Component<any, any> {
   }
 
   public componentDidUpdate(prevProps: any) {
-    if (
-      prevProps.businessData.profile.name !==
-      this.props.businessData.profile.name
-    ) {
+    if (prevProps.businessProfile.name !== this.props.businessProfile.name) {
       this.updatePageMeta();
     }
   }
 
   public updatePageMeta() {
-    const { businessData } = this.props;
+    const { businessProfile } = this.props;
     updatePageMeta({
-      title: businessData.profile.name,
-      description: businessData.profile.description,
-      favicon: businessData.profile.logo
+      title: businessProfile.name,
+      description: businessProfile.description,
+      favicon: businessProfile.logo
     });
   }
 
@@ -56,7 +53,9 @@ class Order extends React.Component<any, any> {
 
   public render() {
     const {
-      businessData,
+      businessProfile,
+      businessTax,
+      businessPayment,
       businessMenu,
       paymentMethod,
       loading,
@@ -70,7 +69,9 @@ class Order extends React.Component<any, any> {
     return !this.props.loading ? (
       <React.Fragment>
         <OrderMenu
-          businessData={businessData}
+          businessProfile={businessProfile}
+          businessTax={businessTax}
+          businessPayment={businessPayment}
           businessMenu={businessMenu}
           items={items}
           checkout={checkout}
@@ -80,7 +81,8 @@ class Order extends React.Component<any, any> {
         />
         <Checkout
           loading={loading}
-          businessData={businessData}
+          businessTax={businessTax}
+          businessPayment={businessPayment}
           submitted={submitted}
           payment={payment}
           paymentMethod={paymentMethod}
@@ -99,7 +101,9 @@ class Order extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
-  businessData: store.admin.businessData,
+  businessProfile: store.admin.businessProfile,
+  businessTax: store.admin.businessTax,
+  businessPayment: store.admin.businessPayment,
   businessMenu: store.admin.businessMenu,
   paymentMethod: store.order.paymentMethod,
   loading: store.order.loading,

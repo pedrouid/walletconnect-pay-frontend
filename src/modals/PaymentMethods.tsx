@@ -16,20 +16,19 @@ const SButton = styled(Button)`
 `;
 
 const PaymentMethods = (props: any) => {
-  const { businessData, callback } = props;
+  const { businessPayment, callback } = props;
   if (
     !(
-      businessData &&
-      businessData.payment &&
-      businessData.payment.methods &&
-      businessData.payment.methods.length
+      businessPayment &&
+      businessPayment.methods &&
+      businessPayment.methods.length
     )
   ) {
     return null;
   }
   return (
     <React.Fragment>
-      {businessData.payment.methods.map((method: IPaymentMethod) => {
+      {businessPayment.methods.map((method: IPaymentMethod) => {
         if (method.type === "walletconnect") {
           return (
             <SButton

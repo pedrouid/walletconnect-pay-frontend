@@ -12,8 +12,8 @@ import {
 } from "../helpers/walletconnect";
 import { formatTransaction } from "../helpers/transaction";
 import {
-  // createOrderJson,
-  // updateOrderJson,
+  createOrderJson,
+  updateOrderJson,
   formatCheckoutDetails,
   defaultCheckoutDetails
 } from "../helpers/order";
@@ -38,7 +38,12 @@ import {
   PAYMENT_PENDING,
   PAYMENT_FAILURE
 } from "../constants/paymentStatus";
-import { adminUpdateBusinessData, adminUpdateBusinessMenu } from "./_admin";
+import {
+  adminUpdateBusinessProfile,
+  adminUpdateBusinessTax,
+  adminUpdateBusinessPayment,
+  adminUpdateBusinessMenu
+} from "./_admin";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -77,17 +82,22 @@ export const orderLoadDemo = (businessName: string) => (
   if (demo) {
     const { data, menu } = demo;
 
+    const { profile, tax, payment } = data;
+
     const paymentMethod =
-      data.payment.methods.length === 1 ? data.payment.methods[0] : null;
+      payment.methods.length === 1 ? payment.methods[0] : null;
 
-    const paymentAddress = data.payment.address || "";
+    const paymentAddress = payment.address || "";
 
-    dispatch(adminUpdateBusinessData(data));
+    dispatch(adminUpdateBusinessProfile(profile));
+    dispatch(adminUpdateBusinessTax(tax));
+    dispatch(adminUpdateBusinessPayment(payment));
     dispatch(adminUpdateBusinessMenu(menu));
 
     dispatch({
       type: ORDER_LOAD_MENU_SUCCESS,
       payload: {
+        demo: true,
         paymentMethod,
         paymentAddress
       }
@@ -100,23 +110,21 @@ export const orderLoadDemo = (businessName: string) => (
 };
 
 export const orderLoadMenu = () => (dispatch: any, getState: any) => {
-  const { businessData, businessMenu } = getState().admin;
+  const { businessPayment, businessMenu } = getState().admin;
 
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
 
   const paymentMethod =
-    businessData.payment.methods.length === 1
-      ? businessData.payment.methods[0]
-      : null;
+    businessPayment.methods.length === 1 ? businessPayment.methods[0] : null;
 
-  const paymentAddress = businessData.payment.address || "";
+  const paymentAddress = businessPayment.address || "";
 
-  dispatch(adminUpdateBusinessData(businessData));
   dispatch(adminUpdateBusinessMenu(businessMenu));
 
   dispatch({
     type: ORDER_LOAD_MENU_SUCCESS,
     payload: {
+      demo: false,
       paymentMethod,
       paymentAddress
     }
@@ -127,7 +135,7 @@ export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  const { businessData } = getState().admin;
+  const { businessTax } = getState().admin;
   let { items } = getState().order;
   let { rawtotal } = getState().order.checkout;
 
@@ -154,7 +162,7 @@ export const orderAddItem = (item: IMenuItem) => (
     type: ORDER_UPDATE_ITEMS,
     payload: {
       items,
-      checkout: formatCheckoutDetails(rawtotal, businessData.tax)
+      checkout: formatCheckoutDetails(rawtotal, businessTax)
     }
   });
 };
@@ -163,7 +171,7 @@ export const orderRemoveItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  const { businessData } = getState().admin;
+  const { businessTax } = getState().admin;
   let { items } = getState().order;
   let { rawtotal } = getState().order.checkout;
 
@@ -184,7 +192,7 @@ export const orderRemoveItem = (item: IMenuItem) => (
     type: ORDER_UPDATE_ITEMS,
     payload: {
       items,
-      checkout: formatCheckoutDetails(rawtotal, businessData.tax)
+      checkout: formatCheckoutDetails(rawtotal, businessTax)
     }
   });
 };
@@ -212,10 +220,10 @@ export const orderManageSession = (
 };
 
 export const orderShowPaymentMethods = () => (dispatch: any, getState: any) => {
-  const { businessData } = getState().admin;
+  const { businessPayment } = getState().admin;
   const callback = (paymentMethod?: IPaymentMethod) =>
     dispatch(orderChoosePaymentMethod(paymentMethod));
-  dispatch(modalShow(PAYMENT_METHODS_MODAL, { businessData, callback }));
+  dispatch(modalShow(PAYMENT_METHODS_MODAL, { businessPayment, callback }));
 };
 
 export const orderChoosePaymentMethod = (
@@ -231,16 +239,17 @@ export const orderChoosePaymentMethod = (
 };
 
 export const orderSubmit = () => async (dispatch: any, getState: any) => {
-  const {
-    // items,
-    // checkout,
-    paymentMethod
-  } = getState().order;
+  const { demo, items, checkout, paymentMethod } = getState().order;
 
   dispatch({ type: ORDER_SUBMIT_REQUEST });
 
-  // const orderId = await createOrderJson({ items, checkout });
-  const orderId = "test-order-id";
+  let orderId = "";
+
+  if (demo) {
+    orderId = "demo-orderId";
+  } else {
+    orderId = await createOrderJson({ items, checkout });
+  }
 
   if (paymentMethod.type === "walletconnect") {
     dispatch(orderSubmitWalletConnect(orderId));
@@ -317,10 +326,12 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
   dispatch: any,
   getState: any
 ) => {
+  const { demo } = getState().order;
+
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
-    const { businessData } = getState().admin;
+    const { businessPayment } = getState().admin;
 
     const { checkout, paymentMethod, paymentAddress } = getState().order;
 
@@ -332,7 +343,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
       from,
       to,
       amount,
-      businessData.payment.currency,
+      businessPayment.currency,
       paymentMethod.assetSymbol,
       paymentMethod.chainId
     );
@@ -342,7 +353,9 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
     if (txhash) {
       const payment: IPayment = { status: PAYMENT_PENDING, result: txhash };
 
-      // await updateOrderJson(orderId, { payment });
+      if (!demo) {
+        await updateOrderJson(orderId, { payment });
+      }
 
       await dispatch({ type: ORDER_PAYMENT_SUCCESS, payload: payment });
 
@@ -352,14 +365,18 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
     } else {
       const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
 
-      // await updateOrderJson(orderId, { payment });
+      if (!demo) {
+        await updateOrderJson(orderId, { payment });
+      }
 
       dispatch({ type: ORDER_PAYMENT_FAILURE, payload: payment });
     }
   } catch (error) {
     const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
 
-    // await updateOrderJson(orderId, { payment });
+    if (!demo) {
+      await updateOrderJson(orderId, { payment });
+    }
 
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
@@ -434,6 +451,7 @@ export const orderClearState = () => ({ type: ORDER_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
+  demo: false,
   paymentAddress: "",
   paymentMethod: null,
   submitting: false,
@@ -460,6 +478,7 @@ export default (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         loading: false,
+        demo: action.payload.demo,
         paymentMethod: action.payload.paymentMethod,
         paymentAddress: action.payload.paymentAddress
       };

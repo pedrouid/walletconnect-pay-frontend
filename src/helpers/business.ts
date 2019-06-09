@@ -1,4 +1,9 @@
-import { IBusinessData } from "../helpers/types";
+import {
+  IBusinessData,
+  IBusinessProfile,
+  IBusinessTax,
+  IBusinessPayment
+} from "../helpers/types";
 import { openBox, openSpace, setSpacePrivate, getSpacePrivate } from "./box";
 import { BUSINESS_DATA } from "../constants/space";
 
@@ -12,36 +17,61 @@ export function getDemoBusiness(bussinessName: string) {
   return result;
 }
 
+export const defaultBusinessProfile: IBusinessProfile = {
+  id: "",
+  name: "",
+  description: "",
+  logo: "",
+  type: "cafe",
+  country: "DE",
+  email: "",
+  phone: ""
+};
+
+export const defaultBusinessTax: IBusinessTax = {
+  rate: 20,
+  included: true,
+  display: true
+};
+
+export const defaultBusinessPayment: IBusinessPayment = {
+  currency: "USD",
+  address: "",
+  methods: [
+    {
+      type: "walletconnect",
+      chainId: 1,
+      assetSymbol: "DAI"
+    }
+  ]
+};
+
 export const defaultBusinessData: IBusinessData = {
-  profile: {
-    id: "",
-    name: "",
-    description: "",
-    logo: "",
-    type: "cafe",
-    country: "",
-    email: "",
-    phone: ""
-  },
-  tax: {
-    rate: 0,
-    included: true,
-    display: false
-  },
-  payment: {
-    methods: [],
-    currency: "USD",
-    address: ""
-  }
+  profile: defaultBusinessProfile,
+  tax: defaultBusinessTax,
+  payment: defaultBusinessPayment
 };
 
 export function formatBusinessData(
   partialBusinessData: Partial<IBusinessData>
 ): IBusinessData {
-  const businessData: IBusinessData = {
-    ...defaultBusinessData,
-    ...partialBusinessData
+  const profile = {
+    ...defaultBusinessProfile,
+    ...partialBusinessData.profile
   };
+
+  const tax = {
+    ...defaultBusinessTax,
+    ...partialBusinessData.tax
+  };
+
+  const payment = {
+    ...defaultBusinessPayment,
+    ...partialBusinessData.payment
+  };
+
+  const businessData: IBusinessData = { profile, tax, payment };
+
   return businessData;
 }
 

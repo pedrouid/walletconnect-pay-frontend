@@ -15,7 +15,8 @@ import {
   SColumnList,
   SColumnRow,
   STitle,
-  SGrid
+  SGrid,
+  SCenter
 } from "../components/common";
 
 const SHeader = styled.div`
@@ -45,9 +46,19 @@ const SListItem = styled(ListItem)`
   margin-bottom: 10px;
 `;
 
+const SEmptyState = styled(SCenter)`
+  background: rgb(${colors.white});
+  & h6 {
+    font-weight: normal;
+    color: rgb(${colors.grey});
+  }
+`;
+
 const OrderMenu = (props: any) => {
   const {
-    businessData,
+    businessProfile,
+    businessTax,
+    businessPayment,
     businessMenu,
     items,
     checkout,
@@ -55,54 +66,67 @@ const OrderMenu = (props: any) => {
     onAdd,
     onRemove
   } = props;
-  const ratio = 70;
   return (
     <React.Fragment>
       <SHeader>
         <Link style={{ display: "flex" }} to="/admin">
-          {businessData.profile.logo && (
-            <SLogo src={businessData.profile.logo} alt="" />
-          )}
-          <SBranding>{businessData.profile.name}</SBranding>
+          {businessProfile.logo && <SLogo src={businessProfile.logo} alt="" />}
+          <SBranding>{businessProfile.name}</SBranding>
         </Link>
       </SHeader>
       <SColumnWrapper>
-        <SColumn width={items.length ? ratio : 100}>
+        <SColumn width={70}>
           <SColumnHeader>
             <STitle>{`Menu`}</STitle>
           </SColumnHeader>
-          <SGrid itemMaxWidth={360} itemMaxHeight={150} gap={10}>
-            {businessMenu &&
-              businessMenu.map((item: IMenuItem) => (
-                <ListItem
-                  key={`menu-${item.name}`}
-                  item={item}
-                  businessData={businessData}
-                  onClick={() => onAdd(item)}
-                />
-              ))}
-          </SGrid>
+          {businessMenu && businessMenu.length ? (
+            <SGrid itemMaxWidth={360} itemMaxHeight={150} gap={10}>
+              {businessMenu &&
+                businessMenu.map((item: IMenuItem) => (
+                  <ListItem
+                    key={`menu-${item.name}`}
+                    item={item}
+                    businessPayment={businessPayment}
+                    onClick={() => onAdd(item)}
+                  />
+                ))}
+            </SGrid>
+          ) : (
+            <SEmptyState>
+              <h6>{`No Items`}</h6>
+            </SEmptyState>
+          )}
         </SColumn>
-        <SColumnOrder width={items.length ? 100 - ratio : 0}>
+        <SColumnOrder width={30}>
           <SColumnHeader>
             <STitle>{`Order`}</STitle>
           </SColumnHeader>
-          <SColumnList>
-            {items.map((item: IOrderItem) => (
-              <SListItem
-                noImage
-                key={`order-${item.name}`}
-                item={item}
-                businessData={businessData}
-                actions={[
-                  { label: "Remove", callback: onRemove },
-                  { label: "Add", callback: onAdd }
-                ]}
-              />
-            ))}
-          </SColumnList>
+          {items && items.length ? (
+            <SColumnList>
+              {items.map((item: IOrderItem) => (
+                <SListItem
+                  noImage
+                  key={`order-${item.name}`}
+                  item={item}
+                  businessPayment={businessPayment}
+                  actions={[
+                    { label: "Remove", callback: onRemove },
+                    { label: "Add", callback: onAdd }
+                  ]}
+                />
+              ))}
+            </SColumnList>
+          ) : (
+            <SEmptyState>
+              <h6>{`No Items`}</h6>
+            </SEmptyState>
+          )}
           <SColumnFooter>
-            <Summary checkout={checkout} businessData={businessData} />
+            <Summary
+              checkout={checkout}
+              businessTax={businessTax}
+              businessPayment={businessPayment}
+            />
             <SColumnRow>
               <Button marginTop={12} onClick={onSubmit}>{`Pay`}</Button>
             </SColumnRow>

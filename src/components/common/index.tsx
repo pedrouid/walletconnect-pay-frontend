@@ -169,3 +169,9 @@ export const SCenterColumn = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
+export const SSeparator = styled.div`
+  border-bottom: 1px solid rgb(${colors.lightGrey});
+  margin: 40px 0 20px !important;
+  width: 100%;
+`;

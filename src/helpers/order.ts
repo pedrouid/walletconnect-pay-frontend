@@ -6,7 +6,8 @@ import {
 } from "../helpers/types";
 import { getSpacePrivate, setSpacePrivate } from "./box";
 import { uuid } from "../helpers/utilities";
-import { WC_ORDER } from "../constants/space";
+import { PAYMENT_PENDING } from "../constants/paymentStatus";
+import { ORDER_ID } from "../constants/space";
 
 export const defaultCheckoutDetails: ICheckoutDetails = {
   rawtotal: 0,
@@ -40,7 +41,7 @@ export function formatCheckoutDetails(
 }
 
 function formatOrderKey(orderId: string): string {
-  return `${WC_ORDER}:${orderId}`;
+  return `${ORDER_ID}_${orderId}`;
 }
 
 export async function createOrderJson(orderDetails: {
@@ -55,7 +56,7 @@ export async function createOrderJson(orderDetails: {
     items: orderDetails.items,
     checkout: orderDetails.checkout,
     payment: {
-      status: "pending",
+      status: PAYMENT_PENDING,
       result: ""
     }
   };

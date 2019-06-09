@@ -199,7 +199,8 @@ function formatBurnerUrl(
 
 const Checkout = ({
   loading,
-  businessData,
+  businessTax,
+  businessPayment,
   submitted,
   payment,
   paymentMethod,
@@ -247,7 +248,11 @@ const Checkout = ({
             <PaymentResult payment={payment} />
           )}
           <SModalFooter>
-            <Summary checkout={checkout} businessData={businessData} />
+            <Summary
+              checkout={checkout}
+              businessTax={businessTax}
+              businessPayment={businessPayment}
+            />
           </SModalFooter>
         </SModalContainer>
       ) : (

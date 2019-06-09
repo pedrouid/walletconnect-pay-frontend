@@ -7,7 +7,8 @@ import BUSINESS_TYPES from "../constants/businessTypes";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 import COUNTRIES from "../constants/countries";
 import { IPFS_GATEWAY } from "../constants/ipfs";
-import { APP_DESCRIPTION, APP_NAME } from "src/constants/appMeta";
+import { APP_DESCRIPTION, APP_NAME } from "../constants/appMeta";
+import { removeDiacritics } from "./diacritics";
 
 export function capitalize(string: string): string {
   return string
@@ -301,4 +302,28 @@ export function revertPageMeta() {
   updateTitle(APP_NAME);
   updateMetaTag("description", "content", APP_DESCRIPTION);
   updateFavicon("/favicon.ico");
+}
+
+export function parseConstantString(constant: string): string {
+  let result = constant
+    .toLowerCase()
+    .split("_")
+    .join(" ");
+  result = capitalize(result);
+  return result;
+}
+
+export function formatConstantString(value: string): string {
+  const result = value
+    .toUpperCase()
+    .split(" ")
+    .join("_");
+  return result;
+}
+
+export function formatBusinessId(name: string): string {
+  return removeDiacritics(name)
+    .toLowerCase()
+    .split(/\W/gi)
+    .join("-");
 }

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Icon from "./Icon";
 import Loader from "./Loader";
 import uploadIcon from "../assets/upload.svg";
+import editIcon from "../assets/edit.svg";
 import { colors, transitions } from "../styles";
 import { SLabel } from "./common";
 
@@ -21,6 +22,17 @@ interface IUploadButtonStyleProps {
   size: number;
   ratio: number;
 }
+
+const SEditIcon = styled(Icon)`
+  transition: ${transitions.short};
+  position: absolute;
+  right: ${({ size }) => `${size / 2}px`};
+  top: ${({ size }) => `${size / 2}px`};
+  cursor: auto;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+`;
 
 const SUploadButton = styled.button<IUploadButtonStyleProps>`
   position: relative;
@@ -45,6 +57,13 @@ const SUploadButton = styled.button<IUploadButtonStyleProps>`
   @media (hover: hover) {
     &:hover {
       transform: ${({ disabled }) => (!disabled ? "translateY(-1px)" : "none")};
+    }
+
+    &:hover ${SEditIcon} {
+      cursor: pointer;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
   }
 `;
@@ -73,7 +92,8 @@ class Upload extends React.Component<any, any> {
     onError: PropTypes.func,
     color: PropTypes.string,
     size: PropTypes.number,
-    label: PropTypes.string
+    label: PropTypes.string,
+    image: PropTypes.string
   };
 
   public static defaultProps = {
@@ -106,18 +126,21 @@ class Upload extends React.Component<any, any> {
   }
 
   public onUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { apiHandler, onSuccess, onError } = this.props;
     if (event.target && event.target.files) {
       this.setState({ uploading: true });
       try {
         const files = Array.from(event.target.files);
 
-        const result = await this.props.apiHandler(files);
+        const result = await apiHandler(files);
 
         this.setState({ uploading: false, result });
-        this.props.onSuccess(result);
+        onSuccess(result);
       } catch (err) {
         this.setState({ uploading: false });
-        this.props.onError(err);
+        if (onError) {
+          onError(err);
+        }
       }
     }
   };
@@ -131,11 +154,12 @@ class Upload extends React.Component<any, any> {
   public render() {
     const { uploading, result } = this.state;
     const { color, size, ratio, label } = this.props;
+    const image = result || this.props.image;
     return (
       <SUploadWrapper>
         {!!label && <SLabel>{label}</SLabel>}
         <SUploadButton
-          disabled={!!result && !uploading}
+          disabled={!!image && !uploading}
           size={size}
           color={color}
           ratio={ratio}
@@ -148,8 +172,16 @@ class Upload extends React.Component<any, any> {
             style={{ display: "none" }}
             onChange={this.onUpload}
           />
-          {result ? (
-            <SImageDisplay url={result} />
+          {image && !uploading ? (
+            <React.Fragment>
+              <SImageDisplay url={image} />
+              <SEditIcon
+                size={(5 * size) / 40}
+                icon={editIcon}
+                color={color}
+                onClick={this.onClick}
+              />
+            </React.Fragment>
           ) : !uploading ? (
             <Icon size={size / 4} icon={uploadIcon} color={color} />
           ) : (

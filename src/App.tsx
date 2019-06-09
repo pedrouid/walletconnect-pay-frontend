@@ -1,12 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import styled from "styled-components";
-import {
-  Route,
-  Switch,
-  withRouter
-  // Redirect
-} from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import Home from "./pages/Home";
 import Demo from "./pages/Demo";

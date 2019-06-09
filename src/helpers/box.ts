@@ -120,3 +120,33 @@ export async function removeSpacePrivate(key: string) {
   }
   await space.private.remove(key);
 }
+
+export async function setSpacePublic(key: string, value: any) {
+  if (!space) {
+    throw new Error("Space is not open yet");
+  }
+  if (typeof value !== "string") {
+    value = JSON.stringify(value);
+  }
+  await space.public.set(key, value);
+}
+
+export async function getSpacePublic(key: string) {
+  if (!space) {
+    throw new Error("Space is not open yet");
+  }
+  let result = await space.public.get(key);
+  try {
+    result = JSON.parse(result);
+  } catch (error) {
+    // ignore error
+  }
+  return result;
+}
+
+export async function removeSpacePublic(key: string) {
+  if (!space) {
+    throw new Error("Space is not open yet");
+  }
+  await space.public.remove(key);
+}

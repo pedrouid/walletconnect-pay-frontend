@@ -1,67 +1,138 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
+import { connect } from "react-redux";
 import styled from "styled-components";
+import ProfileForm from "../../components/ProfileForm";
+import Dropdown from "../../components/Dropdown";
+import Toggle from "../../components/Toggle";
+import Input from "../../components/Input";
+import { SField, SLabel, SSeparator } from "../../components/common";
 import {
-  getBusinessType,
-  getCountryName,
-  getIpfsUrl
-} from "../../helpers/utilities";
-import picture from "../../assets/picture.png";
-import { SField, SLabel } from "../../components/common";
+  adminUpdateBusinessProfile,
+  adminUpdateBusinessTax,
+  adminUpdateBusinessPayment,
+  adminSaveBusinessData
+} from "../../redux/_admin";
+import NATIVE_CURRENCIES from "../../constants/nativeCurrencies";
 
-const SLogo = styled.div`
+const SSettingsWrapper = styled.div`
   width: 100%;
-  & img {
-    width: 100%;
-    max-width: 150px;
-  }
-`;
-
-const SProfileWrapper = styled.div`
-  width: 100%;
-  max-width: 600px;
+  max-width: 1000px;
   display: flex;
 `;
 
-const SProfileSection = styled.div`
+const SSettingsSection = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   padding: 20px;
 `;
 
-const SProfileLeft = styled(SProfileSection)`
-  width: 300px;
-`;
-const SProfileRight = styled(SProfileSection)`
-  width: 100%;
-`;
+class Settings extends React.Component<any, any> {
+  public static propTypes = {
+    businessProfile: PropTypes.object.isRequired,
+    businessTax: PropTypes.object.isRequired,
+    businessPayment: PropTypes.object.isRequired
+  };
 
-const Profile = ({ profile }: any) => (
-  <SProfileWrapper>
-    <SProfileLeft>
-      <SLogo>
-        <img
-          src={getIpfsUrl(profile.logo)}
-          alt={profile.name}
-          onError={(event: any) => (event.target.src = picture)}
-        />
-      </SLogo>
-    </SProfileLeft>
-    <SProfileRight>
-      <h6>{"Business Profile"}</h6>
-      <SLabel>{"Name"}</SLabel>
-      <SField>{profile.name}</SField>
-      <SLabel>{"Description"}</SLabel>
-      <SField>{profile.description}</SField>
-      <SLabel>{"Type"}</SLabel>
-      <SField>{getBusinessType(profile.type)}</SField>
-      <SLabel>{"Country"}</SLabel>
-      <SField>{getCountryName(profile.country)}</SField>
-      <SLabel>{"Email"}</SLabel>
-      <SField>{profile.email}</SField>
-      <SLabel>{"Phone"}</SLabel>
-      <SField>{profile.phone}</SField>
-    </SProfileRight>
-  </SProfileWrapper>
-);
+  public render() {
+    const { businessProfile, businessTax, businessPayment } = this.props;
+    return (
+      <SSettingsWrapper>
+        <SSettingsSection>
+          <ProfileForm
+            title={`Profile`}
+            businessProfile={businessProfile}
+            onInputChange={this.props.adminUpdateBusinessProfile}
+            onInputSubmit={this.props.adminSaveBusinessData}
+          />
+        </SSettingsSection>
+        <SSettingsSection>
+          <h6>{"Tax"}</h6>
+          <Input
+            type="tel"
+            label="Rate"
+            placeholder="20"
+            value={`${businessTax.rate}`}
+            onChange={(e: any) =>
+              this.props.adminUpdateBusinessTax({
+                rate: e.target.value
+              })
+            }
+            onSubmit={this.props.adminSaveBusinessData}
+          />
+          <SLabel>{"Included"}</SLabel>
+          <Toggle
+            color={`lightBlue`}
+            active={businessTax.included}
+            onClick={() => {
+              this.props.adminUpdateBusinessTax({
+                included: !businessTax.included
+              });
+              this.props.adminSaveBusinessData();
+            }}
+          />
+          <SLabel>{"Display"}</SLabel>
+          <Toggle
+            color={`lightBlue`}
+            active={businessTax.display}
+            onClick={() => {
+              this.props.adminUpdateBusinessTax({
+                display: !businessTax.display
+              });
+              this.props.adminSaveBusinessData();
+            }}
+          />
 
-export default Profile;
+          <SSeparator />
+
+          <h6>{"Payment"}</h6>
+          <Dropdown
+            label="Currency"
+            selected={businessPayment.currency}
+            options={NATIVE_CURRENCIES}
+            displayKey={"currency"}
+            targetKey={"currency"}
+            onChange={(currency: string) => {
+              this.props.adminUpdateBusinessPayment({
+                currency
+              });
+              this.props.adminSaveBusinessData();
+            }}
+          />
+          <Input
+            type="text"
+            label="ETH Address"
+            autoComplete={"off"}
+            placeholder="0x0000000000000000000000000000000000000000"
+            value={businessPayment.address}
+            onChange={(e: any) =>
+              this.props.adminUpdateBusinessPayment({
+                address: e.target.value
+              })
+            }
+            onSubmit={this.props.adminSaveBusinessData}
+          />
+          <SLabel>{"Methods"}</SLabel>
+          <SField>{businessPayment.methods.toString()}</SField>
+        </SSettingsSection>
+      </SSettingsWrapper>
+    );
+  }
+}
+
+const reduxProps = (store: any) => ({
+  businessProfile: store.admin.businessProfile,
+  businessTax: store.admin.businessTax,
+  businessPayment: store.admin.businessPayment
+});
+
+export default connect(
+  reduxProps,
+  {
+    adminUpdateBusinessProfile,
+    adminUpdateBusinessTax,
+    adminUpdateBusinessPayment,
+    adminSaveBusinessData
+  }
+)(Settings);

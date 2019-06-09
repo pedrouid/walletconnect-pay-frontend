@@ -70,7 +70,7 @@ const Loader = (props: ILoaderStyleProps) => (
 
 Loader.defaultProps = {
   size: 50,
-  color: "dark",
+  color: "darkBlue",
   background: "white"
 };
 

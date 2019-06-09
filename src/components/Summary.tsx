@@ -4,36 +4,30 @@ import { SColumnRowTitle, SColumnRow } from "../components/common";
 import { formatDisplayAmount } from "../helpers/utilities";
 
 const Summary = (props: any) => {
-  const { checkout, businessData } = props;
+  const { checkout, businessTax, businessPayment } = props;
   return (
     <React.Fragment>
       <SColumnRow>
         <SColumnRowTitle>{`Summary`}</SColumnRowTitle>
       </SColumnRow>
-      {businessData.tax.display ? (
+      {businessTax.display ? (
         <React.Fragment>
           <SColumnRow>
             <div>{`Sub Total`}</div>
             <div>
-              {formatDisplayAmount(
-                checkout.subtotal,
-                businessData.payment.currency
-              )}
+              {formatDisplayAmount(checkout.subtotal, businessPayment.currency)}
             </div>
           </SColumnRow>
           <SColumnRow>
             <div>{`Tax`}</div>
             <div>
-              {formatDisplayAmount(checkout.tax, businessData.payment.currency)}
+              {formatDisplayAmount(checkout.tax, businessPayment.currency)}
             </div>
           </SColumnRow>
           <SColumnRow>
             <div>{`Net Total`}</div>
             <div>
-              {formatDisplayAmount(
-                checkout.nettotal,
-                businessData.payment.currency
-              )}
+              {formatDisplayAmount(checkout.nettotal, businessPayment.currency)}
             </div>
           </SColumnRow>
         </React.Fragment>
@@ -41,10 +35,7 @@ const Summary = (props: any) => {
         <SColumnRow>
           <div>{`Total`}</div>
           <div>
-            {formatDisplayAmount(
-              checkout.rawtotal,
-              businessData.payment.currency
-            )}
+            {formatDisplayAmount(checkout.rawtotal, businessPayment.currency)}
           </div>
         </SColumnRow>
       )}

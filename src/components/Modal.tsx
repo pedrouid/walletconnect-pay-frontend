@@ -11,7 +11,7 @@ interface ILightboxStyleProps {
 }
 
 const SLightbox = styled.div<ILightboxStyleProps>`
-  transition: opacity 0.1s ease-in-out;
+  transition: ${transitions.short.replace("all", "opacity")};
   text-align: center;
   position: absolute;
   width: 100vw;

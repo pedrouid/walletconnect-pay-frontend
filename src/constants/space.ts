@@ -1,7 +1,12 @@
-import { getAppVersion } from "../helpers/utilities";
+import { getAppVersion, formatConstantString } from "../helpers/utilities";
+import { APP_NAME } from "./appMeta";
 
-export const SPACE_ID: string = `WALLETCONNECT_PAY_V_${getAppVersion()}`;
+const SPACE_NAME = formatConstantString(APP_NAME);
 
-export const BUSINESS_DATA: string = "BUSINESS_DATA";
+export const SPACE_ID = `${SPACE_NAME}_V_${getAppVersion()}`;
 
-export const WC_ORDER: string = "WC_ORDER";
+export const BUSINESS_DATA = `${SPACE_NAME}_BUSINESS_DATA`;
+
+export const BUSINESS_MENU = `${SPACE_NAME}_BUSINESS_MENU`;
+
+export const ORDER_ID = `${SPACE_NAME}_ORDER_ID`;

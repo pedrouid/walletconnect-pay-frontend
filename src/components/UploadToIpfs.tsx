@@ -9,7 +9,8 @@ class UploadToIpfs extends React.Component<any, any> {
     onUpload: PropTypes.func.isRequired,
     color: PropTypes.string,
     size: PropTypes.number,
-    label: PropTypes.string
+    label: PropTypes.string,
+    image: PropTypes.string
   };
 
   public handleApiUpload = async (files: File[]) => {
@@ -33,14 +34,16 @@ class UploadToIpfs extends React.Component<any, any> {
   public onUpload = (url: string) => this.props.onUpload(getIpfsHash(url));
 
   public render() {
-    const { color, size, label } = this.props;
+    const { color, size, label, image } = this.props;
     return (
       <Upload
         color={color}
         size={size}
         label={label}
+        image={image}
         apiHandler={this.handleApiUpload}
         onSuccess={this.onUpload}
+        onError={console.error} // tslint:disable-line
       />
     );
   }

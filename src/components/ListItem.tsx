@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { colors, fonts, shadows, transitions } from "../styles";
-import { IMenuItem, IOrderItem, IBusinessData } from "../helpers/types";
+import { IMenuItem, IOrderItem, IBusinessPayment } from "../helpers/types";
 import { formatDisplayAmount } from "../helpers/utilities";
 import {
   SListItemImage,
@@ -118,7 +118,7 @@ interface IListItemAction {
 
 interface IListItemProps {
   item: IOrderItem | IMenuItem;
-  businessData: IBusinessData;
+  businessPayment: IBusinessPayment;
   actions?: IListItemAction[];
   noImage?: boolean;
   onClick?: any;
@@ -126,7 +126,7 @@ interface IListItemProps {
 
 const ListItem = ({
   item,
-  businessData,
+  businessPayment,
   actions,
   noImage,
   onClick,
@@ -152,14 +152,14 @@ const ListItem = ({
             <SListItemSubtotal>
               {formatDisplayAmount(
                 item.price * item.quantity,
-                businessData.payment.currency
+                businessPayment.currency
               )}
             </SListItemSubtotal>
           </SListItemText>
         </SListItemDetails>
       ) : (
         <SListItemPrice>
-          {formatDisplayAmount(item.price, businessData.payment.currency)}
+          {formatDisplayAmount(item.price, businessPayment.currency)}
         </SListItemPrice>
       )}
     </SListItemContainer>

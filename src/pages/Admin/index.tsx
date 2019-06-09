@@ -13,7 +13,6 @@ import Settings from "./Settings";
 
 class Admin extends React.Component<any, any> {
   public static propTypes = {
-    businessData: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired
   };
 
@@ -24,9 +23,9 @@ class Admin extends React.Component<any, any> {
   }
 
   public render() {
-    const { businessData, match } = this.props;
+    const { loading, match } = this.props;
     return (
-      <Dashboard match={match}>
+      <Dashboard match={match} loading={loading}>
         <Switch>
           <Route exact path={match.url} component={Overview} />
           <Route exact path={`${match.url}/inventory`} component={Inventory} />
@@ -36,11 +35,7 @@ class Admin extends React.Component<any, any> {
             path={`${match.url}/accounting`}
             component={Accounting}
           />
-          <Route
-            exact
-            path={`${match.url}/settings`}
-            render={() => <Settings profile={businessData.profile} />}
-          />
+          <Route exact path={`${match.url}/settings`} component={Settings} />
           <Route render={() => <Redirect to={match.url} />} />
         </Switch>
       </Dashboard>
@@ -49,8 +44,8 @@ class Admin extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
-  address: store.admin.address,
-  businessData: store.admin.businessData
+  loading: store.admin.loading,
+  address: store.admin.address
 });
 
 export default connect(

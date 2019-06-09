@@ -105,7 +105,7 @@ export interface IBusinessData {
 
 export type IPaymentStatus = "pending" | "success" | "failure";
 
-export interface IPayment {
+export interface IPaymentReceipt {
   status: IPaymentStatus;
   result: any;
 }
@@ -115,5 +115,5 @@ export interface IOrderJson {
   timestamp: number;
   items: IOrderItem[];
   checkout: ICheckoutDetails;
-  payment: IPayment;
+  payment: IPaymentReceipt;
 }

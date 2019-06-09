@@ -14,7 +14,7 @@ import {
   SListItemDescription
 } from "../components/common";
 
-import { IPayment } from "../helpers/types";
+import { IPaymentReceipt } from "../helpers/types";
 
 import {
   PAYMENT_SUCCESS,
@@ -132,7 +132,7 @@ const PAYMENT_COPY = {
   }
 };
 
-const PaymentResult = (props: { payment: IPayment }) => {
+const PaymentResult = (props: { payment: IPaymentReceipt }) => {
   switch (props.payment.status) {
     case PAYMENT_SUCCESS:
       return (

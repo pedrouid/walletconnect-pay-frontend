@@ -1,7 +1,7 @@
 import {
   IMenuItem,
   IOrderItem,
-  IPayment,
+  IPaymentReceipt,
   IPaymentMethod
 } from "../helpers/types";
 import { IJsonRpcRequest } from "@walletconnect/types";
@@ -351,7 +351,10 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
     const txhash = await sendTransaction(tx);
 
     if (txhash) {
-      const payment: IPayment = { status: PAYMENT_PENDING, result: txhash };
+      const payment: IPaymentReceipt = {
+        status: PAYMENT_PENDING,
+        result: txhash
+      };
 
       if (!demo) {
         await updateOrderJson(orderId, { payment });
@@ -363,7 +366,10 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
 
       dispatch(orderSubscribeToPayment());
     } else {
-      const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
+      const payment: IPaymentReceipt = {
+        status: PAYMENT_FAILURE,
+        result: null
+      };
 
       if (!demo) {
         await updateOrderJson(orderId, { payment });
@@ -372,7 +378,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
       dispatch({ type: ORDER_PAYMENT_FAILURE, payload: payment });
     }
   } catch (error) {
-    const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
+    const payment: IPaymentReceipt = { status: PAYMENT_FAILURE, result: null };
 
     if (!demo) {
       await updateOrderJson(orderId, { payment });

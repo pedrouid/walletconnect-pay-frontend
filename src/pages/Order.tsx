@@ -14,8 +14,11 @@ import {
   orderUnsubmit
 } from "../redux/_order";
 import { adminRequestAuthentication } from "../redux/_admin";
-import { revertPageMeta, updatePageMeta } from "../helpers/utilities";
-import { getIpfsUrl } from "../helpers/utilities";
+import {
+  revertPageMeta,
+  updatePageMeta,
+  sanitizeImgSrc
+} from "../helpers/utilities";
 
 class Order extends React.Component<any, any> {
   public componentDidMount() {
@@ -37,7 +40,7 @@ class Order extends React.Component<any, any> {
     updatePageMeta({
       title: businessProfile.name,
       description: businessProfile.description,
-      favicon: getIpfsUrl(businessProfile.logo)
+      favicon: sanitizeImgSrc(businessProfile.logo)
     });
   }
 

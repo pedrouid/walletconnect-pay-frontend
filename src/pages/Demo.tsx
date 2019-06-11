@@ -101,10 +101,10 @@ class Order extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
-  businessProfile: store.admin.businessProfile,
-  businessTax: store.admin.businessTax,
-  businessPayment: store.admin.businessPayment,
-  businessMenu: store.admin.businessMenu,
+  businessProfile: store.demo.businessProfile,
+  businessTax: store.demo.businessTax,
+  businessPayment: store.demo.businessPayment,
+  businessMenu: store.demo.businessMenu,
   paymentMethod: store.order.paymentMethod,
   loading: store.order.loading,
   submitted: store.order.submitted,

@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { colors, fonts, shadows, transitions } from "../styles";
 import { IMenuItem, IOrderItem, IBusinessPayment } from "../helpers/types";
-import { formatDisplayAmount } from "../helpers/utilities";
+import { formatDisplayAmount, sanitizeImgSrc } from "../helpers/utilities";
 import {
   SListItemImage,
   SListItemText,
@@ -137,7 +137,7 @@ const ListItem = ({
       <SListItemDetails flex={3}>
         {!!item.image && !noImage && (
           <SListItemImage>
-            <img src={item.image} alt={item.name} />
+            <img src={sanitizeImgSrc(item.image)} alt={item.name} />
           </SListItemImage>
         )}
         <SListItemText>

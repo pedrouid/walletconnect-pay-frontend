@@ -6,7 +6,11 @@ import { colors, shadows } from "../../styles";
 import { SField, SLabel } from "../../components/common";
 import { formatDisplayAmount } from "../../helpers/utilities";
 
-import { SIDEBAR_SIZE, HEADER_SIZE, CONTENT_PADDING } from "./dimensions";
+import {
+  SIDEBAR_SIZE,
+  HEADER_SIZE,
+  CONTENT_PADDING
+} from "../../constants/dashboard";
 
 const SHeader = styled.div`
   position: fixed;
@@ -63,7 +67,7 @@ const Header = (props: any) => (
       </SBalanceAmount>
     </SHeaderLeft>
     <SHeaderRight>
-      <Link to="/demo/bufficorn">
+      <Link to="/order">
         <SMenuButton>{"Go To Menu"}</SMenuButton>
       </Link>
     </SHeaderRight>

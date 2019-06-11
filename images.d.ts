@@ -1,3 +1,5 @@
+declare module "is-ipfs";
+
 declare module "*.svg";
 declare module "*.png";
 declare module "*.jpg";

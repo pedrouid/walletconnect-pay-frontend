@@ -5,12 +5,14 @@ import { modalHide } from "../redux/_modal";
 import {
   PAYMENT_METHODS_MODAL,
   PLAIN_MESSAGE_MODAL,
-  ADMIN_AUTHENTICATION_MODAL
+  ADMIN_AUTHENTICATION_MODAL,
+  INVENTORY_ITEM
 } from "../constants/modals";
 
 import PaymentMethods from "./PaymentMethods";
 import PlainMessage from "./PlainMessage";
 import AdminAuthentication from "./AdminAuthentication";
+import InventoryItem from "./InventoryItem";
 
 class ModalController extends React.Component<any, any> {
   public renderModal() {
@@ -22,6 +24,8 @@ class ModalController extends React.Component<any, any> {
         return <PlainMessage {...modalProps} />;
       case ADMIN_AUTHENTICATION_MODAL:
         return <AdminAuthentication {...modalProps} />;
+      case INVENTORY_ITEM:
+        return <InventoryItem {...modalProps} />;
       default:
         return <div />;
     }

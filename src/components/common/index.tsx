@@ -136,6 +136,7 @@ export const SGrid = styled.div<IGridStyleProps>`
 `;
 
 export const SLabel = styled.label`
+  text-align: left;
   color: rgb(${colors.grey});
   font-size: ${fonts.size.small};
   font-weight: ${fonts.weight.semibold};

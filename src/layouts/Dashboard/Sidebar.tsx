@@ -12,7 +12,7 @@ import orders from "../../assets/navigation/orders.svg";
 import accounting from "../../assets/navigation/accounting.svg";
 import settings from "../../assets/navigation/settings.svg";
 
-import { SIDEBAR_SIZE } from "./dimensions";
+import { SIDEBAR_SIZE } from "../../constants/dashboard";
 
 const SSidebar = styled.div`
   position: fixed;

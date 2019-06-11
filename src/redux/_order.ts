@@ -1,7 +1,7 @@
 import {
   IMenuItem,
   IOrderItem,
-  IPaymentReceipt,
+  IPayment,
   IPaymentMethod
 } from "../helpers/types";
 import { IJsonRpcRequest } from "@walletconnect/types";
@@ -38,12 +38,7 @@ import {
   PAYMENT_PENDING,
   PAYMENT_FAILURE
 } from "../constants/paymentStatus";
-import {
-  adminUpdateBusinessProfile,
-  adminUpdateBusinessTax,
-  adminUpdateBusinessPayment,
-  adminUpdateBusinessMenu
-} from "./_admin";
+import { demoLoadDemo } from "./_demo";
 
 // -- Constants ------------------------------------------------------------- //
 
@@ -80,19 +75,15 @@ export const orderLoadDemo = (businessName: string) => (
   const demo = getDemoBusiness(businessName);
 
   if (demo) {
-    const { data, menu } = demo;
-
-    const { profile, tax, payment } = data;
-
+    console.log("[orderLoadDemo] demo", demo); // tslint:disable-line
     const paymentMethod =
-      payment.methods.length === 1 ? payment.methods[0] : null;
+      demo.data.payment.methods.length === 1
+        ? demo.data.payment.methods[0]
+        : null;
 
-    const paymentAddress = payment.address || "";
+    const paymentAddress = demo.data.payment.address || "";
 
-    dispatch(adminUpdateBusinessProfile(profile));
-    dispatch(adminUpdateBusinessTax(tax));
-    dispatch(adminUpdateBusinessPayment(payment));
-    dispatch(adminUpdateBusinessMenu(menu));
+    dispatch(demoLoadDemo(demo));
 
     dispatch({
       type: ORDER_LOAD_MENU_SUCCESS,
@@ -110,7 +101,7 @@ export const orderLoadDemo = (businessName: string) => (
 };
 
 export const orderLoadMenu = () => (dispatch: any, getState: any) => {
-  const { businessPayment, businessMenu } = getState().admin;
+  const { businessPayment } = getState().admin;
 
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
 
@@ -118,8 +109,6 @@ export const orderLoadMenu = () => (dispatch: any, getState: any) => {
     businessPayment.methods.length === 1 ? businessPayment.methods[0] : null;
 
   const paymentAddress = businessPayment.address || "";
-
-  dispatch(adminUpdateBusinessMenu(businessMenu));
 
   dispatch({
     type: ORDER_LOAD_MENU_SUCCESS,
@@ -220,7 +209,13 @@ export const orderManageSession = (
 };
 
 export const orderShowPaymentMethods = () => (dispatch: any, getState: any) => {
-  const { businessPayment } = getState().admin;
+  const { demo } = getState().order;
+  let businessPayment;
+  if (demo) {
+    businessPayment = getState().demo.businessPayment;
+  } else {
+    businessPayment = getState().admin.businessPayment;
+  }
   const callback = (paymentMethod?: IPaymentMethod) =>
     dispatch(orderChoosePaymentMethod(paymentMethod));
   dispatch(modalShow(PAYMENT_METHODS_MODAL, { businessPayment, callback }));
@@ -351,10 +346,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
     const txhash = await sendTransaction(tx);
 
     if (txhash) {
-      const payment: IPaymentReceipt = {
-        status: PAYMENT_PENDING,
-        result: txhash
-      };
+      const payment: IPayment = { status: PAYMENT_PENDING, result: txhash };
 
       if (!demo) {
         await updateOrderJson(orderId, { payment });
@@ -366,10 +358,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
 
       dispatch(orderSubscribeToPayment());
     } else {
-      const payment: IPaymentReceipt = {
-        status: PAYMENT_FAILURE,
-        result: null
-      };
+      const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
 
       if (!demo) {
         await updateOrderJson(orderId, { payment });
@@ -378,7 +367,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
       dispatch({ type: ORDER_PAYMENT_FAILURE, payload: payment });
     }
   } catch (error) {
-    const payment: IPaymentReceipt = { status: PAYMENT_FAILURE, result: null };
+    const payment: IPayment = { status: PAYMENT_FAILURE, result: null };
 
     if (!demo) {
       await updateOrderJson(orderId, { payment });

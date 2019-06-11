@@ -8,6 +8,14 @@ import { getSpacePrivate, setSpacePrivate } from "./box";
 import { uuid } from "../helpers/utilities";
 import { PAYMENT_PENDING } from "../constants/paymentStatus";
 import { ORDER_ID } from "../constants/space";
+import {
+  convertStringToNumber,
+  convertNumberToString,
+  multiply,
+  divide,
+  subtract,
+  add
+} from "./bignumber";
 
 export const defaultCheckoutDetails: ICheckoutDetails = {
   rawtotal: 0,
@@ -21,20 +29,23 @@ export function formatCheckoutDetails(
   businessTax: IBusinessTax
 ): ICheckoutDetails {
   let checkout;
-  const tax = rawtotal * (businessTax.rate / 100);
+  const _rawtotal = convertNumberToString(rawtotal);
+  const tax = multiply(_rawtotal, divide(businessTax.rate, 100));
   if (businessTax.included) {
+    const _subtotal = subtract(_rawtotal, tax);
     checkout = {
-      rawtotal,
-      subtotal: rawtotal - tax,
-      tax,
-      nettotal: rawtotal
+      rawtotal: convertStringToNumber(_rawtotal),
+      subtotal: convertStringToNumber(_subtotal),
+      tax: convertStringToNumber(tax),
+      nettotal: convertStringToNumber(_rawtotal)
     };
   } else {
+    const _nettotal = add(_rawtotal, tax);
     checkout = {
-      rawtotal,
-      subtotal: rawtotal,
-      tax,
-      nettotal: rawtotal + tax
+      rawtotal: convertStringToNumber(_rawtotal),
+      subtotal: convertStringToNumber(_rawtotal),
+      tax: convertStringToNumber(tax),
+      nettotal: convertStringToNumber(_nettotal)
     };
   }
   return checkout;

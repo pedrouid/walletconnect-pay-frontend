@@ -20,69 +20,81 @@ import kraftmalz from "./images/kraftmalz.jpg";
 import obc_strong from "./images/obc_strong.jpg";
 import berliner from "./images/berliner.jpg";
 import laschak from "./images/laschak.jpg";
+import { formatItemId } from "../../helpers/utilities";
 
 const menu: IBusinessMenu = [
   {
+    id: "club-mate",
     name: "Club Mate",
     description: "",
     image: club_mate,
     price: 2.3
   },
   {
+    id: "flora-power-mate",
     name: "Flora Power (Mate)",
     description: "",
     image: flora,
     price: 2.3
   },
   {
+    id: "premium-cola",
     name: "Premium Cola",
     description: "",
     image: premium,
     price: 2.3
   },
   {
+    id: "spezi",
     name: "Spezi",
     description: "",
     image: spezi,
     price: 2.3
   },
   {
-    name: "rhubarb",
+    id: "rhubarb",
+    name: "Rhubarb",
     description: "",
     image: rhubarb,
     price: 2.3
   },
   {
+    id: "selters-classic",
     name: "Selters classic",
     description: "",
     image: selters_classic,
     price: 2.0
   },
   {
-    name: "Selters naturell",
+    id: "selters-naturell",
+    name: "Selters Naturell",
     description: "",
     image: selters_naturell,
     price: 2.0
   },
   {
+    id: "kraftmalz",
     name: "KraftMalz",
     description: "",
     image: kraftmalz,
     price: 2.3
   },
   {
+    id: "obc-strong",
     name: "OBC strong",
     description: "",
     image: obc_strong,
     price: 3.0
   },
   {
+    id: "berliner-pilsner",
     name: "Berliner Pilsner",
     description: "",
     image: berliner,
     price: 3.0
   },
   {
+    id: "720-light-lager",
     name: "720 (light lager)",
     description: "",
     image: laschak,
@@ -113,12 +125,14 @@ const methods: IPaymentMethod[] = [
   }
 ];
 
+const name = "C-Base";
+
 const profile: IBusinessProfile = {
-  id: "c-base",
-  name: "C-Base",
+  id: formatItemId(name),
+  name,
   description: "",
   logo,
-  type: "cafe",
+  type: "bar",
   country: "DE",
   email: "",
   phone: ""

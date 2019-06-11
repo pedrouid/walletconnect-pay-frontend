@@ -6,9 +6,9 @@ import SUPPORTED_CHAINS from "../constants/chains";
 import BUSINESS_TYPES from "../constants/businessTypes";
 import NATIVE_CURRENCIES from "../constants/nativeCurrencies";
 import COUNTRIES from "../constants/countries";
-import { IPFS_GATEWAY } from "../constants/ipfs";
 import { APP_DESCRIPTION, APP_NAME } from "../constants/appMeta";
 import { removeDiacritics } from "./diacritics";
+import { isIpfsHash, getIpfsUrl } from "./ipfs";
 
 export function capitalize(string: string): string {
   return string
@@ -258,16 +258,6 @@ export function getAppVersion() {
   return version;
 }
 
-export function getIpfsUrl(fileHash: string) {
-  const result = `${IPFS_GATEWAY}${fileHash}`;
-  return result;
-}
-
-export function getIpfsHash(url: string) {
-  const result = url.replace(IPFS_GATEWAY, "");
-  return result;
-}
-
 export function updateTitle(title: string) {
   if (typeof document !== "undefined") {
     document.title = title;
@@ -321,9 +311,15 @@ export function formatConstantString(value: string): string {
   return result;
 }
 
-export function formatBusinessId(name: string): string {
+export function formatItemId(name: string): string {
   return removeDiacritics(name)
     .toLowerCase()
     .split(/\W/gi)
-    .join("-");
+    .join("-")
+    .replace(/\-+/g, "-")
+    .replace(/\-+$/, "");
+}
+
+export function sanitizeImgSrc(image: string): string {
+  return isIpfsHash(image) ? getIpfsUrl(image) : image;
 }

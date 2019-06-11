@@ -7,6 +7,7 @@ import uploadIcon from "../assets/upload.svg";
 import editIcon from "../assets/edit.svg";
 import { colors, transitions } from "../styles";
 import { SLabel } from "./common";
+import { sanitizeImgSrc } from "../helpers/utilities";
 
 const IMAGE_PADDING = 5;
 
@@ -69,7 +70,7 @@ const SUploadButton = styled.button<IUploadButtonStyleProps>`
 `;
 
 interface IImageDisplayStyledProps {
-  url: string;
+  image: string;
 }
 
 const SImageDisplay = styled.div<IImageDisplayStyledProps>`
@@ -79,7 +80,7 @@ const SImageDisplay = styled.div<IImageDisplayStyledProps>`
   left: ${IMAGE_PADDING}px;
   right: ${IMAGE_PADDING}px;
   overflow: hidden;
-  background-image: ${({ url }) => `url(${url})`};
+  background-image: ${({ image }) => `url(${image})`};
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -174,7 +175,7 @@ class Upload extends React.Component<any, any> {
           />
           {image && !uploading ? (
             <React.Fragment>
-              <SImageDisplay url={image} />
+              <SImageDisplay image={sanitizeImgSrc(image)} />
               <SEditIcon
                 size={(5 * size) / 40}
                 icon={editIcon}

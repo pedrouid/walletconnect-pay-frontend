@@ -4,7 +4,6 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import UploadToIpfs from "../components/UploadToIpfs";
-import { getIpfsUrl } from "../helpers/utilities";
 import { IBusinessProfile } from "../helpers/types";
 import BUSINESS_TYPES from "../constants/businessTypes";
 import COUNTRIES from "../constants/countries";
@@ -43,7 +42,7 @@ const ProfileForm = (props: IProfileFormProps) => {
         <UploadToIpfs
           size={200}
           label={`Logo`}
-          image={getIpfsUrl(businessProfile.logo)}
+          image={businessProfile.logo}
           onUpload={(logo: string) => {
             onInputChange({ logo });
             if (onInputSubmit) {

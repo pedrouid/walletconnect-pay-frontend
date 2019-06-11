@@ -6,6 +6,7 @@ import { IMenuItem, IOrderItem } from "../helpers/types";
 import Button from "../components/Button";
 import Summary from "../components/Summary";
 import ListItem from "../components/ListItem";
+import EmptyState from "../components/EmptyState";
 import {
   SColumnWrapper,
   SColumn,
@@ -15,9 +16,9 @@ import {
   SColumnList,
   SColumnRow,
   STitle,
-  SGrid,
-  SCenter
+  SGrid
 } from "../components/common";
+import { sanitizeImgSrc } from "../helpers/utilities";
 
 const SHeader = styled.div`
   width: 100%;
@@ -46,14 +47,6 @@ const SListItem = styled(ListItem)`
   margin-bottom: 10px;
 `;
 
-const SEmptyState = styled(SCenter)`
-  background: rgb(${colors.white});
-  & h6 {
-    font-weight: normal;
-    color: rgb(${colors.grey});
-  }
-`;
-
 const OrderMenu = (props: any) => {
   const {
     businessProfile,
@@ -70,7 +63,9 @@ const OrderMenu = (props: any) => {
     <React.Fragment>
       <SHeader>
         <Link style={{ display: "flex" }} to="/admin">
-          {businessProfile.logo && <SLogo src={businessProfile.logo} alt="" />}
+          {businessProfile.logo && (
+            <SLogo src={sanitizeImgSrc(businessProfile.logo)} alt="" />
+          )}
           <SBranding>{businessProfile.name}</SBranding>
         </Link>
       </SHeader>
@@ -92,9 +87,7 @@ const OrderMenu = (props: any) => {
                 ))}
             </SGrid>
           ) : (
-            <SEmptyState>
-              <h6>{`No Items`}</h6>
-            </SEmptyState>
+            <EmptyState />
           )}
         </SColumn>
         <SColumnOrder width={30}>
@@ -117,9 +110,7 @@ const OrderMenu = (props: any) => {
               ))}
             </SColumnList>
           ) : (
-            <SEmptyState>
-              <h6>{`No Items`}</h6>
-            </SEmptyState>
+            <EmptyState />
           )}
           <SColumnFooter>
             <Summary

@@ -2,12 +2,13 @@ import {
   IBusinessData,
   IBusinessProfile,
   IBusinessTax,
-  IBusinessPayment
+  IBusinessPayment,
+  IBusinessMenu
 } from "../helpers/types";
 import { openBox, openSpace, setSpacePrivate, getSpacePrivate } from "./box";
-import { BUSINESS_DATA } from "../constants/space";
+import { BUSINESS_DATA, BUSINESS_MENU } from "../constants/space";
 
-import demo from "../data";
+import demo from "../demo";
 
 export function getDemoBusiness(bussinessName: string) {
   let result = null;
@@ -88,21 +89,28 @@ export async function getBusinessData(): Promise<IBusinessData> {
   return businessData;
 }
 
+export async function setBusinessMenu(
+  businessMenu: IBusinessMenu
+): Promise<IBusinessMenu> {
+  await setSpacePrivate(BUSINESS_MENU, businessMenu);
+  return businessMenu;
+}
+
+export async function getBusinessMenu(): Promise<IBusinessMenu> {
+  const businessMenu = await getSpacePrivate(BUSINESS_MENU);
+  return businessMenu;
+}
+
 export async function openBusinessBox(
   address: string,
   provider: any
-): Promise<IBusinessData> {
-  let result = null;
-
+): Promise<{ data: IBusinessData | null; menu: IBusinessMenu | null }> {
   await openBox(address, provider);
 
   await openSpace();
 
-  const businessData = await getSpacePrivate(BUSINESS_DATA);
+  const data = await getBusinessData();
+  const menu = await getBusinessMenu();
 
-  if (businessData) {
-    result = businessData;
-  }
-
-  return result;
+  return { data, menu };
 }

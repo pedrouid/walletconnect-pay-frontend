@@ -1,4 +1,5 @@
 export interface IMenuItem {
+  id: string;
   name: string;
   description?: string;
   price: number;
@@ -105,7 +106,7 @@ export interface IBusinessData {
 
 export type IPaymentStatus = "pending" | "success" | "failure";
 
-export interface IPaymentReceipt {
+export interface IPayment {
   status: IPaymentStatus;
   result: any;
 }
@@ -115,5 +116,5 @@ export interface IOrderJson {
   timestamp: number;
   items: IOrderItem[];
   checkout: ICheckoutDetails;
-  payment: IPaymentReceipt;
+  payment: IPayment;
 }

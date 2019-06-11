@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import { apiPinFile } from "../helpers/api";
-import { getIpfsUrl, getIpfsHash } from "../helpers/utilities";
 import Upload from "../components/Upload";
 
 class UploadToIpfs extends React.Component<any, any> {
@@ -20,18 +19,12 @@ class UploadToIpfs extends React.Component<any, any> {
       formData.append(`${idx}`, file);
     });
 
-    const fileHash = await apiPinFile(formData);
-
-    let result = "";
-
-    if (fileHash) {
-      result = getIpfsUrl(fileHash);
-    }
+    const result = await apiPinFile(formData);
 
     return result;
   };
 
-  public onUpload = (url: string) => this.props.onUpload(getIpfsHash(url));
+  public onUpload = (image: string) => this.props.onUpload(image);
 
   public render() {
     const { color, size, label, image } = this.props;

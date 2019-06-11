@@ -1,17 +1,15 @@
 import Web3 from "web3";
-import {
-  queryChainId,
-  formatBusinessId,
-  sanitizeUrl
-} from "../helpers/utilities";
+import { queryChainId, formatItemId, sanitizeUrl } from "../helpers/utilities";
 import {
   IBusinessProfile,
   IBusinessTax,
-  IBusinessPayment
+  IBusinessPayment,
+  IMenuItem
 } from "../helpers/types";
 import {
   openBusinessBox,
   setBusinessData,
+  setBusinessMenu,
   defaultBusinessProfile,
   defaultBusinessTax,
   defaultBusinessPayment
@@ -19,8 +17,11 @@ import {
 import { isNaN } from "../helpers/bignumber";
 import { modalShow, modalHide } from "./_modal";
 import { notificationShow } from "./_notification";
-import { ADMIN_AUTHENTICATION_MODAL } from "../constants/modals";
-import { logRedux } from "src/helpers/dev";
+import {
+  ADMIN_AUTHENTICATION_MODAL,
+  INVENTORY_ITEM
+} from "../constants/modals";
+import { logRedux } from "../helpers/dev";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
@@ -76,10 +77,10 @@ export const adminConnectWallet = (provider: any) => async (
 
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
-    const businessData = await openBusinessBox(address, provider);
+    const { data, menu } = await openBusinessBox(address, provider);
 
-    if (businessData) {
-      const { profile, tax, payment } = businessData;
+    if (data) {
+      const { profile, tax, payment } = data;
       dispatch({
         type: ADMIN_CONNECT_SUCCESS,
         payload: {
@@ -88,7 +89,8 @@ export const adminConnectWallet = (provider: any) => async (
           chainId,
           profile,
           tax,
-          payment
+          payment,
+          menu
         }
       });
       const pathname = sanitizeUrl(window.browserHistory.location.pathname);
@@ -97,6 +99,7 @@ export const adminConnectWallet = (provider: any) => async (
       }
     } else {
       const {
+        businessMenu,
         businessProfile,
         businessTax,
         businessPayment
@@ -109,7 +112,8 @@ export const adminConnectWallet = (provider: any) => async (
           chainId,
           profile: businessProfile,
           tax: businessTax,
-          payment: businessPayment
+          payment: businessPayment,
+          menu: businessMenu
         }
       });
       window.browserHistory.push("/signup");
@@ -176,6 +180,17 @@ export const adminSaveBusinessData = () => async (
   }
 };
 
+export const adminSaveBusinessMenu = () => async (
+  dispatch: any,
+  getState: any
+) => {
+  const { address, businessMenu } = getState().admin;
+  if (!address) {
+    return;
+  }
+  await setBusinessMenu(businessMenu);
+};
+
 export const adminUpdateBusinessProfile = (
   updatedBusinessProfile: Partial<IBusinessProfile>
 ) => async (dispatch: any, getState: any) => {
@@ -184,7 +199,7 @@ export const adminUpdateBusinessProfile = (
     ...businessProfile,
     ...updatedBusinessProfile
   };
-  businessProfile.id = formatBusinessId(businessProfile.name);
+  businessProfile.id = formatItemId(businessProfile.name);
   dispatch({ type: ADMIN_UPDATE_BUSINESS_PROFILE, payload: businessProfile });
 };
 
@@ -213,10 +228,54 @@ export const adminUpdateBusinessPayment = (
   dispatch({ type: ADMIN_UPDATE_BUSINESS_PAYMENT, payload: businessPayment });
 };
 
-export const adminUpdateBusinessMenu = (businessMenu: any) => ({
-  type: ADMIN_UPDATE_BUSINESS_MENU,
-  payload: businessMenu
-});
+export const adminShowInventoryModal = (menuItem?: IMenuItem) => async (
+  dispatch: any
+) =>
+  dispatch(
+    modalShow(INVENTORY_ITEM, {
+      menuItem,
+      onAddItem: (menuItem: IMenuItem) => {
+        if (menuItem) {
+          dispatch(modalHide());
+          dispatch(adminAddMenuItem(menuItem));
+        }
+      }
+    })
+  );
+
+export const adminAddMenuItem = (menuItem: IMenuItem) => async (
+  dispatch: any,
+  getState: any
+) => {
+  let { businessMenu } = getState().admin;
+  const matches = businessMenu.filter(
+    (item: IMenuItem) => item.id === menuItem.id
+  );
+  if (matches && matches.length) {
+    menuItem = {
+      ...matches[0],
+      ...menuItem
+    };
+    businessMenu = businessMenu.filter(
+      (item: IMenuItem) => item.id !== menuItem.id
+    );
+  }
+  businessMenu = [...businessMenu, menuItem];
+  dispatch({ type: ADMIN_UPDATE_BUSINESS_MENU, payload: businessMenu });
+  dispatch(adminSaveBusinessMenu());
+};
+
+export const adminRemoveMenuItem = (menuItem: IMenuItem) => async (
+  dispatch: any,
+  getState: any
+) => {
+  let { businessMenu } = getState().admin;
+  businessMenu = businessMenu.filter(
+    (item: IMenuItem) => item.id !== menuItem.id
+  );
+  dispatch({ type: ADMIN_UPDATE_BUSINESS_MENU, payload: businessMenu });
+  dispatch(adminSaveBusinessMenu());
+};
 
 export const adminClearState = () => ({ type: ADMIN_CLEAR_STATE });
 
@@ -226,7 +285,7 @@ const INITIAL_STATE = {
   web3: null,
   address: "",
   chainId: 1,
-  businessMenu: null,
+  businessMenu: [],
   businessProfile: defaultBusinessProfile,
   businessTax: defaultBusinessTax,
   businessPayment: defaultBusinessPayment
@@ -245,6 +304,7 @@ export default (state = INITIAL_STATE, action: any) => {
         web3: action.payload.web3,
         address: action.payload.address,
         chainId: action.payload.chainId,
+        businessMenu: action.payload.menu || [],
         businessProfile: action.payload.profile || defaultBusinessProfile,
         businessTax: action.payload.tax || defaultBusinessTax,
         businessPayment: action.payload.payment || defaultBusinessPayment

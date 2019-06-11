@@ -5,7 +5,11 @@ import { colors, shadows, transitions } from "../../styles";
 
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import { SIDEBAR_SIZE, HEADER_SIZE, CONTENT_PADDING } from "./dimensions";
+import {
+  SIDEBAR_SIZE,
+  HEADER_SIZE,
+  CONTENT_PADDING
+} from "../../constants/dashboard";
 import Loader from "../../components/Loader";
 import { SCenter } from "../../components/common";
 

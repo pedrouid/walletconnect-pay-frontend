@@ -1,11 +1,4 @@
-import {
-  IBusinessMenu,
-  IBusinessData,
-  IPaymentMethod,
-  IBusinessProfile,
-  IBusinessTax,
-  IBusinessPayment
-} from "../../helpers/types";
+import { IMenu, IData, IProfile, ISettings } from "../../helpers/types";
 
 import logo from "./logo.png";
 
@@ -21,8 +14,9 @@ import obc_strong from "./images/obc_strong.jpg";
 import berliner from "./images/berliner.jpg";
 import laschak from "./images/laschak.jpg";
 import { formatItemId } from "../../helpers/utilities";
+import PAYMENT_METHODS from "../../constants/paymentMethods";
 
-const menu: IBusinessMenu = [
+const menu: IMenu = [
   {
     id: "club-mate",
     name: "Club Mate",
@@ -102,32 +96,9 @@ const menu: IBusinessMenu = [
   }
 ];
 
-const methods: IPaymentMethod[] = [
-  {
-    type: "burner",
-    chainId: 100,
-    assetSymbol: "xDAI"
-  },
-  {
-    type: "walletconnect",
-    chainId: 1,
-    assetSymbol: "ETH"
-  },
-  {
-    type: "walletconnect",
-    chainId: 1,
-    assetSymbol: "DAI"
-  },
-  {
-    type: "walletconnect",
-    chainId: 100,
-    assetSymbol: "xDAI"
-  }
-];
-
 const name = "C-Base";
 
-const profile: IBusinessProfile = {
+const profile: IProfile = {
   id: formatItemId(name),
   name,
   description: "",
@@ -138,22 +109,18 @@ const profile: IBusinessProfile = {
   phone: ""
 };
 
-const tax: IBusinessTax = {
-  rate: 19,
-  included: true,
-  display: false
+const settings: ISettings = {
+  taxRate: 19,
+  taxIncluded: true,
+  taxDisplay: false,
+  paymentMethods: PAYMENT_METHODS,
+  paymentCurrency: "EUR",
+  paymentAddress: ""
 };
 
-const payment: IBusinessPayment = {
-  methods,
-  currency: "EUR",
-  address: ""
-};
-
-const data: IBusinessData = {
+const data: IData = {
   profile,
-  tax,
-  payment
+  settings
 };
 
 export default { data, menu };

@@ -5,13 +5,13 @@ import PageWrapper from "../components/PageWrapper";
 import Card from "../components/Card";
 import {
   adminRequestAuthentication,
-  adminUpdateBusinessProfile,
+  adminUpdateProfile,
   adminSubmitSignUp
 } from "../redux/_admin";
 import ProfileForm from "../components/ProfileForm";
 
 interface ISignUpProps {
-  adminUpdateBusinessProfile: (updatedBusinessProfile: any) => void;
+  adminUpdateProfile: (updatedProfile: any) => void;
   adminSubmitSignUp: () => void;
   name: string;
   type: string;
@@ -21,10 +21,10 @@ interface ISignUpProps {
 
 class SignUp extends React.Component<any, ISignUpProps> {
   public static propTypes = {
-    adminUpdateBusinessProfile: PropTypes.func.isRequired,
+    adminUpdateProfile: PropTypes.func.isRequired,
     adminSubmitSignUp: PropTypes.func.isRequired,
     address: PropTypes.string.isRequired,
-    businessProfile: PropTypes.object.isRequired
+    profile: PropTypes.object.isRequired
   };
 
   public componentDidMount() {
@@ -39,8 +39,8 @@ class SignUp extends React.Component<any, ISignUpProps> {
         <Card shadow margin={20}>
           <ProfileForm
             title={`Sign Up`}
-            businessProfile={this.props.businessProfile}
-            onInputChange={this.props.adminUpdateBusinessProfile}
+            profile={this.props.profile}
+            onInputChange={this.props.adminUpdateProfile}
             onSubmit={this.props.adminSubmitSignUp}
           />
         </Card>
@@ -51,10 +51,10 @@ class SignUp extends React.Component<any, ISignUpProps> {
 
 const reduxProps = (store: any) => ({
   address: store.admin.address,
-  businessProfile: store.admin.businessProfile
+  profile: store.admin.profile
 });
 
 export default connect(
   reduxProps,
-  { adminRequestAuthentication, adminUpdateBusinessProfile, adminSubmitSignUp }
+  { adminRequestAuthentication, adminUpdateProfile, adminSubmitSignUp }
 )(SignUp);

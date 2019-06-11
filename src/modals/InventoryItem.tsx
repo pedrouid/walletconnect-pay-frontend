@@ -13,27 +13,25 @@ const SSubmitWrapper = styled.div`
   justify-content: center;
   align-content: center;
   margin-top: 24px;
+  & > button:last-child {
+    margin-left: 16px;
+  }
+  & > button:first-child {
+    margin-left: 0;
+  }
 `;
-
-interface IInventoryItemState extends IMenuItem {
-  description: string;
-}
 
 interface IInventoryItemProps {
   menuItem: IMenuItem;
   onAddItem: (menuItem: IMenuItem) => void;
+  onRemoveItem: (menuItem: IMenuItem) => void;
 }
 
-class InventoryItem extends React.Component<
-  IInventoryItemProps,
-  IInventoryItemState
-> {
+class InventoryItem extends React.Component<IInventoryItemProps, IMenuItem> {
   public state = {
     id: this.props.menuItem ? this.props.menuItem.id : "",
     name: this.props.menuItem ? this.props.menuItem.name : "",
-    description: this.props.menuItem
-      ? this.props.menuItem.description || ""
-      : "",
+    description: this.props.menuItem ? this.props.menuItem.description : "",
     price: this.props.menuItem ? this.props.menuItem.price : 0,
     image: this.props.menuItem ? this.props.menuItem.image : ""
   };
@@ -44,6 +42,11 @@ class InventoryItem extends React.Component<
   public onSubmit = () => {
     const { id, name, description, price, image } = this.state;
     this.props.onAddItem({ id, name, description, price, image });
+  };
+
+  public onRemove = () => {
+    const { id, name, description, price, image } = this.state;
+    this.props.onRemoveItem({ id, name, description, price, image });
   };
 
   public render() {
@@ -85,7 +88,7 @@ class InventoryItem extends React.Component<
           type="text"
           label="Price"
           placeholder="2.50"
-          value={this.state.price}
+          value={`${this.state.price}`}
           onChange={(e: any) => {
             const price = e.target.value;
             if (price && isNaN(price)) {
@@ -96,7 +99,14 @@ class InventoryItem extends React.Component<
         />
 
         <SSubmitWrapper>
-          <Button onClick={this.onSubmit}>{`Submit`}</Button>
+          {this.props.menuItem ? (
+            <React.Fragment>
+              <Button color={`red`} onClick={this.onRemove}>{`Delete`}</Button>
+              <Button onClick={this.onSubmit}>{`Update`}</Button>
+            </React.Fragment>
+          ) : (
+            <Button onClick={this.onSubmit}>{`Submit`}</Button>
+          )}
         </SSubmitWrapper>
       </React.Fragment>
     );

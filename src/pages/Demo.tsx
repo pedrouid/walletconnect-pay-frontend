@@ -15,27 +15,25 @@ import Loader from "../components/Loader";
 import OrderMenu from "../layouts/OrderMenu";
 import { revertPageMeta, updatePageMeta } from "../helpers/utilities";
 
-class Order extends React.Component<any, any> {
+class Demo extends React.Component<any, any> {
   public componentDidMount() {
     const businessName = this.props.match.params.businessName;
-    if (businessName) {
-      this.props.orderLoadDemo(businessName);
-    }
+    this.props.orderLoadDemo(businessName);
     this.updatePageMeta();
   }
 
   public componentDidUpdate(prevProps: any) {
-    if (prevProps.businessProfile.name !== this.props.businessProfile.name) {
+    if (prevProps.profile.name !== this.props.profile.name) {
       this.updatePageMeta();
     }
   }
 
   public updatePageMeta() {
-    const { businessProfile } = this.props;
+    const { profile } = this.props;
     updatePageMeta({
-      title: businessProfile.name,
-      description: businessProfile.description,
-      favicon: businessProfile.logo
+      title: profile.name,
+      description: profile.description,
+      favicon: profile.logo
     });
   }
 
@@ -53,10 +51,9 @@ class Order extends React.Component<any, any> {
 
   public render() {
     const {
-      businessProfile,
-      businessTax,
-      businessPayment,
-      businessMenu,
+      profile,
+      settings,
+      menu,
       paymentMethod,
       loading,
       submitted,
@@ -69,10 +66,10 @@ class Order extends React.Component<any, any> {
     return !this.props.loading ? (
       <React.Fragment>
         <OrderMenu
-          businessProfile={businessProfile}
-          businessTax={businessTax}
-          businessPayment={businessPayment}
-          businessMenu={businessMenu}
+          loading={loading}
+          profile={profile}
+          settings={settings}
+          menu={menu}
           items={items}
           checkout={checkout}
           onSubmit={this.onSubmit}
@@ -81,8 +78,7 @@ class Order extends React.Component<any, any> {
         />
         <Checkout
           loading={loading}
-          businessTax={businessTax}
-          businessPayment={businessPayment}
+          settings={settings}
           submitted={submitted}
           payment={payment}
           paymentMethod={paymentMethod}
@@ -101,10 +97,9 @@ class Order extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
-  businessProfile: store.demo.businessProfile,
-  businessTax: store.demo.businessTax,
-  businessPayment: store.demo.businessPayment,
-  businessMenu: store.demo.businessMenu,
+  profile: store.demo.profile,
+  settings: store.demo.settings,
+  menu: store.demo.menu,
   paymentMethod: store.order.paymentMethod,
   loading: store.order.loading,
   submitted: store.order.submitted,
@@ -126,4 +121,4 @@ export default connect(
     orderSubmit,
     orderUnsubmit
   }
-)(Order);
+)(Demo);

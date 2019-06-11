@@ -65,8 +65,8 @@ const SCloseButton = styled.div<ICloseButtonStyleProps>`
   position: absolute;
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};
-  right: ${({ size }) => `${size / 1.6667}px`};
-  top: ${({ size }) => `${size / 1.6667}px`};
+  right: ${({ size }) => `${size / 2}px`};
+  top: ${({ size }) => `${size / 2}px`};
   opacity: 0.5;
   cursor: pointer;
   &:hover {
@@ -92,7 +92,7 @@ const SCard = styled.div`
   position: relative;
   width: 100%;
   max-width: 500px;
-  padding: 25px;
+  padding: 30px;
   background-color: rgb(${colors.white});
   border-radius: 6px;
   display: flex;

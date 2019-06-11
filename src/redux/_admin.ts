@@ -1,18 +1,12 @@
 import Web3 from "web3";
 import { queryChainId, formatItemId, sanitizeUrl } from "../helpers/utilities";
-import {
-  IBusinessProfile,
-  IBusinessTax,
-  IBusinessPayment,
-  IMenuItem
-} from "../helpers/types";
+import { IProfile, ISettings, IMenuItem } from "../helpers/types";
 import {
   openBusinessBox,
-  setBusinessData,
-  setBusinessMenu,
-  defaultBusinessProfile,
-  defaultBusinessTax,
-  defaultBusinessPayment
+  setData,
+  setMenu,
+  defaultProfile,
+  defaultSettings
 } from "../helpers/business";
 import { isNaN } from "../helpers/bignumber";
 import { modalShow, modalHide } from "./_modal";
@@ -32,20 +26,15 @@ const ADMIN_SUBMIT_SIGNUP_REQUEST = "admin/ADMIN_SUBMIT_SIGNUP_REQUEST";
 const ADMIN_SUBMIT_SIGNUP_SUCCESS = "admin/ADMIN_SUBMIT_SIGNUP_SUCCESS";
 const ADMIN_SUBMIT_SIGNUP_FAILURE = "admin/ADMIN_SUBMIT_SIGNUP_FAILURE";
 
-const ADMIN_SAVE_BUSINESS_DATA_REQUEST =
-  "admin/ADMIN_SAVE_BUSINESS_DATA_REQUEST";
-const ADMIN_SAVE_BUSINESS_DATA_SUCCESS =
-  "admin/ADMIN_SAVE_BUSINESS_DATA_SUCCESS";
-const ADMIN_SAVE_BUSINESS_DATA_FAILURE =
-  "admin/ADMIN_SAVE_BUSINESS_DATA_FAILURE";
+const ADMIN_SAVE_DATA_REQUEST = "admin/ADMIN_SAVE_DATA_REQUEST";
+const ADMIN_SAVE_DATA_SUCCESS = "admin/ADMIN_SAVE_DATA_SUCCESS";
+const ADMIN_SAVE_DATA_FAILURE = "admin/ADMIN_SAVE_DATA_FAILURE";
 
-const ADMIN_UPDATE_BUSINESS_PROFILE = "admin/ADMIN_UPDATE_BUSINESS_PROFILE";
+const ADMIN_UPDATE_PROFILE = "admin/ADMIN_UPDATE_PROFILE";
 
-const ADMIN_UPDATE_BUSINESS_TAX = "admin/ADMIN_UPDATE_BUSINESS_TAX";
+const ADMIN_UPDATE_SETTINGS = "admin/ADMIN_UPDATE_SETTINGS";
 
-const ADMIN_UPDATE_BUSINESS_PAYMENT = "admin/ADMIN_UPDATE_BUSINESS_PAYMENT";
-
-const ADMIN_UPDATE_BUSINESS_MENU = "admin/ADMIN_UPDATE_BUSINESS_MENU";
+const ADMIN_UPDATE_MENU = "admin/ADMIN_UPDATE_MENU";
 
 const ADMIN_CLEAR_STATE = "admin/ADMIN_CLEAR_STATE";
 
@@ -80,7 +69,7 @@ export const adminConnectWallet = (provider: any) => async (
     const { data, menu } = await openBusinessBox(address, provider);
 
     if (data) {
-      const { profile, tax, payment } = data;
+      const { profile, settings } = data;
       dispatch({
         type: ADMIN_CONNECT_SUCCESS,
         payload: {
@@ -88,8 +77,7 @@ export const adminConnectWallet = (provider: any) => async (
           address,
           chainId,
           profile,
-          tax,
-          payment,
+          settings,
           menu
         }
       });
@@ -98,22 +86,16 @@ export const adminConnectWallet = (provider: any) => async (
         window.browserHistory.push("/admin");
       }
     } else {
-      const {
-        businessMenu,
-        businessProfile,
-        businessTax,
-        businessPayment
-      } = getState().admin;
+      const { menu, profile, settings } = getState().admin;
       dispatch({
         type: ADMIN_CONNECT_SUCCESS,
         payload: {
           web3,
           address,
           chainId,
-          profile: businessProfile,
-          tax: businessTax,
-          payment: businessPayment,
-          menu: businessMenu
+          profile,
+          settings,
+          menu
         }
       });
       window.browserHistory.push("/signup");
@@ -128,16 +110,15 @@ export const adminConnectWallet = (provider: any) => async (
 export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   dispatch({ type: ADMIN_SUBMIT_SIGNUP_REQUEST });
   try {
-    const { businessProfile } = getState().admin;
-    const { profile, tax, payment } = await setBusinessData({
-      profile: businessProfile
-    });
+    const { address, profile } = getState().admin;
+    const settings = { ...getState().admin.settings, paymentAddress: address };
+    await setData({ profile, settings });
 
-    // await apiSendEmailVerification(businessProfile.email)
+    // await apiSendEmailVerification(profile.email)
 
     dispatch({
       type: ADMIN_SUBMIT_SIGNUP_SUCCESS,
-      payload: { profile, tax, payment }
+      payload: { profile, settings }
     });
 
     window.browserHistory.push("/admin");
@@ -148,84 +129,62 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
   }
 };
 
-export const adminSaveBusinessData = () => async (
-  dispatch: any,
-  getState: any
-) => {
-  const {
-    address,
-    businessProfile,
-    businessTax,
-    businessPayment
-  } = getState().admin;
+export const adminSaveData = () => async (dispatch: any, getState: any) => {
+  const { address, profile, settings } = getState().admin;
   if (!address) {
     return;
   }
-  dispatch({ type: ADMIN_SAVE_BUSINESS_DATA_REQUEST });
+  dispatch({ type: ADMIN_SAVE_DATA_REQUEST });
   try {
-    const { profile, tax, payment } = await setBusinessData({
-      profile: businessProfile,
-      tax: businessTax,
-      payment: businessPayment
+    await setData({
+      profile,
+      settings
     });
 
     dispatch({
-      type: ADMIN_SAVE_BUSINESS_DATA_SUCCESS,
-      payload: { profile, tax, payment }
+      type: ADMIN_SAVE_DATA_SUCCESS,
+      payload: { profile, settings }
     });
   } catch (error) {
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
-    dispatch({ type: ADMIN_SAVE_BUSINESS_DATA_FAILURE });
+    dispatch({ type: ADMIN_SAVE_DATA_FAILURE });
   }
 };
 
-export const adminSaveBusinessMenu = () => async (
-  dispatch: any,
-  getState: any
-) => {
-  const { address, businessMenu } = getState().admin;
+export const adminSaveMenu = () => async (dispatch: any, getState: any) => {
+  const { address, menu } = getState().admin;
   if (!address) {
     return;
   }
-  await setBusinessMenu(businessMenu);
+  await setMenu(menu);
 };
 
-export const adminUpdateBusinessProfile = (
-  updatedBusinessProfile: Partial<IBusinessProfile>
-) => async (dispatch: any, getState: any) => {
-  let { businessProfile } = getState().admin;
-  businessProfile = {
-    ...businessProfile,
-    ...updatedBusinessProfile
+export const adminUpdateProfile = (updatedProfile: Partial<IProfile>) => async (
+  dispatch: any,
+  getState: any
+) => {
+  let { profile } = getState().admin;
+  profile = {
+    ...profile,
+    ...updatedProfile
   };
-  businessProfile.id = formatItemId(businessProfile.name);
-  dispatch({ type: ADMIN_UPDATE_BUSINESS_PROFILE, payload: businessProfile });
+  profile.id = formatItemId(profile.name);
+  dispatch({ type: ADMIN_UPDATE_PROFILE, payload: profile });
 };
 
-export const adminUpdateBusinessTax = (
-  updatedBusinessTax: Partial<IBusinessTax>
+export const adminUpdateSettings = (
+  updatedSettings: Partial<ISettings>
 ) => async (dispatch: any, getState: any) => {
-  if (updatedBusinessTax.rate && isNaN(updatedBusinessTax.rate)) {
+  if (updatedSettings.taxRate && isNaN(updatedSettings.taxRate)) {
     return;
   }
-  let { businessTax } = getState().admin;
-  businessTax = {
-    ...businessTax,
-    ...updatedBusinessTax
+  let { settings } = getState().admin;
+  settings = {
+    ...settings,
+    ...updatedSettings
   };
-  dispatch({ type: ADMIN_UPDATE_BUSINESS_TAX, payload: businessTax });
-};
-
-export const adminUpdateBusinessPayment = (
-  updatedBusinessPayment: Partial<IBusinessPayment>
-) => async (dispatch: any, getState: any) => {
-  let { businessPayment } = getState().admin;
-  businessPayment = {
-    ...businessPayment,
-    ...updatedBusinessPayment
-  };
-  dispatch({ type: ADMIN_UPDATE_BUSINESS_PAYMENT, payload: businessPayment });
+  dispatch({ type: ADMIN_UPDATE_SETTINGS, payload: settings });
 };
 
 export const adminShowInventoryModal = (menuItem?: IMenuItem) => async (
@@ -239,6 +198,12 @@ export const adminShowInventoryModal = (menuItem?: IMenuItem) => async (
           dispatch(modalHide());
           dispatch(adminAddMenuItem(menuItem));
         }
+      },
+      onRemoveItem: (menuItem: IMenuItem) => {
+        if (menuItem) {
+          dispatch(modalHide());
+          dispatch(adminRemoveMenuItem(menuItem));
+        }
       }
     })
   );
@@ -247,34 +212,28 @@ export const adminAddMenuItem = (menuItem: IMenuItem) => async (
   dispatch: any,
   getState: any
 ) => {
-  let { businessMenu } = getState().admin;
-  const matches = businessMenu.filter(
-    (item: IMenuItem) => item.id === menuItem.id
-  );
+  let { menu } = getState().admin;
+  const matches = menu.filter((item: IMenuItem) => item.id === menuItem.id);
   if (matches && matches.length) {
     menuItem = {
       ...matches[0],
       ...menuItem
     };
-    businessMenu = businessMenu.filter(
-      (item: IMenuItem) => item.id !== menuItem.id
-    );
+    menu = menu.filter((item: IMenuItem) => item.id !== menuItem.id);
   }
-  businessMenu = [...businessMenu, menuItem];
-  dispatch({ type: ADMIN_UPDATE_BUSINESS_MENU, payload: businessMenu });
-  dispatch(adminSaveBusinessMenu());
+  menu = [...menu, menuItem];
+  dispatch({ type: ADMIN_UPDATE_MENU, payload: menu });
+  dispatch(adminSaveMenu());
 };
 
 export const adminRemoveMenuItem = (menuItem: IMenuItem) => async (
   dispatch: any,
   getState: any
 ) => {
-  let { businessMenu } = getState().admin;
-  businessMenu = businessMenu.filter(
-    (item: IMenuItem) => item.id !== menuItem.id
-  );
-  dispatch({ type: ADMIN_UPDATE_BUSINESS_MENU, payload: businessMenu });
-  dispatch(adminSaveBusinessMenu());
+  let { menu } = getState().admin;
+  menu = menu.filter((item: IMenuItem) => item.id !== menuItem.id);
+  dispatch({ type: ADMIN_UPDATE_MENU, payload: menu });
+  dispatch(adminSaveMenu());
 };
 
 export const adminClearState = () => ({ type: ADMIN_CLEAR_STATE });
@@ -285,10 +244,9 @@ const INITIAL_STATE = {
   web3: null,
   address: "",
   chainId: 1,
-  businessMenu: [],
-  businessProfile: defaultBusinessProfile,
-  businessTax: defaultBusinessTax,
-  businessPayment: defaultBusinessPayment
+  menu: [],
+  profile: defaultProfile,
+  settings: defaultSettings
 };
 
 export default (state = INITIAL_STATE, action: any) => {
@@ -304,10 +262,9 @@ export default (state = INITIAL_STATE, action: any) => {
         web3: action.payload.web3,
         address: action.payload.address,
         chainId: action.payload.chainId,
-        businessMenu: action.payload.menu || [],
-        businessProfile: action.payload.profile || defaultBusinessProfile,
-        businessTax: action.payload.tax || defaultBusinessTax,
-        businessPayment: action.payload.payment || defaultBusinessPayment
+        menu: action.payload.menu || [],
+        profile: action.payload.profile || defaultProfile,
+        settings: action.payload.settings || defaultSettings
       };
     case ADMIN_CONNECT_FAILURE:
       return { ...state, loading: false };
@@ -317,28 +274,24 @@ export default (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         loading: false,
-        businessProfile: action.payload.profile,
-        businessTax: action.payload.tax,
-        businessPayment: action.payload.payment
+        profile: action.payload.profile,
+        settings: action.payload.settings
       };
     case ADMIN_SUBMIT_SIGNUP_FAILURE:
       return { ...state, loading: false };
-    case ADMIN_SAVE_BUSINESS_DATA_SUCCESS:
+    case ADMIN_SAVE_DATA_SUCCESS:
       return {
         ...state,
-        businessProfile: action.payload.profile,
-        businessTax: action.payload.tax,
-        businessPayment: action.payload.payment
+        profile: action.payload.profile,
+        settings: action.payload.settings
       };
 
-    case ADMIN_UPDATE_BUSINESS_PROFILE:
-      return { ...state, businessProfile: action.payload };
-    case ADMIN_UPDATE_BUSINESS_TAX:
-      return { ...state, businessTax: action.payload };
-    case ADMIN_UPDATE_BUSINESS_PAYMENT:
-      return { ...state, businessPayment: action.payload };
-    case ADMIN_UPDATE_BUSINESS_MENU:
-      return { ...state, businessMenu: action.payload };
+    case ADMIN_UPDATE_PROFILE:
+      return { ...state, profile: action.payload };
+    case ADMIN_UPDATE_SETTINGS:
+      return { ...state, settings: action.payload };
+    case ADMIN_UPDATE_MENU:
+      return { ...state, menu: action.payload };
     case ADMIN_CLEAR_STATE:
       return { ...state, ...INITIAL_STATE };
     default:

@@ -49,10 +49,10 @@ const SListItem = styled(ListItem)`
 
 const OrderMenu = (props: any) => {
   const {
-    businessProfile,
-    businessTax,
-    businessPayment,
-    businessMenu,
+    loading,
+    profile,
+    settings,
+    menu,
     items,
     checkout,
     onSubmit,
@@ -63,10 +63,8 @@ const OrderMenu = (props: any) => {
     <React.Fragment>
       <SHeader>
         <Link style={{ display: "flex" }} to="/admin">
-          {businessProfile.logo && (
-            <SLogo src={sanitizeImgSrc(businessProfile.logo)} alt="" />
-          )}
-          <SBranding>{businessProfile.name}</SBranding>
+          {profile.logo && <SLogo src={sanitizeImgSrc(profile.logo)} alt="" />}
+          <SBranding>{profile.name}</SBranding>
         </Link>
       </SHeader>
       <SColumnWrapper>
@@ -74,20 +72,20 @@ const OrderMenu = (props: any) => {
           <SColumnHeader>
             <STitle>{`Menu`}</STitle>
           </SColumnHeader>
-          {businessMenu && businessMenu.length ? (
+          {menu && menu.length ? (
             <SGrid itemMaxWidth={360} itemMaxHeight={150} gap={10}>
-              {businessMenu &&
-                businessMenu.map((item: IMenuItem) => (
+              {menu &&
+                menu.map((item: IMenuItem) => (
                   <ListItem
                     key={`menu-${item.name}`}
                     item={item}
-                    businessPayment={businessPayment}
+                    settings={settings}
                     onClick={() => onAdd(item)}
                   />
                 ))}
             </SGrid>
           ) : (
-            <EmptyState />
+            <EmptyState loading={loading} />
           )}
         </SColumn>
         <SColumnOrder width={30}>
@@ -101,7 +99,7 @@ const OrderMenu = (props: any) => {
                   noImage
                   key={`order-${item.name}`}
                   item={item}
-                  businessPayment={businessPayment}
+                  settings={settings}
                   actions={[
                     { label: "Remove", callback: onRemove },
                     { label: "Add", callback: onAdd }
@@ -110,14 +108,10 @@ const OrderMenu = (props: any) => {
               ))}
             </SColumnList>
           ) : (
-            <EmptyState />
+            <EmptyState loading={loading} />
           )}
           <SColumnFooter>
-            <Summary
-              checkout={checkout}
-              businessTax={businessTax}
-              businessPayment={businessPayment}
-            />
+            <Summary checkout={checkout} settings={settings} />
             <SColumnRow>
               <Button marginTop={12} onClick={onSubmit}>{`Pay`}</Button>
             </SColumnRow>

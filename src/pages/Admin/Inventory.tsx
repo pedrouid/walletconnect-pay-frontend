@@ -1,11 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import {
-  IMenuItem,
-  IBusinessMenu,
-  IBusinessPayment
-} from "../../helpers/types";
+import { IMenuItem, IMenu, ISettings } from "../../helpers/types";
 import { adminShowInventoryModal } from "../../redux/_admin";
 import ListItem from "../../components/ListItem";
 import EmptyState from "../../components/EmptyState";
@@ -19,23 +15,29 @@ const SButtonWrapper = styled.div`
   right: ${CONTENT_PADDING * 2}px;
 `;
 
+const SListItem = styled(ListItem)`
+  margin-bottom: 10px;
+`;
+
 interface IInventoryProps {
-  businessMenu: IBusinessMenu;
-  businessPayment: IBusinessPayment;
+  menu: IMenu;
+  settings: ISettings;
   adminShowInventoryModal: (menuItem?: IMenuItem) => void;
 }
 
 const Inventory = (props: IInventoryProps) => {
-  const { businessMenu, businessPayment } = props;
+  const { menu, settings } = props;
+  console.log("[OrderMenu] menu", menu); // tslint:disable-line
+  console.log("[OrderMenu] settings", settings); // tslint:disable-line
   return (
     <React.Fragment>
-      {businessMenu && businessMenu.length ? (
+      {menu && menu.length ? (
         <SColumnList>
-          {businessMenu.map((item: IMenuItem) => (
-            <ListItem
+          {menu.map((item: IMenuItem) => (
+            <SListItem
               key={`inventory-${item.name}`}
               item={item}
-              businessPayment={businessPayment}
+              settings={settings}
               onClick={() => props.adminShowInventoryModal(item)}
             />
           ))}
@@ -44,14 +46,16 @@ const Inventory = (props: IInventoryProps) => {
         <EmptyState message={`No Inventory`} />
       )}
       <SButtonWrapper>
-        <Button onClick={props.adminShowInventoryModal}>{`Add Item`}</Button>
+        <Button
+          onClick={() => props.adminShowInventoryModal()}
+        >{`Add Item`}</Button>
       </SButtonWrapper>
     </React.Fragment>
   );
 };
 const reduxProps = (store: any) => ({
-  businessMenu: store.admin.businessMenu,
-  businessPayment: store.admin.businessPayment
+  menu: store.admin.menu,
+  settings: store.admin.settings
 });
 
 export default connect(

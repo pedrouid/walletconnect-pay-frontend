@@ -1,11 +1,4 @@
-import {
-  IBusinessMenu,
-  IBusinessData,
-  IPaymentMethod,
-  IBusinessProfile,
-  IBusinessTax,
-  IBusinessPayment
-} from "../../helpers/types";
+import { IMenu, IData, IProfile, ISettings } from "../../helpers/types";
 
 import logo from "./logo.png";
 
@@ -21,8 +14,9 @@ import scone from "./images/scone.jpg";
 import croissant from "./images/croissant.jpg";
 import almondCroissant from "./images/almond-croissant.jpg";
 import { formatItemId } from "../../helpers/utilities";
+import PAYMENT_METHODS from "../../constants/paymentMethods";
 
-const menu: IBusinessMenu = [
+const menu: IMenu = [
   {
     id: "espresso",
     name: "Espresso",
@@ -102,32 +96,9 @@ const menu: IBusinessMenu = [
   }
 ];
 
-const methods: IPaymentMethod[] = [
-  {
-    type: "burner",
-    chainId: 100,
-    assetSymbol: "xDAI"
-  },
-  {
-    type: "walletconnect",
-    chainId: 1,
-    assetSymbol: "ETH"
-  },
-  {
-    type: "walletconnect",
-    chainId: 1,
-    assetSymbol: "DAI"
-  },
-  {
-    type: "walletconnect",
-    chainId: 100,
-    assetSymbol: "xDAI"
-  }
-];
-
 const name = "Bufficorn Café";
 
-const profile: IBusinessProfile = {
+const profile: IProfile = {
   id: formatItemId(name),
   name,
   description: "Local roasted café in Denver",
@@ -138,22 +109,18 @@ const profile: IBusinessProfile = {
   phone: ""
 };
 
-const tax: IBusinessTax = {
-  rate: 11,
-  included: false,
-  display: true
+const settings: ISettings = {
+  taxRate: 11,
+  taxIncluded: false,
+  taxDisplay: true,
+  paymentMethods: PAYMENT_METHODS,
+  paymentCurrency: "USD",
+  paymentAddress: ""
 };
 
-const payment: IBusinessPayment = {
-  methods,
-  currency: "USD",
-  address: ""
-};
-
-const data: IBusinessData = {
+const data: IData = {
   profile,
-  tax,
-  payment
+  settings
 };
 
 export default { data, menu };

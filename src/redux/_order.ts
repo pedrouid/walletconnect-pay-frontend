@@ -21,7 +21,11 @@ import { getDemoBusiness } from "../helpers/business";
 import { notificationShow } from "./_notification";
 import { modalShow, modalHide } from "./_modal";
 import { apiGetTransactionReceipt } from "../helpers/api";
-import { convertHexToNumber } from "../helpers/bignumber";
+import {
+  convertStringToNumber,
+  convertHexToNumber,
+  add
+} from "../helpers/bignumber";
 import { getChainData } from "../helpers/utilities";
 import {
   PAYMENT_METHODS_MODAL,
@@ -66,7 +70,7 @@ const ORDER_CLEAR_STATE = "order/ORDER_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
 
-export const orderLoadDemo = (businessName: string) => (
+export const orderLoadDemo = (businessName?: string) => (
   dispatch: any,
   getState: any
 ) => {
@@ -75,13 +79,12 @@ export const orderLoadDemo = (businessName: string) => (
   const demo = getDemoBusiness(businessName);
 
   if (demo) {
-    console.log("[orderLoadDemo] demo", demo); // tslint:disable-line
     const paymentMethod =
-      demo.data.payment.methods.length === 1
-        ? demo.data.payment.methods[0]
+      demo.data.settings.paymentMethods.length === 1
+        ? demo.data.settings.paymentMethods[0]
         : null;
 
-    const paymentAddress = demo.data.payment.address || "";
+    const paymentAddress = demo.data.settings.paymentAddress || "";
 
     dispatch(demoLoadDemo(demo));
 
@@ -101,14 +104,14 @@ export const orderLoadDemo = (businessName: string) => (
 };
 
 export const orderLoadMenu = () => (dispatch: any, getState: any) => {
-  const { businessPayment } = getState().admin;
+  const { settings } = getState().admin;
 
   dispatch({ type: ORDER_LOAD_MENU_REQUEST });
 
   const paymentMethod =
-    businessPayment.methods.length === 1 ? businessPayment.methods[0] : null;
+    settings.paymentMethods.length === 1 ? settings.paymentMethods[0] : null;
 
-  const paymentAddress = businessPayment.address || "";
+  const paymentAddress = settings.paymentAddress || "";
 
   dispatch({
     type: ORDER_LOAD_MENU_SUCCESS,
@@ -124,17 +127,17 @@ export const orderAddItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  const { businessTax } = getState().admin;
+  const { settings } = getState().admin;
   let { items } = getState().order;
   let { rawtotal } = getState().order.checkout;
 
   let newItem = true;
 
   items = items.map((orderItem: IOrderItem) => {
-    if (orderItem.name === item.name) {
+    if (orderItem.id === item.id) {
       newItem = false;
-      orderItem.quantity += 1;
-      rawtotal += item.price;
+      orderItem.quantity = convertStringToNumber(add(orderItem.quantity, 1));
+      rawtotal = convertStringToNumber(add(rawtotal, item.price));
     }
     return orderItem;
   });
@@ -144,14 +147,14 @@ export const orderAddItem = (item: IMenuItem) => (
       ...item,
       quantity: 1
     });
-    rawtotal += item.price;
+    rawtotal = convertStringToNumber(add(rawtotal, item.price));
   }
 
   dispatch({
     type: ORDER_UPDATE_ITEMS,
     payload: {
       items,
-      checkout: formatCheckoutDetails(rawtotal, businessTax)
+      checkout: formatCheckoutDetails(rawtotal, settings)
     }
   });
 };
@@ -160,7 +163,7 @@ export const orderRemoveItem = (item: IMenuItem) => (
   dispatch: any,
   getState: any
 ) => {
-  const { businessTax } = getState().admin;
+  const { settings } = getState().admin;
   let { items } = getState().order;
   let { rawtotal } = getState().order.checkout;
 
@@ -181,7 +184,7 @@ export const orderRemoveItem = (item: IMenuItem) => (
     type: ORDER_UPDATE_ITEMS,
     payload: {
       items,
-      checkout: formatCheckoutDetails(rawtotal, businessTax)
+      checkout: formatCheckoutDetails(rawtotal, settings)
     }
   });
 };
@@ -210,15 +213,15 @@ export const orderManageSession = (
 
 export const orderShowPaymentMethods = () => (dispatch: any, getState: any) => {
   const { demo } = getState().order;
-  let businessPayment;
+  let settings;
   if (demo) {
-    businessPayment = getState().demo.businessPayment;
+    settings = getState().demo.settings;
   } else {
-    businessPayment = getState().admin.businessPayment;
+    settings = getState().admin.settings;
   }
   const callback = (paymentMethod?: IPaymentMethod) =>
     dispatch(orderChoosePaymentMethod(paymentMethod));
-  dispatch(modalShow(PAYMENT_METHODS_MODAL, { businessPayment, callback }));
+  dispatch(modalShow(PAYMENT_METHODS_MODAL, { settings, callback }));
 };
 
 export const orderChoosePaymentMethod = (
@@ -326,7 +329,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
   dispatch({ type: ORDER_PAYMENT_REQUEST });
 
   try {
-    const { businessPayment } = getState().admin;
+    const { settings } = getState().admin;
 
     const { checkout, paymentMethod, paymentAddress } = getState().order;
 
@@ -338,7 +341,7 @@ export const orderRequestPayment = (account: string, orderId: string) => async (
       from,
       to,
       amount,
-      businessPayment.currency,
+      settings.paymentCurrency,
       paymentMethod.assetSymbol,
       paymentMethod.chainId
     );

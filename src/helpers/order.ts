@@ -1,6 +1,6 @@
 import {
   ICheckoutDetails,
-  IBusinessTax,
+  ISettings,
   IOrderItem,
   IOrderJson
 } from "../helpers/types";
@@ -26,12 +26,12 @@ export const defaultCheckoutDetails: ICheckoutDetails = {
 
 export function formatCheckoutDetails(
   rawtotal: number,
-  businessTax: IBusinessTax
+  settings: ISettings
 ): ICheckoutDetails {
   let checkout;
   const _rawtotal = convertNumberToString(rawtotal);
-  const tax = multiply(_rawtotal, divide(businessTax.rate, 100));
-  if (businessTax.included) {
+  const tax = multiply(_rawtotal, divide(settings.taxRate, 100));
+  if (settings.taxIncluded) {
     const _subtotal = subtract(_rawtotal, tax);
     checkout = {
       rawtotal: convertStringToNumber(_rawtotal),

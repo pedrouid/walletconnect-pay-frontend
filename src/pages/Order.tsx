@@ -30,17 +30,17 @@ class Order extends React.Component<any, any> {
   }
 
   public componentDidUpdate(prevProps: any) {
-    if (prevProps.businessProfile.name !== this.props.businessProfile.name) {
+    if (prevProps.profile.name !== this.props.profile.name) {
       this.updatePageMeta();
     }
   }
 
   public updatePageMeta() {
-    const { businessProfile } = this.props;
+    const { profile } = this.props;
     updatePageMeta({
-      title: businessProfile.name,
-      description: businessProfile.description,
-      favicon: sanitizeImgSrc(businessProfile.logo)
+      title: profile.name,
+      description: profile.description,
+      favicon: sanitizeImgSrc(profile.logo)
     });
   }
 
@@ -58,12 +58,12 @@ class Order extends React.Component<any, any> {
 
   public render() {
     const {
-      businessProfile,
-      businessTax,
-      businessPayment,
-      businessMenu,
+      adminLoading,
+      profile,
+      settings,
+      menu,
       paymentMethod,
-      loading,
+      orderLoading,
       submitted,
       items,
       checkout,
@@ -71,13 +71,13 @@ class Order extends React.Component<any, any> {
       uri,
       orderId
     } = this.props;
-    return !this.props.loading ? (
+    return !orderLoading ? (
       <React.Fragment>
         <OrderMenu
-          businessProfile={businessProfile}
-          businessTax={businessTax}
-          businessPayment={businessPayment}
-          businessMenu={businessMenu}
+          loading={orderLoading || adminLoading}
+          profile={profile}
+          settings={settings}
+          menu={menu}
           items={items}
           checkout={checkout}
           onSubmit={this.onSubmit}
@@ -85,9 +85,8 @@ class Order extends React.Component<any, any> {
           onRemove={this.props.orderRemoveItem}
         />
         <Checkout
-          loading={loading}
-          businessTax={businessTax}
-          businessPayment={businessPayment}
+          loading={orderLoading}
+          settings={settings}
           submitted={submitted}
           payment={payment}
           paymentMethod={paymentMethod}
@@ -106,13 +105,13 @@ class Order extends React.Component<any, any> {
 }
 
 const reduxProps = (store: any) => ({
+  adminLoading: store.admin.loading,
   address: store.admin.address,
-  businessProfile: store.admin.businessProfile,
-  businessTax: store.admin.businessTax,
-  businessPayment: store.admin.businessPayment,
-  businessMenu: store.admin.businessMenu,
+  profile: store.admin.profile,
+  settings: store.admin.settings,
+  menu: store.admin.menu,
   paymentMethod: store.order.paymentMethod,
-  loading: store.order.loading,
+  orderLoading: store.order.loading,
   submitted: store.order.submitted,
   items: store.order.items,
   checkout: store.order.checkout,

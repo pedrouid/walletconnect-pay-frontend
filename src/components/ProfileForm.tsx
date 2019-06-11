@@ -4,7 +4,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Dropdown from "../components/Dropdown";
 import UploadToIpfs from "../components/UploadToIpfs";
-import { IBusinessProfile } from "../helpers/types";
+import { IProfile } from "../helpers/types";
 import BUSINESS_TYPES from "../constants/businessTypes";
 import COUNTRIES from "../constants/countries";
 
@@ -19,7 +19,7 @@ const SSubmitWrapper = styled.div`
 interface IProfileFormProps {
   title?: string;
   noLogo?: boolean;
-  businessProfile: IBusinessProfile;
+  profile: IProfile;
   onInputChange: (input: any) => void;
   onInputSubmit?: () => void;
   onSubmit?: () => void;
@@ -29,7 +29,7 @@ const ProfileForm = (props: IProfileFormProps) => {
   const {
     title,
     noLogo,
-    businessProfile,
+    profile,
     onInputChange,
     onInputSubmit,
     onSubmit
@@ -42,7 +42,7 @@ const ProfileForm = (props: IProfileFormProps) => {
         <UploadToIpfs
           size={200}
           label={`Logo`}
-          image={businessProfile.logo}
+          image={profile.logo}
           onUpload={(logo: string) => {
             onInputChange({ logo });
             if (onInputSubmit) {
@@ -56,7 +56,7 @@ const ProfileForm = (props: IProfileFormProps) => {
         type="text"
         label="Name"
         placeholder="Crypto Café"
-        value={businessProfile.name}
+        value={profile.name}
         onChange={(e: any) => onInputChange({ name: e.target.value })}
         onSubmit={() => {
           if (onInputSubmit) {
@@ -69,7 +69,7 @@ const ProfileForm = (props: IProfileFormProps) => {
         type="text"
         label="Description"
         placeholder="Boutique Coffeeshop for Crypto Folks"
-        value={businessProfile.description}
+        value={profile.description}
         onChange={(e: any) =>
           onInputChange({
             description: e.target.value
@@ -84,7 +84,7 @@ const ProfileForm = (props: IProfileFormProps) => {
 
       <Dropdown
         label="Type"
-        selected={businessProfile.type}
+        selected={profile.type}
         options={BUSINESS_TYPES}
         displayKey={"display_name"}
         targetKey={"type"}
@@ -100,7 +100,7 @@ const ProfileForm = (props: IProfileFormProps) => {
         type="email"
         label="Email"
         placeholder="contact@cryptocafe.com"
-        value={businessProfile.email}
+        value={profile.email}
         onChange={(e: any) => onInputChange({ email: e.target.value })}
         onSubmit={() => {
           if (onInputSubmit) {
@@ -111,7 +111,7 @@ const ProfileForm = (props: IProfileFormProps) => {
 
       <Dropdown
         label="Country"
-        selected={businessProfile.country}
+        selected={profile.country}
         options={COUNTRIES}
         displayKey={"name"}
         targetKey={"code"}
@@ -127,7 +127,7 @@ const ProfileForm = (props: IProfileFormProps) => {
         type="text"
         label="Phone"
         placeholder="+49 03054908166"
-        value={businessProfile.phone}
+        value={profile.phone}
         onChange={(e: any) => onInputChange({ phone: e.target.value })}
         onSubmit={() => {
           if (onInputSubmit) {

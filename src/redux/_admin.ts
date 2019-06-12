@@ -76,8 +76,7 @@ export const adminConnectWallet = (provider: any) => async (
 
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
-    const { data, menu } = await openBusinessBox(address, provider);
-    const orders = await getAllOrders();
+    const { data, menu, orders } = await openBusinessBox(address, provider);
 
     if (data) {
       const { profile, settings } = data;

@@ -4,7 +4,13 @@ import {
   IOrderDetails,
   IOrderJson
 } from "../helpers/types";
-import { getSpacePrivate, setSpacePrivate } from "./box";
+import {
+  getSpacePrivate,
+  setSpacePrivate,
+  getThreadPosts,
+  postToThread,
+  joinThread
+} from "./box";
 import { uuid } from "../helpers/utilities";
 import { PAYMENT_PENDING } from "../constants/paymentStatus";
 import { ORDER_ID, ORDER_LIST } from "../constants/space";
@@ -51,27 +57,24 @@ export function formatCheckoutDetails(
   return checkout;
 }
 
-export async function setOrderList(orderList: string[]): Promise<string[]> {
-  await setSpacePrivate(ORDER_LIST, orderList);
-  return orderList;
+function formatOrderThreadName(address: string): string {
+  return `${ORDER_LIST}:${address.toUpperCase()}`;
 }
 
 export async function getOrderList(): Promise<string[]> {
-  const orderList = await getSpacePrivate(ORDER_LIST);
+  const orderList = await getThreadPosts();
   return orderList;
 }
 
-export async function updateOrderList(orderId: string): Promise<string[]> {
-  let orderList: string[] = [];
+export async function updateOrderList(orderId: string): Promise<void> {
+  await postToThread(orderId);
+}
 
-  const result = await getOrderList();
-  if (result) {
-    orderList = [...result, orderId];
-  }
-
-  await setOrderList(orderList);
-
-  return orderList;
+export async function openOrderThread(address: string): Promise<IOrderJson[]> {
+  const threadName = formatOrderThreadName(address);
+  await joinThread(threadName);
+  const orders = await getAllOrders();
+  return orders;
 }
 
 function formatOrderKey(orderId: string): string {

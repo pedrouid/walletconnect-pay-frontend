@@ -11,6 +11,7 @@ import { DATA, MENU } from "../constants/space";
 import { DEFAULT_PAYMENT_METHOD } from "../constants/paymentMethods";
 
 import demo from "../demo";
+import { openOrderThread } from "./order";
 
 export function getDemoBusiness(bussinessName?: string) {
   let result = demo[Object.keys(demo)[0]];
@@ -85,13 +86,14 @@ export async function getMenu(): Promise<IMenu> {
 export async function openBusinessBox(
   address: string,
   provider: any
-): Promise<{ data: IData | null; menu: IMenu | null }> {
+): Promise<{ data: IData | null; menu: IMenu | null; orders: string[] }> {
   await openBox(address, provider);
 
   await openSpace();
 
   const data = await getData();
   const menu = await getMenu();
+  const orders = await openOrderThread(address);
 
-  return { data, menu };
+  return { data, menu, orders };
 }

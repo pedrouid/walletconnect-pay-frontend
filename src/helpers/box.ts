@@ -150,3 +150,37 @@ export async function removeSpacePublic(key: string) {
   }
   await space.public.remove(key);
 }
+
+let thread: any = null;
+
+export async function joinThread(threadName: string) {
+  if (!space) {
+    throw new Error("Space is not open yet");
+  }
+  thread = await space.joinThread(threadName);
+}
+
+export async function getThreadPosts() {
+  if (!thread) {
+    throw new Error("Thread is not open yet");
+  }
+  const posts = await thread.getPosts();
+  return posts;
+}
+
+export async function postToThread(message: any) {
+  if (!thread) {
+    throw new Error("Thread is not open yet");
+  }
+  if (typeof message !== "string") {
+    message = JSON.stringify(message);
+  }
+  await thread.post(message);
+}
+
+export async function subscribeToThread(callback: any) {
+  if (!thread) {
+    throw new Error("Thread is not open yet");
+  }
+  thread.onUpdate(callback);
+}

@@ -15,6 +15,8 @@ declare global {
     web3: any;
     browserHistory: any;
     Box: any;
+    box: any;
+    space: any;
   }
 }
 

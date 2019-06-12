@@ -143,8 +143,6 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
     const settings = { ...getState().admin.settings, paymentAddress: address };
     await setData({ profile, settings });
 
-    // await apiSendEmailVerification(profile.email)
-
     dispatch({
       type: ADMIN_SUBMIT_SIGNUP_SUCCESS,
       payload: { profile, settings }

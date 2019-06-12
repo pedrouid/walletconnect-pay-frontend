@@ -81,23 +81,38 @@ export const apiGetAssetPrice = async (symbol: string) => {
 export const apiPinFile = async (
   formData: FormData
 ): Promise<string | null> => {
-  const response = await axios.post("/ipfs", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data"
+  const response = await axios.post(
+    `https://api.pinata.cloud/pinning/pinFileToIPFS`,
+    formData,
+    {
+      maxContentLength: Infinity,
+      headers: {
+        "Content-Type": `multipart/form-data;`,
+        pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
+        pinata_secret_api_key: process.env.REACT_APP_PINATA_API_SECRET
+      }
     }
-  });
+  );
 
-  const { result } = response.data;
+  let result = null;
+
+  if (response.data.IpfsHash) {
+    result = response.data.IpfsHash;
+  }
+
   return result;
 };
 
 export const apiFetchFile = async (fileHash: string): Promise<any> => {
-  const response = await axios.get(`/ipfs?fileHash=${fileHash}`, {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
+  const response = await axios.get(
+    `https://gateway.pinata.cloud/ipfs/${fileHash}`,
+    {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
     }
-  });
+  );
 
   let data = null;
 
@@ -106,41 +121,4 @@ export const apiFetchFile = async (fileHash: string): Promise<any> => {
   }
 
   return data;
-};
-
-export const apiSendEmail = async (email: string): Promise<boolean> => {
-  const response = await axios.post(
-    "/send-email",
-    { email },
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    }
-  );
-
-  const result = response.data.result;
-
-  return result;
-};
-
-export const apiVerifyEmail = async (
-  email: string,
-  id: string
-): Promise<boolean> => {
-  const response = await axios.post(
-    "/verify-email",
-    { email, id },
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    }
-  );
-
-  const result = response.data.result;
-
-  return result;
 };

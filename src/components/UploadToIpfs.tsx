@@ -2,6 +2,7 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import { apiPinFile } from "../helpers/api";
 import Upload from "../components/Upload";
+import { resizeImage } from "src/helpers/image";
 
 class UploadToIpfs extends React.Component<any, any> {
   public static propTypes = {
@@ -15,9 +16,11 @@ class UploadToIpfs extends React.Component<any, any> {
   public handleApiUpload = async (files: File[]) => {
     const formData = new FormData();
 
-    files.forEach((file: File, idx: number) => {
-      formData.append(`${idx}`, file);
-    });
+    const image = files[0];
+
+    const resizedImage = await resizeImage(image);
+
+    formData.append("file", resizedImage);
 
     const result = await apiPinFile(formData);
 

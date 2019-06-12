@@ -1,4 +1,5 @@
 declare module "is-ipfs";
+declare module "browser-image-resizer";
 
 declare module "*.svg";
 declare module "*.png";

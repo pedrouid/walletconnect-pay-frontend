@@ -55,14 +55,17 @@ export interface INativeCurrency {
   assetLimit: number;
 }
 
+export interface IPaymentMethodDisplay {
+  [name: string]: {
+    color: string;
+    imgSrc: string;
+  };
+}
+
 export interface IPaymentMethod {
   type: string;
   chainId: number;
   assetSymbol: string;
-  display: {
-    color: string;
-    imgSrc: string;
-  };
 }
 
 export type IBusinessType =

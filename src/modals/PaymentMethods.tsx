@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { IPaymentMethod } from "../helpers/types";
 import ButtonWithImage from "../components/ButtonWithImage";
 import { fonts } from "../styles";
+import { PAYMENT_METHODS_DISPLAY } from "../constants/paymentMethods";
 
 const SColumnRowWrap = styled.div`
   width: 100%;
@@ -31,20 +32,20 @@ const PaymentMethods = (props: any) => {
           return (
             <SButtonWithImage
               imgSize={40}
-              imgSrc={method.display.imgSrc}
-              color={method.display.color}
+              imgSrc={PAYMENT_METHODS_DISPLAY[method.assetSymbol].imgSrc}
+              color={PAYMENT_METHODS_DISPLAY[method.assetSymbol].color}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
             >
               {method.assetSymbol}
             </SButtonWithImage>
           );
-        } else if (method.type === "burner") {
+        } else {
           return (
             <SButtonWithImage
               imgSize={40}
-              imgSrc={method.display.imgSrc}
-              color={method.display.color}
+              imgSrc={PAYMENT_METHODS_DISPLAY[method.type].imgSrc}
+              color={PAYMENT_METHODS_DISPLAY[method.type].color}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
             >{`Burner`}</SButtonWithImage>

@@ -11,7 +11,8 @@ import {
   orderAddItem,
   orderRemoveItem,
   orderSubmit,
-  orderUnsubmit
+  orderUnsubmit,
+  orderClearState
 } from "../redux/_order";
 import { adminRequestAuthentication } from "../redux/_admin";
 import { notificationShow } from "../redux/_notification";
@@ -57,8 +58,13 @@ class Order extends React.Component<any, any> {
     }
   };
 
-  public componentWillUnmount() {
+  public clearState = () => {
     revertPageMeta();
+    this.props.orderClearState();
+  };
+
+  public componentWillUnmount() {
+    this.clearState();
   }
 
   public render() {
@@ -136,6 +142,7 @@ export default connect(
     orderSubmit,
     orderUnsubmit,
     adminRequestAuthentication,
-    notificationShow
+    notificationShow,
+    orderClearState
   }
 )(Order);

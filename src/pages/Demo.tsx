@@ -7,7 +7,8 @@ import {
   orderAddItem,
   orderRemoveItem,
   orderSubmit,
-  orderUnsubmit
+  orderUnsubmit,
+  orderClearState
 } from "../redux/_order";
 import { notificationShow } from "../redux/_notification";
 import PageWrapper from "../components/PageWrapper";
@@ -50,8 +51,13 @@ class Demo extends React.Component<any, any> {
     }
   };
 
-  public componentWillUnmount() {
+  public clearState = () => {
     revertPageMeta();
+    this.props.orderClearState();
+  };
+
+  public componentWillUnmount() {
+    this.clearState();
   }
 
   public render() {
@@ -125,6 +131,7 @@ export default connect(
     orderRemoveItem,
     orderSubmit,
     orderUnsubmit,
-    notificationShow
+    notificationShow,
+    orderClearState
   }
 )(Demo);

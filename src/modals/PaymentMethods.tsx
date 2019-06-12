@@ -29,11 +29,13 @@ const PaymentMethods = (props: any) => {
     <SColumnRowWrap>
       {settings.paymentMethods.map((method: IPaymentMethod) => {
         if (method.type === "walletconnect") {
+          const display =
+            PAYMENT_METHODS_DISPLAY[method.assetSymbol.toLowerCase()];
           return (
             <SButtonWithImage
               imgSize={40}
-              imgSrc={PAYMENT_METHODS_DISPLAY[method.assetSymbol].imgSrc}
-              color={PAYMENT_METHODS_DISPLAY[method.assetSymbol].color}
+              imgSrc={display.imgSrc}
+              color={display.color}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
             >
@@ -41,11 +43,12 @@ const PaymentMethods = (props: any) => {
             </SButtonWithImage>
           );
         } else {
+          const display = PAYMENT_METHODS_DISPLAY[method.type.toLowerCase()];
           return (
             <SButtonWithImage
               imgSize={40}
-              imgSrc={PAYMENT_METHODS_DISPLAY[method.type].imgSrc}
-              color={PAYMENT_METHODS_DISPLAY[method.type].color}
+              imgSrc={display.imgSrc}
+              color={display.color}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
             >{`Burner`}</SButtonWithImage>

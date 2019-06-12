@@ -4,7 +4,7 @@ import {
   formatItemId,
   getCurrentPathname
 } from "../helpers/utilities";
-import { IProfile, ISettings, IMenuItem } from "../helpers/types";
+import { IProfile, ISettings, IMenuItem, IThreadPost } from "../helpers/types";
 import {
   openBusinessBox,
   setData,
@@ -78,8 +78,12 @@ export const adminConnectWallet = (provider: any) => async (
 
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
-    const orderCallback = (orderId: string) =>
-      dispatch(adminAddNewOrder(orderId));
+    const orderCallback = (post: IThreadPost) => {
+      console.log("[orderCallback post", post); // tslint:disable-line
+      if (post && post.message) {
+        dispatch(adminAddNewOrder(post.message));
+      }
+    };
     const { data, menu, orders } = await openBusinessBox(
       address,
       provider,
@@ -204,7 +208,9 @@ export const adminAddNewOrder = (orderId: string) => async (
 ) => {
   const { orders } = getState().admin;
   const orderJson = getOrderJson(orderId);
-  orders.push(orderJson);
+  if (orderJson) {
+    orders.push(orderJson);
+  }
   dispatch({ type: ADMIN_UPDATE_ORDERS, payload: orders });
 };
 

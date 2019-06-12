@@ -126,3 +126,10 @@ export interface IOrderJson {
   checkout: ICheckoutDetails;
   payment: IPayment;
 }
+
+export interface IThreadPost {
+  author: string;
+  message: string;
+  postId: string;
+  timestamp: number;
+}

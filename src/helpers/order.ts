@@ -2,7 +2,8 @@ import {
   ICheckoutDetails,
   ISettings,
   IOrderDetails,
-  IOrderJson
+  IOrderJson,
+  IThreadPost
 } from "../helpers/types";
 import {
   getSpacePrivate,
@@ -62,7 +63,8 @@ function formatOrderThreadName(address: string): string {
 }
 
 export async function getOrderList(): Promise<string[]> {
-  const orderList = await getThreadPosts();
+  const posts: IThreadPost[] = await getThreadPosts();
+  const orderList = posts.map(post => post.message);
   return orderList;
 }
 
@@ -142,7 +144,12 @@ export async function getAllOrders(): Promise<IOrderJson[]> {
 
   if (orderList) {
     orders = await Promise.all(
-      orderList.map((orderId: string) => getOrderJson(orderId))
+      orderList.map(async (orderId: string) => {
+        console.log("[getAllOrders] orderId", orderId); // tslint:disable-line
+        const orderJson = await getOrderJson(orderId);
+        console.log("[getAllOrders] orderJson", orderJson); // tslint:disable-line
+        return orderJson;
+      })
     );
   }
 

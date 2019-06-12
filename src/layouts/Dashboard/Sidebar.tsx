@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Icon from "../../components/Icon";
 import { colors } from "../../styles";
-import { sanitizeUrl } from "../../helpers/utilities";
+import { formatPathname, isActivePath } from "../../helpers/utilities";
 import { APP_LOGO, APP_NAME } from "../../constants/appMeta";
 
 import overview from "../../assets/navigation/overview.svg";
@@ -109,12 +109,8 @@ const Sidebar = (props: any) => (
     </SAppLogo>
     <SNavigation>
       {navigation.map(item => {
-        const pathname = sanitizeUrl(`${props.match.url}${item.path}`);
-        const current =
-          typeof window !== "undefined"
-            ? sanitizeUrl(window.location.pathname)
-            : "";
-        const active = current === pathname;
+        const pathname = formatPathname(item.path, props.match);
+        const active = isActivePath(item.path, props.match);
         return (
           <Link
             key={pathname}

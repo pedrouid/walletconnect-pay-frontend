@@ -9,4 +9,6 @@ export const DATA = `${SPACE_NAME}_DATA`;
 
 export const MENU = `${SPACE_NAME}_MENU`;
 
+export const ORDER_LIST = `${SPACE_NAME}_ORDER_LIST`;
+
 export const ORDER_ID = `${SPACE_NAME}_ORDER_ID`;

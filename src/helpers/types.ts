@@ -107,6 +107,11 @@ export interface IPayment {
   result: any;
 }
 
+export interface IOrderDetails {
+  items: IOrderItem[];
+  checkout: ICheckoutDetails;
+}
+
 export interface IOrderJson {
   id: string;
   timestamp: number;

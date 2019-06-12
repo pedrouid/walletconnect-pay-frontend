@@ -10,13 +10,21 @@ import Button from "../../components/Button";
 import { CONTENT_PADDING } from "../../constants/dashboard";
 
 const SButtonWrapper = styled.div`
-  position: absolute;
+  position: fixed;
   bottom: ${CONTENT_PADDING * 2}px;
   right: ${CONTENT_PADDING * 2}px;
 `;
 
+const SInventoryList = styled(SColumnList)`
+  padding: 0;
+`;
+
 const SListItem = styled(ListItem)`
-  margin-bottom: 10px;
+  margin: 20px;
+  margin-bottom: 0;
+  &:last-child {
+    margin-bottom: 20px;
+  }
 `;
 
 interface IInventoryProps {
@@ -27,12 +35,10 @@ interface IInventoryProps {
 
 const Inventory = (props: IInventoryProps) => {
   const { menu, settings } = props;
-  console.log("[OrderMenu] menu", menu); // tslint:disable-line
-  console.log("[OrderMenu] settings", settings); // tslint:disable-line
   return (
     <React.Fragment>
       {menu && menu.length ? (
-        <SColumnList>
+        <SInventoryList>
           {menu.map((item: IMenuItem) => (
             <SListItem
               key={`inventory-${item.name}`}
@@ -41,7 +47,7 @@ const Inventory = (props: IInventoryProps) => {
               onClick={() => props.adminShowInventoryModal(item)}
             />
           ))}
-        </SColumnList>
+        </SInventoryList>
       ) : (
         <EmptyState message={`No Inventory`} />
       )}

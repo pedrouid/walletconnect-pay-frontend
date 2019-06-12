@@ -1,13 +1,13 @@
 import {
   ICheckoutDetails,
   ISettings,
-  IOrderItem,
+  IOrderDetails,
   IOrderJson
 } from "../helpers/types";
 import { getSpacePrivate, setSpacePrivate } from "./box";
 import { uuid } from "../helpers/utilities";
 import { PAYMENT_PENDING } from "../constants/paymentStatus";
-import { ORDER_ID } from "../constants/space";
+import { ORDER_ID, ORDER_LIST } from "../constants/space";
 import {
   convertStringToNumber,
   convertNumberToString,
@@ -51,14 +51,34 @@ export function formatCheckoutDetails(
   return checkout;
 }
 
+export async function setOrderList(orderList: string[]): Promise<string[]> {
+  await setSpacePrivate(ORDER_LIST, orderList);
+  return orderList;
+}
+
+export async function getOrderList(): Promise<string[]> {
+  const orderList = await getSpacePrivate(ORDER_LIST);
+  return orderList;
+}
+
+export async function updateOrderList(orderId: string): Promise<string[]> {
+  let orderList: string[] = [];
+
+  const result = await getOrderList();
+  if (result) {
+    orderList = [...result, orderId];
+  }
+
+  await setOrderList(orderList);
+
+  return orderList;
+}
+
 function formatOrderKey(orderId: string): string {
   return `${ORDER_ID}_${orderId}`;
 }
 
-export async function createOrderJson(orderDetails: {
-  items: IOrderItem[];
-  checkout: ICheckoutDetails;
-}): Promise<string> {
+function formatOrderJson(orderDetails: IOrderDetails): IOrderJson {
   const orderId = uuid();
 
   const orderJson: IOrderJson = {
@@ -71,10 +91,29 @@ export async function createOrderJson(orderDetails: {
       result: ""
     }
   };
+  return orderJson;
+}
 
-  const key = formatOrderKey(orderId);
-
+export async function setOrderJson(orderJson: IOrderJson): Promise<string> {
+  const key = formatOrderKey(orderJson.id);
   await setSpacePrivate(key, JSON.stringify(orderJson));
+  return orderJson.id;
+}
+
+export async function getOrderJson(orderId: string): Promise<IOrderJson> {
+  const key = formatOrderKey(orderId);
+  const orderJson = await getSpacePrivate(key);
+  return orderJson;
+}
+
+export async function createOrderJson(
+  orderDetails: IOrderDetails
+): Promise<string> {
+  const orderJson = formatOrderJson(orderDetails);
+
+  const orderId = await setOrderJson(orderJson);
+
+  await updateOrderList(orderId);
 
   return orderId;
 }
@@ -83,14 +122,26 @@ export async function updateOrderJson(
   orderId: string,
   updatedOrderJson: any
 ): Promise<void> {
-  const key = formatOrderKey(orderId);
-
-  const orderJson = await getSpacePrivate(key);
+  const orderJson = await getOrderJson(orderId);
 
   const newOrderJson: IOrderJson = {
     ...orderJson,
     ...updatedOrderJson
   };
 
-  await setSpacePrivate(key, JSON.stringify(newOrderJson));
+  await setOrderJson(newOrderJson);
+}
+
+export async function getAllOrders(): Promise<IOrderJson[]> {
+  const orderList = await getOrderList();
+
+  let orders: IOrderJson[] = [];
+
+  if (orderList) {
+    orders = await Promise.all(
+      orderList.map((orderId: string) => getOrderJson(orderId))
+    );
+  }
+
+  return orders;
 }

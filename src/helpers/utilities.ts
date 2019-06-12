@@ -323,3 +323,19 @@ export function formatItemId(name: string): string {
 export function sanitizeImgSrc(image: string): string {
   return isIpfsHash(image) ? getIpfsUrl(image) : image;
 }
+
+export function getCurrentPathname() {
+  const current =
+    typeof window !== "undefined" ? sanitizeUrl(window.location.pathname) : "";
+  return current || "/";
+}
+
+export function formatPathname(path: string, match: any) {
+  return sanitizeUrl(`${match.url}${path}`);
+}
+
+export function isActivePath(path: string, match: any) {
+  const pathname = formatPathname(path, match);
+  const current = getCurrentPathname();
+  return current === pathname;
+}

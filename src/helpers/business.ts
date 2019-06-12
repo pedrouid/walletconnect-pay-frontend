@@ -1,5 +1,12 @@
 import { IData, IProfile, ISettings, IMenu } from "../helpers/types";
-import { openBox, openSpace, setSpacePrivate, getSpacePrivate } from "./box";
+import {
+  openBox,
+  openSpace,
+  setSpacePrivate,
+  getSpacePrivate,
+  setSpacePublic,
+  getSpacePublic
+} from "./box";
 import { DATA, MENU } from "../constants/space";
 
 import demo from "../demo";
@@ -71,12 +78,12 @@ export async function getData(): Promise<IData> {
 }
 
 export async function setMenu(menu: IMenu): Promise<IMenu> {
-  await setSpacePrivate(MENU, menu);
+  await setSpacePublic(MENU, menu);
   return menu;
 }
 
 export async function getMenu(): Promise<IMenu> {
-  const menu = await getSpacePrivate(MENU);
+  const menu = await getSpacePublic(MENU);
   return menu;
 }
 

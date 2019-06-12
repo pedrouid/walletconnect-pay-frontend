@@ -1,5 +1,9 @@
 import Web3 from "web3";
-import { queryChainId, formatItemId, sanitizeUrl } from "../helpers/utilities";
+import {
+  queryChainId,
+  formatItemId,
+  getCurrentPathname
+} from "../helpers/utilities";
 import { IProfile, ISettings, IMenuItem } from "../helpers/types";
 import {
   openBusinessBox,
@@ -16,11 +20,16 @@ import {
   INVENTORY_ITEM
 } from "../constants/modals";
 import { logRedux } from "../helpers/dev";
+import { getAllOrders } from "../helpers/order";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
 const ADMIN_CONNECT_SUCCESS = "admin/ADMIN_CONNECT_SUCCESS";
 const ADMIN_CONNECT_FAILURE = "admin/ADMIN_CONNECT_FAILURE";
+
+const ADMIN_GET_ALL_ORDERS_REQUEST = "admin/ADMIN_GET_ALL_ORDERS_REQUEST";
+const ADMIN_GET_ALL_ORDERS_SUCCESS = "admin/ADMIN_GET_ALL_ORDERS_SUCCESS";
+const ADMIN_GET_ALL_ORDERS_FAILURE = "admin/ADMIN_GET_ALL_ORDERS_FAILURE";
 
 const ADMIN_SUBMIT_SIGNUP_REQUEST = "admin/ADMIN_SUBMIT_SIGNUP_REQUEST";
 const ADMIN_SUBMIT_SIGNUP_SUCCESS = "admin/ADMIN_SUBMIT_SIGNUP_SUCCESS";
@@ -67,6 +76,7 @@ export const adminConnectWallet = (provider: any) => async (
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
     const { data, menu } = await openBusinessBox(address, provider);
+    const orders = await getAllOrders();
 
     if (data) {
       const { profile, settings } = data;
@@ -78,11 +88,12 @@ export const adminConnectWallet = (provider: any) => async (
           chainId,
           profile,
           settings,
-          menu
+          menu,
+          orders
         }
       });
-      const pathname = sanitizeUrl(window.browserHistory.location.pathname);
-      if (["/", "/signup"].includes(pathname)) {
+      const current = getCurrentPathname();
+      if (["/", "/signup"].includes(current)) {
         window.browserHistory.push("/admin");
       }
     } else {
@@ -95,7 +106,8 @@ export const adminConnectWallet = (provider: any) => async (
           chainId,
           profile,
           settings,
-          menu
+          menu,
+          orders
         }
       });
       window.browserHistory.push("/signup");
@@ -104,6 +116,23 @@ export const adminConnectWallet = (provider: any) => async (
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
     dispatch({ type: ADMIN_CONNECT_FAILURE });
+  }
+};
+
+export const adminGetAllOrders = () => async (dispatch: any, getState: any) => {
+  const { address } = getState().admin;
+  if (!address) {
+    return;
+  }
+  dispatch({ type: ADMIN_GET_ALL_ORDERS_REQUEST });
+  try {
+    const orders = await getAllOrders();
+
+    dispatch({ type: ADMIN_GET_ALL_ORDERS_SUCCESS, payload: orders });
+  } catch (error) {
+    console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
+    dispatch({ type: ADMIN_GET_ALL_ORDERS_FAILURE });
   }
 };
 
@@ -245,6 +274,7 @@ const INITIAL_STATE = {
   address: "",
   chainId: 1,
   menu: [],
+  orders: [],
   profile: defaultProfile,
   settings: defaultSettings
 };
@@ -263,10 +293,21 @@ export default (state = INITIAL_STATE, action: any) => {
         address: action.payload.address,
         chainId: action.payload.chainId,
         menu: action.payload.menu || [],
+        orders: action.payload.orders || [],
         profile: action.payload.profile || defaultProfile,
         settings: action.payload.settings || defaultSettings
       };
     case ADMIN_CONNECT_FAILURE:
+      return { ...state, loading: false };
+    case ADMIN_GET_ALL_ORDERS_REQUEST:
+      return { ...state, loading: true };
+    case ADMIN_GET_ALL_ORDERS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        orders: action.payload
+      };
+    case ADMIN_GET_ALL_ORDERS_FAILURE:
       return { ...state, loading: false };
     case ADMIN_SUBMIT_SIGNUP_REQUEST:
       return { ...state, loading: true };

@@ -12,6 +12,7 @@ import {
 } from "../../constants/dashboard";
 import Loader from "../../components/Loader";
 import { SCenter } from "../../components/common";
+import { isActivePath } from "../../helpers/utilities";
 
 const SWrapper = styled.div`
   position: relative;
@@ -37,6 +38,7 @@ const SContent = styled.div`
 
 interface IContentContainerStyleProps {
   show?: boolean;
+  fixedScroll?: boolean;
 }
 
 const SContentCard = styled.div<IContentContainerStyleProps>`
@@ -45,7 +47,9 @@ const SContentCard = styled.div<IContentContainerStyleProps>`
   align-items: center;
   min-height: 100%;
   border-radius: 6px;
-  padding: ${CONTENT_PADDING * 2}px ${CONTENT_PADDING}px;
+  height: ${({ fixedScroll }) => (fixedScroll ? `100%` : `initial`)};
+  padding: ${({ fixedScroll }) =>
+    fixedScroll ? `0` : `${CONTENT_PADDING * 2}px ${CONTENT_PADDING}px`};
   box-shadow: ${shadows.soft};
   background: rgb(${colors.white});
   color: rgb(${colors.dark});
@@ -71,17 +75,34 @@ const SContentLoading = styled(SCenter)<IContentContainerStyleProps>`
   pointer-events: ${({ show }) => (show ? "auto" : "none")};
 `;
 
+const FixedScrollPaths = ["/inventory", "/orders"];
+
+function isFixedScroll(match: any) {
+  let fixedScroll = false;
+  FixedScrollPaths.forEach((path: string) => {
+    if (!fixedScroll) {
+      const active = isActivePath(path, match);
+      if (active) {
+        fixedScroll = true;
+      }
+    }
+  });
+  return fixedScroll;
+}
+
 const Dashboard = (props: any) => {
-  const { children, match, loading } = props;
+  const { children, match, settings, loading } = props;
   const balance = 35245;
-  const currency = "USD";
+  const fixedScroll = isFixedScroll(match);
   return (
     <SWrapper>
       <Sidebar match={match} />
-      <Header balance={balance} currency={currency} />
+      <Header balance={balance} currency={settings.paymentCurrency} />
       <SContent>
-        <SContentCard show={!loading}>{children}</SContentCard>
-        <SContentLoading show={loading}>
+        <SContentCard fixedScroll={fixedScroll} show={!loading}>
+          {children}
+        </SContentCard>
+        <SContentLoading fixedScroll={fixedScroll} show={loading}>
           <SCenter>
             <Loader />
           </SCenter>
@@ -95,6 +116,7 @@ Dashboard.propTypes = {
   children: PropTypes.node.isRequired,
   match: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
+  settings: PropTypes.object.isRequired,
   center: PropTypes.bool,
   maxWidth: PropTypes.number
 };

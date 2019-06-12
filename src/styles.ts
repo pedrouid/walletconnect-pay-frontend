@@ -4,6 +4,7 @@ export const colors = {
   dark: "45, 42, 42",
   darkGrey: "113, 119, 138",
   grey: "155, 177, 187",
+  grey45: "115, 115, 115",
   grey90: "230, 230, 230",
   lightGrey: "234, 235, 238",
   blue: "101, 127, 230",

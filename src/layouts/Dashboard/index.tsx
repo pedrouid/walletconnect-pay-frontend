@@ -48,8 +48,7 @@ const SContentCard = styled.div<IContentContainerStyleProps>`
   min-height: 100%;
   border-radius: 6px;
   height: ${({ fixedScroll }) => (fixedScroll ? `100%` : `initial`)};
-  padding: ${({ fixedScroll }) =>
-    fixedScroll ? `0` : `${CONTENT_PADDING * 2}px ${CONTENT_PADDING}px`};
+  padding: ${({ fixedScroll }) => (fixedScroll ? `0` : `${CONTENT_PADDING}px`)};
   box-shadow: ${shadows.soft};
   background: rgb(${colors.white});
   color: rgb(${colors.dark});

@@ -4,12 +4,14 @@ import * as qrImage from "qr-image";
 
 const SQRCodeDisplay = styled.div`
   width: 100%;
+  height: 100%;
   margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
   & svg {
     width: 100%;
+    height: 100%;
   }
 `;
 

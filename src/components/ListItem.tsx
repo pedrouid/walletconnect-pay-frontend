@@ -39,7 +39,7 @@ const SListItem = styled.div<IListItemStyleProps>`
 
 const SListItemContainer = styled.div`
   width: 100%;
-  padding: 16px 24px;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
 `;
@@ -57,7 +57,7 @@ const SListItemButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: rgb(${colors.grey});
+  color: rgb(${colors.grey45});
   font-weight: ${fonts.weight.semibold};
   border-right: 1px solid rgb(${colors.lightGrey});
   cursor: pointer;
@@ -90,7 +90,7 @@ const SListItemDetails = styled.div<IListItemDetailsStyleProps>`
 const SListItemSmallDetails = styled.div`
   width: 100%;
   text-align: right;
-  font-size: ${fonts.size.large};
+  font-size: ${fonts.size.medium};
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -98,10 +98,12 @@ const SListItemSmallDetails = styled.div`
 
 const SListItemPrice = styled(SListItemSmallDetails)`
   flex: 1;
-  min-width: 55px;
+  font-weight: ${fonts.weight.semibold};
 `;
 
-const SListItemQuantity = styled(SListItemSmallDetails)``;
+const SListItemQuantity = styled(SListItemSmallDetails)`
+  font-weight: ${fonts.weight.semibold};
+`;
 
 const SListItemSubtotal = styled(SListItemDescription)`
   text-align: right;

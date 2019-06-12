@@ -80,13 +80,25 @@ const SModalFooter = styled(SColumnFooter)`
   border-top: 0;
 `;
 
+const QRCODE_HEIGHT = 300;
+
+const SQRCodeWrapper = styled.div`
+  width: 100%;
+  height: ${QRCODE_HEIGHT}px;
+`;
+
 const SPaymentResult = styled.div`
   width: 100%;
-  padding-top: 100%;
+  height: 100%;
+  max-height: ${QRCODE_HEIGHT}px;
+  padding-top: ${QRCODE_HEIGHT}px;
   position: relative;
 
   & > div {
     position: absolute;
+    width: 100%;
+    height: 100%;
+    max-height: ${QRCODE_HEIGHT}px;
     top: 0;
     left: 0;
     bottom: 0;
@@ -97,8 +109,8 @@ const SPaymentResult = styled.div`
   }
 
   & > div > img {
-    width: 150px;
-    height: 150px;
+    width: 125px;
+    height: 125px;
   }
 `;
 
@@ -239,7 +251,9 @@ const Checkout = ({
         <SModalContainer>
           {!payment ? (
             <SModalColumn>
-              <QRCodeDisplay data={qrcode} />
+              <SQRCodeWrapper>
+                <QRCodeDisplay data={qrcode} />
+              </SQRCodeWrapper>
               <SModalCallToAction>{title}</SModalCallToAction>
               <SModalDescription>{description}</SModalDescription>
             </SModalColumn>

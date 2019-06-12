@@ -2,7 +2,7 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import { apiPinFile } from "../helpers/api";
 import Upload from "../components/Upload";
-import { resizeImage } from "src/helpers/image";
+import { resizeImage } from "../helpers/image";
 
 class UploadToIpfs extends React.Component<any, any> {
   public static propTypes = {

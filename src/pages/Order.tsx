@@ -14,6 +14,7 @@ import {
   orderUnsubmit
 } from "../redux/_order";
 import { adminRequestAuthentication } from "../redux/_admin";
+import { notificationShow } from "../redux/_notification";
 import {
   revertPageMeta,
   updatePageMeta,
@@ -45,6 +46,10 @@ class Order extends React.Component<any, any> {
   }
 
   public onSubmit = () => {
+    if (!this.props.items || !this.props.items.length) {
+      this.props.notificationShow("No items added to the order", true);
+      return;
+    }
     if (this.props.paymentMethod) {
       this.props.orderSubmit();
     } else {
@@ -130,6 +135,7 @@ export default connect(
     orderRemoveItem,
     orderSubmit,
     orderUnsubmit,
-    adminRequestAuthentication
+    adminRequestAuthentication,
+    notificationShow
   }
 )(Order);

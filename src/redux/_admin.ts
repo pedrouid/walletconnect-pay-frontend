@@ -21,6 +21,7 @@ import {
 } from "../constants/modals";
 import { logRedux } from "../helpers/dev";
 import { getAllOrders } from "../helpers/order";
+import { orderLoadMenu } from "./_order";
 
 // -- Constants ------------------------------------------------------------- //
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
@@ -95,6 +96,9 @@ export const adminConnectWallet = (provider: any) => async (
       const current = getCurrentPathname();
       if (["/", "/signup"].includes(current)) {
         window.browserHistory.push("/admin");
+      }
+      if (["/order"].includes(current)) {
+        dispatch(orderLoadMenu());
       }
     } else {
       const { menu, profile, settings } = getState().admin;

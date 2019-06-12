@@ -9,6 +9,7 @@ import {
   orderSubmit,
   orderUnsubmit
 } from "../redux/_order";
+import { notificationShow } from "../redux/_notification";
 import PageWrapper from "../components/PageWrapper";
 import Checkout from "../layouts/Checkout";
 import Loader from "../components/Loader";
@@ -38,6 +39,10 @@ class Demo extends React.Component<any, any> {
   }
 
   public onSubmit = () => {
+    if (!this.props.items || !this.props.items.length) {
+      this.props.notificationShow("No items added to the order", true);
+      return;
+    }
     if (this.props.paymentMethod) {
       this.props.orderSubmit();
     } else {
@@ -119,6 +124,7 @@ export default connect(
     orderAddItem,
     orderRemoveItem,
     orderSubmit,
-    orderUnsubmit
+    orderUnsubmit,
+    notificationShow
   }
 )(Demo);

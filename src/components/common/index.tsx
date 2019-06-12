@@ -2,9 +2,9 @@ import styled from "styled-components";
 import { colors, fonts, transitions } from "../../styles";
 
 export const SListItemImage = styled.div`
-  width: 120px;
-  height: 120px;
-  margin-right: 20px;
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,16 +15,18 @@ export const SListItemImage = styled.div`
 `;
 
 export const SListItemText = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
 `;
 
 export const SListItemName = styled.div`
-  font-size: ${fonts.size.large};
+  font-size: ${fonts.size.medium};
 `;
 
 export const SListItemDescription = styled.div`
-  color: rgb(${colors.grey});
+  font-size: ${fonts.size.small};
+  color: rgb(${colors.grey45});
   margin-top: 8px;
 `;
 
@@ -62,7 +64,7 @@ export const SColumnOrder = styled(SColumn)`
 export const SColumnHeader = styled.div`
   border-bottom: 1px solid rgb(${colors.lightGrey});
   background: rgb(${colors.white});
-  padding: 20px;
+  padding: 10px 20px;
 `;
 
 export const SColumnFooter = styled.div`
@@ -97,11 +99,15 @@ export const SColumnRowTitle = styled.div`
 export const SColumnRow = styled.div`
   display: flex;
   justify-content: space-between;
-  color: rgb(${colors.grey});
+  color: rgb(${colors.grey45});
   margin-top: 8px;
   &:first-child {
     margin-top: 0;
   }
+`;
+
+export const SColumnTitle = styled.h6`
+  margin: 0;
 `;
 
 export const STitle = styled.h4`
@@ -137,7 +143,7 @@ export const SGrid = styled.div<IGridStyleProps>`
 
 export const SLabel = styled.label`
   text-align: left;
-  color: rgb(${colors.grey});
+  color: rgb(${colors.grey45});
   font-size: ${fonts.size.small};
   font-weight: ${fonts.weight.semibold};
   width: 100%;

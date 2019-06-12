@@ -15,7 +15,7 @@ import {
   SColumnFooter,
   SColumnList,
   SColumnRow,
-  STitle,
+  SColumnTitle,
   SGrid
 } from "../components/common";
 import { sanitizeImgSrc } from "../helpers/utilities";
@@ -59,6 +59,7 @@ const OrderMenu = (props: any) => {
     onAdd,
     onRemove
   } = props;
+  const ratio = 63.33;
   return (
     <React.Fragment>
       <SHeader>
@@ -68,12 +69,12 @@ const OrderMenu = (props: any) => {
         </Link>
       </SHeader>
       <SColumnWrapper>
-        <SColumn width={70}>
+        <SColumn width={ratio}>
           <SColumnHeader>
-            <STitle>{`Menu`}</STitle>
+            <SColumnTitle>{`Menu`}</SColumnTitle>
           </SColumnHeader>
           {menu && menu.length ? (
-            <SGrid itemMaxWidth={360} itemMaxHeight={150} gap={10}>
+            <SGrid itemMaxWidth={280} itemMaxHeight={120} gap={10}>
               {menu &&
                 menu.map((item: IMenuItem) => (
                   <ListItem
@@ -88,9 +89,9 @@ const OrderMenu = (props: any) => {
             <EmptyState loading={loading} />
           )}
         </SColumn>
-        <SColumnOrder width={30}>
+        <SColumnOrder width={100 - ratio}>
           <SColumnHeader>
-            <STitle>{`Order`}</STitle>
+            <SColumnTitle>{`Order`}</SColumnTitle>
           </SColumnHeader>
           {items && items.length ? (
             <SColumnList>

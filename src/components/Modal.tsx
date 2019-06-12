@@ -88,10 +88,14 @@ const SCloseButton = styled.div<ICloseButtonStyleProps>`
   }
 `;
 
-const SCard = styled.div`
+interface ICardStyleProps {
+  maxWidth?: number;
+}
+
+const SCard = styled.div<ICardStyleProps>`
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: ${({ maxWidth }) => `${maxWidth}px`};
   padding: 30px;
   background-color: rgb(${colors.white});
   border-radius: 6px;
@@ -115,6 +119,7 @@ interface IModalProps {
   children: React.ReactNode;
   show: boolean;
   toggleModal?: any;
+  maxWidth?: number;
   opacity?: number;
 }
 
@@ -126,8 +131,13 @@ class Modal extends React.Component<IModalProps, IModalState> {
   public static propTypes = {
     children: PropTypes.node.isRequired,
     show: PropTypes.bool.isRequired,
+    maxWidth: PropTypes.number,
     toggleModal: PropTypes.func,
     opacity: PropTypes.number
+  };
+
+  public static defaultProps = {
+    maxWidth: 500
   };
 
   public lightbox?: HTMLDivElement | null;
@@ -164,7 +174,14 @@ class Modal extends React.Component<IModalProps, IModalState> {
 
   public render() {
     const { offset } = this.state;
-    const { children, show, opacity, toggleModal, ...props } = this.props;
+    const {
+      children,
+      show,
+      opacity,
+      maxWidth,
+      toggleModal,
+      ...props
+    } = this.props;
     return (
       <SLightbox
         show={show}
@@ -175,7 +192,7 @@ class Modal extends React.Component<IModalProps, IModalState> {
         <SModalContainer>
           <SHitbox onClick={this.toggleModal} />
 
-          <SCard>
+          <SCard maxWidth={maxWidth}>
             {toggleModal && (
               <SCloseButton
                 size={25}

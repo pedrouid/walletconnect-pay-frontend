@@ -221,7 +221,13 @@ export const orderShowPaymentMethods = () => (dispatch: any, getState: any) => {
   }
   const callback = (paymentMethod?: IPaymentMethod) =>
     dispatch(orderChoosePaymentMethod(paymentMethod));
-  dispatch(modalShow(PAYMENT_METHODS_MODAL, { settings, callback }));
+  dispatch(
+    modalShow(PAYMENT_METHODS_MODAL, {
+      settings,
+      callback,
+      modalStyleProps: { maxWidth: 640 }
+    })
+  );
 };
 
 export const orderChoosePaymentMethod = (
@@ -317,7 +323,11 @@ export const orderSubmitBurnerWallet = (orderId: string) => async (
   dispatch: any,
   getState: any
 ) => {
-  dispatch({ type: ORDER_SUBMIT_SUCCESS, payload: { uri: "", orderId } });
+  setTimeout(
+    () =>
+      dispatch({ type: ORDER_SUBMIT_SUCCESS, payload: { uri: "", orderId } }),
+    0
+  );
 };
 
 export const orderRequestPayment = (account: string, orderId: string) => async (

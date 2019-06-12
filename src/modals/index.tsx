@@ -31,9 +31,13 @@ class ModalController extends React.Component<any, any> {
     }
   }
   public render() {
-    const { show, modalHide, disableToggle } = this.props;
+    const { show, modalHide, modalProps, disableToggle } = this.props;
     return (
-      <Modal show={show} toggleModal={!disableToggle ? modalHide : undefined}>
+      <Modal
+        show={show}
+        toggleModal={!disableToggle ? modalHide : undefined}
+        {...modalProps.modalStyleProps}
+      >
         {this.renderModal()}
       </Modal>
     );

@@ -2,17 +2,19 @@ import * as React from "react";
 import styled from "styled-components";
 import { IPaymentMethod } from "../helpers/types";
 import ButtonWithImage from "../components/ButtonWithImage";
+import { fonts } from "../styles";
 
-import burner from "../assets/payment-methods/burner.png";
-import xdai from "../assets/payment-methods/xdai.png";
-import dai from "../assets/payment-methods/dai.png";
-import eth from "../assets/payment-methods/eth.png";
-
-const iconMap = { burner, xdai, dai, eth };
+const SColumnRowWrap = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;
 
 const SButtonWithImage = styled(ButtonWithImage)`
-  margin: 10px auto;
-  max-width: 200px;
+  margin: 10px;
+  font-size: ${fonts.size.h5};
+  max-width: 250px;
 `;
 
 const PaymentMethods = (props: any) => {
@@ -23,28 +25,34 @@ const PaymentMethods = (props: any) => {
     return null;
   }
   return (
-    <React.Fragment>
+    <SColumnRowWrap>
       {settings.paymentMethods.map((method: IPaymentMethod) => {
         if (method.type === "walletconnect") {
           return (
             <SButtonWithImage
-              imgSrc={iconMap[method.assetSymbol.toLowerCase()]}
+              imgSize={40}
+              imgSrc={method.display.imgSrc}
+              color={method.display.color}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
-            >{`Pay with ${method.assetSymbol}`}</SButtonWithImage>
+            >
+              {method.assetSymbol}
+            </SButtonWithImage>
           );
         } else if (method.type === "burner") {
           return (
             <SButtonWithImage
-              imgSrc={iconMap[method.type]}
+              imgSize={40}
+              imgSrc={method.display.imgSrc}
+              color={method.display.color}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
-            >{`Pay with Burner`}</SButtonWithImage>
+            >{`Burner`}</SButtonWithImage>
           );
         }
         return null;
       })}
-    </React.Fragment>
+    </SColumnRowWrap>
   );
 };
 

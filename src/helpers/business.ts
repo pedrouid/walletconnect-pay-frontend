@@ -8,6 +8,7 @@ import {
   getSpacePublic
 } from "./box";
 import { DATA, MENU } from "../constants/space";
+import { DEFAULT_PAYMENT_METHOD } from "../constants/paymentMethods";
 
 import demo from "../demo";
 
@@ -36,13 +37,7 @@ export const defaultSettings: ISettings = {
   taxDisplay: true,
   paymentCurrency: "USD",
   paymentAddress: "",
-  paymentMethods: [
-    {
-      type: "walletconnect",
-      chainId: 1,
-      assetSymbol: "DAI"
-    }
-  ]
+  paymentMethods: [DEFAULT_PAYMENT_METHOD]
 };
 
 export const defaultData: IData = {

@@ -11,7 +11,7 @@ const SImageWrapper = styled.div<IImageWrapperStyleProps>`
   position: absolute;
   height: ${({ imgSize }) => `${imgSize}px`};
   width: ${({ imgSize }) => `${imgSize}px`};
-  margin: 0 8px;
+  margin: ${({ imgSize }) => `0 ${imgSize / 2}px`};
   top: ${({ imgSize }) => `calc((100% - ${imgSize}px) / 2)`};
   & img {
     width: 100%;
@@ -21,12 +21,19 @@ const SImageWrapper = styled.div<IImageWrapperStyleProps>`
 
 interface IButtonWithImageStyleProps {
   imgSrc: string;
+  imgSize: number;
   left?: boolean;
 }
 
 const SButton = styled(Button)<IButtonWithImageStyleProps>`
-  padding: ${({ imgSrc, left }) =>
-    imgSrc ? (left ? "8px 12px 8px 28px" : "8px 28px 8px 12px") : "8px 12px"};
+  padding: ${({ imgSrc, imgSize, left }) =>
+    imgSrc
+      ? left
+        ? `${imgSize / 2}px ${imgSize / 1.33}px ${imgSize / 2}px ${imgSize /
+            0.58}px`
+        : `${imgSize / 2}px ${imgSize / 0.58}px ${imgSize / 2}px ${imgSize /
+            1.33}px`
+      : "inherit"};
 
   & ${SImageWrapper} {
     right: ${({ left }) => (left ? "auto" : "0")};
@@ -59,6 +66,7 @@ const ButtonWithImage = (props: any) => {
       icon={icon}
       fetching={fetching}
       imgSrc={imgSrc}
+      imgSize={imgSize}
       left={left}
       {...otherProps}
     >
@@ -78,7 +86,7 @@ ButtonWithImage.propTypes = {
 };
 
 ButtonWithImage.defaultProps = {
-  imgSize: 30,
+  imgSize: 16,
   left: false
 };
 

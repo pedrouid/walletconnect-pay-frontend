@@ -11,6 +11,7 @@ export const colors = {
   lightBlue: "82, 210, 255",
   darkBlue: "16, 28, 56",
   yellow: "250, 188, 45",
+  yellowTwo: "236, 171, 0",
   orange: "246, 133, 27",
   green: "83, 205, 106",
   pink: "255, 51, 102",

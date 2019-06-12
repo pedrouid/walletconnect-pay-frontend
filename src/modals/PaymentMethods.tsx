@@ -1,16 +1,16 @@
 import * as React from "react";
 import styled from "styled-components";
 import { IPaymentMethod } from "../helpers/types";
-import Button from "../components/Button";
+import ButtonWithImage from "../components/ButtonWithImage";
 
-// import burner from "../assets/payment-methods/burner.png";
-// import xdai from "../assets/payment-methods/xdai.png";
-// import dai from "../assets/payment-methods/dai.png";
-// import eth from "../assets/payment-methods/eth.png";
+import burner from "../assets/payment-methods/burner.png";
+import xdai from "../assets/payment-methods/xdai.png";
+import dai from "../assets/payment-methods/dai.png";
+import eth from "../assets/payment-methods/eth.png";
 
-// const iconMap = { burner, xdai, dai, eth };
+const iconMap = { burner, xdai, dai, eth };
 
-const SButton = styled(Button)`
+const SButtonWithImage = styled(ButtonWithImage)`
   margin: 10px auto;
   max-width: 200px;
 `;
@@ -18,11 +18,7 @@ const SButton = styled(Button)`
 const PaymentMethods = (props: any) => {
   const { settings, callback } = props;
   if (
-    !(
-      settings &&
-      settings.paymentMethods &&
-      settings.paymentMethods.length
-    )
+    !(settings && settings.paymentMethods && settings.paymentMethods.length)
   ) {
     return null;
   }
@@ -31,17 +27,19 @@ const PaymentMethods = (props: any) => {
       {settings.paymentMethods.map((method: IPaymentMethod) => {
         if (method.type === "walletconnect") {
           return (
-            <SButton
+            <SButtonWithImage
+              imgSrc={iconMap[method.assetSymbol.toLowerCase()]}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
-            >{`Pay with ${method.assetSymbol}`}</SButton>
+            >{`Pay with ${method.assetSymbol}`}</SButtonWithImage>
           );
         } else if (method.type === "burner") {
           return (
-            <SButton
+            <SButtonWithImage
+              imgSrc={iconMap[method.type]}
               key={`${method.type}-${method.assetSymbol}-${method.chainId}`}
               onClick={() => callback(method)}
-            >{`Pay with Burner`}</SButton>
+            >{`Pay with Burner`}</SButtonWithImage>
           );
         }
         return null;

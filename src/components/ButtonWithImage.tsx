@@ -56,7 +56,6 @@ const ButtonWithImage = (props: any) => {
     children,
     ...otherProps
   } = props;
-  console.log("[ButtonWithImage] props", props); // tslint:disable-line
   return (
     <SButton
       type={type}

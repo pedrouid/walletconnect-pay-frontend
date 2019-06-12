@@ -20,7 +20,7 @@ import {
   INVENTORY_ITEM
 } from "../constants/modals";
 import { logRedux } from "../helpers/dev";
-import { getAllOrders } from "../helpers/order";
+import { getAllOrders, getOrderJson } from "../helpers/order";
 import { orderLoadMenu } from "./_order";
 
 // -- Constants ------------------------------------------------------------- //
@@ -39,6 +39,8 @@ const ADMIN_SUBMIT_SIGNUP_FAILURE = "admin/ADMIN_SUBMIT_SIGNUP_FAILURE";
 const ADMIN_SAVE_DATA_REQUEST = "admin/ADMIN_SAVE_DATA_REQUEST";
 const ADMIN_SAVE_DATA_SUCCESS = "admin/ADMIN_SAVE_DATA_SUCCESS";
 const ADMIN_SAVE_DATA_FAILURE = "admin/ADMIN_SAVE_DATA_FAILURE";
+
+const ADMIN_UPDATE_ORDERS = "admin/ADMIN_UPDATE_ORDERS";
 
 const ADMIN_UPDATE_PROFILE = "admin/ADMIN_UPDATE_PROFILE";
 
@@ -76,7 +78,13 @@ export const adminConnectWallet = (provider: any) => async (
 
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
-    const { data, menu, orders } = await openBusinessBox(address, provider);
+    const orderCallback = (orderId: string) =>
+      dispatch(adminAddNewOrder(orderId));
+    const { data, menu, orders } = await openBusinessBox(
+      address,
+      provider,
+      orderCallback
+    );
 
     if (data) {
       const { profile, settings } = data;
@@ -188,6 +196,16 @@ export const adminSaveMenu = () => async (dispatch: any, getState: any) => {
     return;
   }
   await setMenu(menu);
+};
+
+export const adminAddNewOrder = (orderId: string) => async (
+  dispatch: any,
+  getState: any
+) => {
+  const { orders } = getState().admin;
+  const orderJson = getOrderJson(orderId);
+  orders.push(orderJson);
+  dispatch({ type: ADMIN_UPDATE_ORDERS, payload: orders });
 };
 
 export const adminUpdateProfile = (updatedProfile: Partial<IProfile>) => async (
@@ -327,7 +345,8 @@ export default (state = INITIAL_STATE, action: any) => {
         profile: action.payload.profile,
         settings: action.payload.settings
       };
-
+    case ADMIN_UPDATE_ORDERS:
+      return { ...state, orders: action.payload };
     case ADMIN_UPDATE_PROFILE:
       return { ...state, profile: action.payload };
     case ADMIN_UPDATE_SETTINGS:

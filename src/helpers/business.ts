@@ -1,11 +1,18 @@
-import { IData, IProfile, ISettings, IMenu } from "../helpers/types";
+import {
+  IData,
+  IProfile,
+  ISettings,
+  IMenu,
+  IOrderJson
+} from "../helpers/types";
 import {
   openBox,
   openSpace,
   setSpacePrivate,
   getSpacePrivate,
   setSpacePublic,
-  getSpacePublic
+  getSpacePublic,
+  subscribeToThread
 } from "./box";
 import { DATA, MENU } from "../constants/space";
 import { DEFAULT_PAYMENT_METHOD } from "../constants/paymentMethods";
@@ -85,8 +92,9 @@ export async function getMenu(): Promise<IMenu> {
 
 export async function openBusinessBox(
   address: string,
-  provider: any
-): Promise<{ data: IData | null; menu: IMenu | null; orders: string[] }> {
+  provider: any,
+  orderCallback: any
+): Promise<{ data: IData | null; menu: IMenu | null; orders: IOrderJson[] }> {
   await openBox(address, provider);
 
   await openSpace();
@@ -94,6 +102,8 @@ export async function openBusinessBox(
   const data = await getData();
   const menu = await getMenu();
   const orders = await openOrderThread(address);
+
+  subscribeToThread(orderCallback);
 
   return { data, menu, orders };
 }

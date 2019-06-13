@@ -95,11 +95,7 @@ const Dashboard = (props: any) => {
   return (
     <SWrapper>
       <Sidebar match={match} />
-      <Header
-        balance={balance}
-        profile={profile}
-        currency={settings.paymentCurrency}
-      />
+      <Header balance={balance} profile={profile} settings={settings} />
       <SContent>
         <SContentCard fixedScroll={fixedScroll} show={!loading}>
           {children}
@@ -118,7 +114,7 @@ Dashboard.propTypes = {
   children: PropTypes.node.isRequired,
   match: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
-  balance: PropTypes.number.isRequired,
+  balance: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
   settings: PropTypes.object.isRequired,
   center: PropTypes.bool,

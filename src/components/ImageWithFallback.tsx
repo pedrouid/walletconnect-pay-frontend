@@ -84,21 +84,17 @@ class ImageWithFallback extends React.Component<any, any> {
   }
 
   public componentDidUpdate(prevProps: any) {
-    console.log("[componentDidUpdate] this.props", this.props); // tslint:disable-line
-    console.log("[componentDidUpdate] prevProps", prevProps); // tslint:disable-line
     this.updateSrc(prevProps);
   }
 
   public updateSrc = (prevProps?: any) => {
     if (this.img) {
       if (!this.props.src && !this.props.fallbackText) {
-        console.log("[updateSrc] this.img", this.img); // tslint:disable-line
         this.img.src = placeholder;
       } else if (
         this.props.src &&
         (prevProps && this.props.src !== prevProps.src)
       ) {
-        console.log("[updateSrc] this.props.src", this.props.src); // tslint:disable-line
         this.img.src = this.props.src;
       }
     }

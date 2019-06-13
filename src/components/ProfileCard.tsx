@@ -54,9 +54,10 @@ const SProfileBalance = styled.p<IProfileCardStyleProps>`
 `;
 
 const ProfileCard = (props: any) => {
-  const { profile, size, balance, currency } = props;
+  const { profile, size, totalBalance, nativeCurrency } = props;
   const hideBalance =
-    typeof balance === "undefined" && typeof currency === "undefined";
+    typeof totalBalance === "undefined" &&
+    typeof nativeCurrency === "undefined";
   return (
     <SProfileCard>
       <SProfileLogo
@@ -69,11 +70,12 @@ const ProfileCard = (props: any) => {
         <SProfileName size={size} hideBalance={hideBalance}>
           {profile.name || `Business Name`}
         </SProfileName>
-        {typeof balance !== "undefined" && typeof currency !== "undefined" && (
-          <SProfileBalance size={size}>
-            {formatDisplayAmount(balance, currency)}
-          </SProfileBalance>
-        )}
+        {typeof totalBalance !== "undefined" &&
+          typeof nativeCurrency !== "undefined" && (
+            <SProfileBalance size={size}>
+              {formatDisplayAmount(totalBalance, nativeCurrency)}
+            </SProfileBalance>
+          )}
       </SProfileDetails>
     </SProfileCard>
   );
@@ -82,8 +84,8 @@ const ProfileCard = (props: any) => {
 ProfileCard.propTypes = {
   profile: PropTypes.object.isRequired,
   size: PropTypes.number,
-  balance: PropTypes.number,
-  currency: PropTypes.string
+  totalBalance: PropTypes.string,
+  nativeCurrency: PropTypes.string
 };
 
 ProfileCard.defaultProps = {

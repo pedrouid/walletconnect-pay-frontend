@@ -1,14 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { IGasPrices, IAssetData } from "./types";
 import { payloadId } from "@walletconnect/utils";
-import SUPPORTED_ASSETS from "../constants/supportedAssets";
-import ASSET_PRICES from "../constants/assetPrices";
-import {
-  convertStringToNumber,
-  convertAmountFromRawNumber,
-  multiply,
-  add
-} from "./bignumber";
 
 const api: AxiosInstance = axios.create({
   baseURL: "https://ethereum-api.xyz",
@@ -95,47 +87,6 @@ export const apiGetTokenBalance = async (
   );
   const { result } = response.data;
   return result;
-};
-
-export const apiGetAvailableBalance = async (
-  address: string,
-  nativeCurrency: string
-): Promise<number> => {
-  const assetPrices = ASSET_PRICES[nativeCurrency];
-  const balances = await Promise.all(
-    Object.keys(SUPPORTED_ASSETS).map(async (key: string) => {
-      const chainId = convertStringToNumber(key);
-      const assets = SUPPORTED_ASSETS[chainId];
-      const _balances = await Promise.all(
-        Object.keys(assets).map(async (assetSymbol: string) => {
-          const asset = assets[assetSymbol];
-          let result: IAssetData;
-          if (asset.contractAddress) {
-            result = await apiGetTokenBalance(
-              address,
-              chainId,
-              asset.contractAddress
-            );
-          } else {
-            result = await apiGetAccountBalance(address, chainId);
-          }
-          let assetBalance = "0";
-          if (result.balance) {
-            assetBalance = multiply(
-              convertAmountFromRawNumber(result.balance, result.decimals),
-              assetPrices[assetSymbol]
-            );
-          }
-          return assetBalance;
-        })
-      );
-      return _balances;
-    })
-  );
-  const availabeBalance = convertStringToNumber(
-    balances.flat(2).reduce((prev: string, curr: string) => add(prev, curr))
-  );
-  return availabeBalance;
 };
 
 export const apiGetAssetPrice = async (symbol: string) => {

@@ -133,3 +133,13 @@ export interface IThreadPost {
   postId: string;
   timestamp: number;
 }
+
+export interface IAssetNativeBalance {
+  asset: IAssetData;
+  balance: string;
+}
+
+export interface IAvailableBalance {
+  assetBalances: IAssetNativeBalance[];
+  total: string;
+}

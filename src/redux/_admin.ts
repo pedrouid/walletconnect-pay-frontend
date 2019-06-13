@@ -1,10 +1,14 @@
 import Web3 from "web3";
+import merge from "lodash.merge";
 import {
   queryChainId,
   formatItemId,
   getCurrentPathname
 } from "../helpers/utilities";
-import { apiGetAvailableBalance } from "../helpers/api";
+import {
+  accountingGetAvailableBalance,
+  defaultAvailableBalance
+} from "../helpers/accounting";
 import { IProfile, ISettings, IMenuItem } from "../helpers/types";
 import {
   openBusinessBox,
@@ -143,18 +147,23 @@ export const adminGetAvailableBalance = () => async (
   dispatch: any,
   getState: any
 ) => {
-  const { address, settings } = getState().admin;
-  if (!address) {
+  const { settings } = getState().admin;
+  if (!settings.paymentAddress) {
     return;
   }
   dispatch({ type: ADMIN_GET_AVAILABLE_BALANCE_REQUEST });
   try {
-    const balance = await apiGetAvailableBalance(
-      address,
+    const updatedBalance = await accountingGetAvailableBalance(
+      settings.paymentAddress,
       settings.paymentCurrency
     );
 
-    dispatch({ type: ADMIN_GET_AVAILABLE_BALANCE_SUCCESS, payload: balance });
+    const balance = merge({}, updatedBalance);
+
+    dispatch({
+      type: ADMIN_GET_AVAILABLE_BALANCE_SUCCESS,
+      payload: balance
+    });
   } catch (error) {
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
@@ -326,7 +335,7 @@ const INITIAL_STATE = {
   web3: null,
   address: "",
   chainId: 1,
-  balance: 0,
+  balance: defaultAvailableBalance,
   menu: [],
   orders: [],
   profile: defaultProfile,

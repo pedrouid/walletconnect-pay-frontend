@@ -49,11 +49,15 @@ const SMenuButton = styled(Button)`
 `;
 
 const Header = (props: any) => {
-  const { profile, balance, currency } = props;
+  const { profile, balance, settings } = props;
   return (
     <SHeader>
       <SHeaderLeft>
-        <ProfileCard profile={profile} balance={balance} currency={currency} />
+        <ProfileCard
+          profile={profile}
+          totalBalance={balance.total}
+          nativeCurrency={settings.paymentCurrency}
+        />
       </SHeaderLeft>
       <SHeaderRight>
         <Link to="/order">

@@ -16,7 +16,7 @@ class Admin extends React.Component<any, any> {
     match: PropTypes.object.isRequired,
     loading: PropTypes.bool.isRequired,
     address: PropTypes.string.isRequired,
-    balance: PropTypes.number.isRequired,
+    balance: PropTypes.object.isRequired,
     profile: PropTypes.object.isRequired,
     settings: PropTypes.object.isRequired
   };

@@ -4,6 +4,7 @@ import {
   formatItemId,
   getCurrentPathname
 } from "../helpers/utilities";
+import { apiGetAvailableBalance } from "../helpers/api";
 import { IProfile, ISettings, IMenuItem, IThreadPost } from "../helpers/types";
 import {
   openBusinessBox,
@@ -27,6 +28,13 @@ import { orderLoadMenu } from "./_order";
 const ADMIN_CONNECT_REQUEST = "admin/ADMIN_CONNECT_REQUEST";
 const ADMIN_CONNECT_SUCCESS = "admin/ADMIN_CONNECT_SUCCESS";
 const ADMIN_CONNECT_FAILURE = "admin/ADMIN_CONNECT_FAILURE";
+
+const ADMIN_GET_AVAILABLE_BALANCE_REQUEST =
+  "admin/ADMIN_GET_AVAILABLE_BALANCE_REQUEST";
+const ADMIN_GET_AVAILABLE_BALANCE_SUCCESS =
+  "admin/ADMIN_GET_AVAILABLE_BALANCE_SUCCESS";
+const ADMIN_GET_AVAILABLE_BALANCE_FAILURE =
+  "admin/ADMIN_GET_AVAILABLE_BALANCE_FAILURE";
 
 const ADMIN_GET_ALL_ORDERS_REQUEST = "admin/ADMIN_GET_ALL_ORDERS_REQUEST";
 const ADMIN_GET_ALL_ORDERS_SUCCESS = "admin/ADMIN_GET_ALL_ORDERS_SUCCESS";
@@ -79,7 +87,6 @@ export const adminConnectWallet = (provider: any) => async (
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
     const orderCallback = (post: IThreadPost) => {
-      console.log("[orderCallback post", post); // tslint:disable-line
       if (post && post.message) {
         dispatch(adminAddNewOrder(post.message));
       }
@@ -104,6 +111,9 @@ export const adminConnectWallet = (provider: any) => async (
           orders
         }
       });
+
+      dispatch(adminGetAvailableBalance());
+
       const current = getCurrentPathname();
       if (["/", "/signup"].includes(current)) {
         window.browserHistory.push("/admin");
@@ -131,6 +141,29 @@ export const adminConnectWallet = (provider: any) => async (
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));
     dispatch({ type: ADMIN_CONNECT_FAILURE });
+  }
+};
+
+export const adminGetAvailableBalance = () => async (
+  dispatch: any,
+  getState: any
+) => {
+  const { address, settings } = getState().admin;
+  if (!address) {
+    return;
+  }
+  dispatch({ type: ADMIN_GET_AVAILABLE_BALANCE_REQUEST });
+  try {
+    const balance = await apiGetAvailableBalance(
+      address,
+      settings.paymentCurrency
+    );
+
+    dispatch({ type: ADMIN_GET_AVAILABLE_BALANCE_SUCCESS, payload: balance });
+  } catch (error) {
+    console.error(error); // tslint:disable-line
+    dispatch(notificationShow(error.message, true));
+    dispatch({ type: ADMIN_GET_AVAILABLE_BALANCE_FAILURE });
   }
 };
 
@@ -298,6 +331,7 @@ const INITIAL_STATE = {
   web3: null,
   address: "",
   chainId: 1,
+  balance: 0,
   menu: [],
   orders: [],
   profile: defaultProfile,
@@ -324,14 +358,18 @@ export default (state = INITIAL_STATE, action: any) => {
       };
     case ADMIN_CONNECT_FAILURE:
       return { ...state, loading: false };
+
+    case ADMIN_GET_AVAILABLE_BALANCE_REQUEST:
+      return { ...state };
+    case ADMIN_GET_AVAILABLE_BALANCE_SUCCESS:
+      return { ...state, balance: action.payload };
+    case ADMIN_GET_AVAILABLE_BALANCE_FAILURE:
+      return { ...state };
+
     case ADMIN_GET_ALL_ORDERS_REQUEST:
       return { ...state, loading: true };
     case ADMIN_GET_ALL_ORDERS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        orders: action.payload
-      };
+      return { ...state, loading: false, orders: action.payload };
     case ADMIN_GET_ALL_ORDERS_FAILURE:
       return { ...state, loading: false };
     case ADMIN_SUBMIT_SIGNUP_REQUEST:

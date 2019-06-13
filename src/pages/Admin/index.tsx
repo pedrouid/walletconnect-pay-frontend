@@ -23,9 +23,14 @@ class Admin extends React.Component<any, any> {
   }
 
   public render() {
-    const { loading, match, settings } = this.props;
+    const { loading, balance, match, settings } = this.props;
     return (
-      <Dashboard match={match} loading={loading} settings={settings}>
+      <Dashboard
+        match={match}
+        balance={balance}
+        loading={loading}
+        settings={settings}
+      >
         <Switch>
           <Route exact path={match.url} component={Overview} />
           <Route exact path={`${match.url}/inventory`} component={Inventory} />
@@ -46,6 +51,7 @@ class Admin extends React.Component<any, any> {
 const reduxProps = (store: any) => ({
   loading: store.admin.loading,
   address: store.admin.address,
+  balance: store.admin.balance,
   settings: store.admin.settings
 });
 

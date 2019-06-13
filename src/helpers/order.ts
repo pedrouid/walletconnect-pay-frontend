@@ -145,9 +145,7 @@ export async function getAllOrders(): Promise<IOrderJson[]> {
   if (orderList) {
     orders = await Promise.all(
       orderList.map(async (orderId: string) => {
-        console.log("[getAllOrders] orderId", orderId); // tslint:disable-line
         const orderJson = await getOrderJson(orderId);
-        console.log("[getAllOrders] orderJson", orderJson); // tslint:disable-line
         return orderJson;
       })
     );

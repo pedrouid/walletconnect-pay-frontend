@@ -90,8 +90,7 @@ function isFixedScroll(match: any) {
 }
 
 const Dashboard = (props: any) => {
-  const { children, match, settings, loading } = props;
-  const balance = 35245;
+  const { children, match, balance, settings, loading } = props;
   const fixedScroll = isFixedScroll(match);
   return (
     <SWrapper>
@@ -115,6 +114,7 @@ Dashboard.propTypes = {
   children: PropTypes.node.isRequired,
   match: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
+  balance: PropTypes.number.isRequired,
   settings: PropTypes.object.isRequired,
   center: PropTypes.bool,
   maxWidth: PropTypes.number

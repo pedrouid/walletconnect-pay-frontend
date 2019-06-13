@@ -1,6 +1,14 @@
 import axios, { AxiosInstance } from "axios";
-import { IGasPrices } from "./types";
+import { IGasPrices, IAssetData } from "./types";
 import { payloadId } from "@walletconnect/utils";
+import SUPPORTED_ASSETS from "src/constants/supportedAssets";
+import ASSET_PRICES from "src/constants/assetPrices";
+import {
+  convertStringToNumber,
+  convertAmountFromRawNumber,
+  multiply,
+  add
+} from "./bignumber";
 
 const api: AxiosInstance = axios.create({
   baseURL: "https://ethereum-api.xyz",
@@ -66,6 +74,70 @@ export const apiGetTransactionReceipt = async (
   return result;
 };
 
+export const apiGetAccountBalance = async (
+  address: string,
+  chainId: number
+): Promise<IAssetData> => {
+  const response = await api.get(
+    `/account-balance?address=${address}&chainId=${chainId}`
+  );
+  const { result } = response.data;
+  return result;
+};
+
+export const apiGetTokenBalance = async (
+  address: string,
+  chainId: number,
+  contractAddress: string
+): Promise<IAssetData> => {
+  const response = await api.get(
+    `/token-balance?address=${address}&chainId=${chainId}&contractAddress=${contractAddress}`
+  );
+  const { result } = response.data;
+  return result;
+};
+
+export const apiGetAvailableBalance = async (
+  address: string,
+  nativeCurrency: string
+): Promise<number> => {
+  const assetPrices = ASSET_PRICES[nativeCurrency];
+  const balances = await Promise.all(
+    Object.keys(SUPPORTED_ASSETS).map(async (key: string) => {
+      const chainId = convertStringToNumber(key);
+      const assets = SUPPORTED_ASSETS[chainId];
+      const _balances = await Promise.all(
+        Object.keys(assets).map(async (assetSymbol: string) => {
+          const asset = assets[assetSymbol];
+          let result: IAssetData;
+          if (asset.contractAddress) {
+            result = await apiGetTokenBalance(
+              address,
+              chainId,
+              asset.contractAddress
+            );
+          } else {
+            result = await apiGetAccountBalance(address, chainId);
+          }
+          let assetBalance = "0";
+          if (result.balance) {
+            assetBalance = multiply(
+              convertAmountFromRawNumber(result.balance, result.decimals),
+              assetPrices[assetSymbol]
+            );
+          }
+          return assetBalance;
+        })
+      );
+      return _balances;
+    })
+  );
+  const availabeBalance = convertStringToNumber(
+    balances.flat(2).reduce((prev: string, curr: string) => add(prev, curr))
+  );
+  return availabeBalance;
+};
+
 export const apiGetAssetPrice = async (symbol: string) => {
   const response = await axios.get(
     `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbol}`,
@@ -75,7 +147,8 @@ export const apiGetAssetPrice = async (symbol: string) => {
       }
     }
   );
-  console.log("apiGetDaiPrice response.data", response.data); // tslint:disable-line
+  // TODO: Get Live Asset Prices
+  console.log("apiGetAssetPrice response.data", response.data); // tslint:disable-line
 };
 
 export const apiPinFile = async (

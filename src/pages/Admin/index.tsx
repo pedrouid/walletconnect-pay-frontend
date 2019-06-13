@@ -13,7 +13,12 @@ import Settings from "./Settings";
 
 class Admin extends React.Component<any, any> {
   public static propTypes = {
-    match: PropTypes.object.isRequired
+    match: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired,
+    address: PropTypes.string.isRequired,
+    balance: PropTypes.number.isRequired,
+    profile: PropTypes.object.isRequired,
+    settings: PropTypes.object.isRequired
   };
 
   public componentDidMount() {
@@ -23,12 +28,13 @@ class Admin extends React.Component<any, any> {
   }
 
   public render() {
-    const { loading, balance, match, settings } = this.props;
+    const { match, loading, balance, profile, settings } = this.props;
     return (
       <Dashboard
         match={match}
-        balance={balance}
         loading={loading}
+        balance={balance}
+        profile={profile}
         settings={settings}
       >
         <Switch>
@@ -52,6 +58,7 @@ const reduxProps = (store: any) => ({
   loading: store.admin.loading,
   address: store.admin.address,
   balance: store.admin.balance,
+  profile: store.admin.profile,
   settings: store.admin.settings
 });
 

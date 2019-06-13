@@ -3,9 +3,7 @@ import styled from "styled-components";
 import { colors, transitions } from "../styles";
 import Loader from "../components/Loader";
 import Summary from "../components/Summary";
-
 import QRCodeDisplay from "../components/QRCodeDisplay";
-
 import {
   STitle,
   SColumnHeader,
@@ -13,24 +11,22 @@ import {
   SListItemName,
   SListItemDescription
 } from "../components/common";
-
 import { IPayment } from "../helpers/types";
-
 import {
   PAYMENT_SUCCESS,
   PAYMENT_PENDING,
   PAYMENT_FAILURE
 } from "../constants/paymentStatus";
-
+import { fonts } from "../styles";
 import success from "../assets/success.png";
 import error from "../assets/error.png";
 import arrow from "../assets/arrow.png";
 
-interface IModalStyleProps {
+interface ICheckoutStyleProps {
   show: boolean;
 }
 
-const SModal = styled.div<IModalStyleProps>`
+const SCheckout = styled.div<ICheckoutStyleProps>`
   transition: ${transitions.long};
   position: absolute;
   bottom: 0;
@@ -43,31 +39,35 @@ const SModal = styled.div<IModalStyleProps>`
     show ? "translate3d(0, 0, 0)" : "translate3d(100vw, 0, 0)"};
 `;
 
-const SModalContainer = styled.div`
+const SCheckoutContainer = styled.div`
   width: 400px;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
 `;
 
-const SModalHeader = styled(SColumnHeader)`
+const SCheckoutHeader = styled(SColumnHeader)`
   position: relative;
   display: flex;
   justify-content: center;
 `;
 
-const SModalCallToAction = styled(SListItemName)`
+const SCheckoutTitle = styled(STitle)`
+  font-size: ${fonts.size.h5};
+`;
+
+const SCheckoutCallToAction = styled(SListItemName)`
   text-align: center;
   margin: 0.6em 0;
   font-size: 24px;
   font-weight: 700;
 `;
 
-const SModalDescription = styled(SListItemDescription)`
+const SCheckoutDescription = styled(SListItemDescription)`
   text-align: center;
 `;
 
-const SModalColumn = styled.div`
+const SCheckoutColumn = styled.div`
   width: 100%;
   height: 100%;
   padding: 24px;
@@ -76,7 +76,7 @@ const SModalColumn = styled.div`
   max-height: 100vh;
 `;
 
-const SModalFooter = styled(SColumnFooter)`
+const SCheckoutFooter = styled(SColumnFooter)`
   border-top: 0;
 `;
 
@@ -114,18 +114,21 @@ const SPaymentResult = styled.div`
   }
 `;
 
+const BACK_BUTTON_SIZE = 24;
+
 const SBackButton = styled.div`
   position: absolute;
-  font-size: 16px;
+  font-size: ${BACK_BUTTON_SIZE / 1.5}px;
   font-weight: 400;
+  top: calc((100% - ${BACK_BUTTON_SIZE}px) / 2);
   left: 20px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  & img {
-    width: 24px;
-    height: 24px;
+  & > img {
+    width: ${BACK_BUTTON_SIZE}px;
+    height: ${BACK_BUTTON_SIZE}px;
   }
 `;
 
@@ -148,52 +151,52 @@ const PaymentResult = (props: { payment: IPayment }) => {
   switch (props.payment.status) {
     case PAYMENT_SUCCESS:
       return (
-        <SModalColumn>
+        <SCheckoutColumn>
           <SPaymentResult>
             <div>
               <img src={success} alt={PAYMENT_COPY[PAYMENT_SUCCESS].title} />
             </div>
           </SPaymentResult>
-          <SModalCallToAction>
+          <SCheckoutCallToAction>
             {PAYMENT_COPY[PAYMENT_SUCCESS].title}
-          </SModalCallToAction>
-          <SModalDescription>
+          </SCheckoutCallToAction>
+          <SCheckoutDescription>
             {PAYMENT_COPY[PAYMENT_SUCCESS].description}
-          </SModalDescription>
-        </SModalColumn>
+          </SCheckoutDescription>
+        </SCheckoutColumn>
       );
     case PAYMENT_PENDING:
       return (
-        <SModalColumn>
+        <SCheckoutColumn>
           <SPaymentResult>
             <div>
               <Loader />
             </div>
           </SPaymentResult>
-          <SModalCallToAction>
+          <SCheckoutCallToAction>
             {PAYMENT_COPY[PAYMENT_PENDING].title}
-          </SModalCallToAction>
-          <SModalDescription>
+          </SCheckoutCallToAction>
+          <SCheckoutDescription>
             {PAYMENT_COPY[PAYMENT_PENDING].description}
-          </SModalDescription>
-        </SModalColumn>
+          </SCheckoutDescription>
+        </SCheckoutColumn>
       );
 
     case PAYMENT_FAILURE:
       return (
-        <SModalColumn>
+        <SCheckoutColumn>
           <SPaymentResult>
             <div>
               <img src={error} alt={PAYMENT_COPY[PAYMENT_FAILURE].title} />
             </div>
           </SPaymentResult>
-          <SModalCallToAction>
+          <SCheckoutCallToAction>
             {PAYMENT_COPY[PAYMENT_FAILURE].title}
-          </SModalCallToAction>
-          <SModalDescription>
+          </SCheckoutCallToAction>
+          <SCheckoutDescription>
             {PAYMENT_COPY[PAYMENT_FAILURE].description}
-          </SModalDescription>
-        </SModalColumn>
+          </SCheckoutDescription>
+        </SCheckoutColumn>
       );
     default:
       return null;
@@ -224,8 +227,6 @@ const Checkout = ({
   if (!paymentMethod) {
     return null;
   }
-  paymentAddress =
-    paymentAddress || "0x9b7b2B4f7a391b6F14A81221AE0920A9735B67Fb";
   const qrcode =
     paymentMethod.type === "walletconnect"
       ? uri
@@ -239,37 +240,37 @@ const Checkout = ({
       ? `Scan this QR code with your WalletConnect-enabled mobile wallet to pay.`
       : `Scan this QR code with your Burner wallet to pay.`;
   return (
-    <SModal show={submitted}>
-      <SModalHeader>
+    <SCheckout show={submitted}>
+      <SCheckoutHeader>
         <SBackButton onClick={orderUnsubmit}>
           <img src={arrow} alt="" />
           <span>{`Back`}</span>
         </SBackButton>
-        <STitle>{`Payment`}</STitle>
-      </SModalHeader>
+        <SCheckoutTitle>{`Payment`}</SCheckoutTitle>
+      </SCheckoutHeader>
       {!loading ? (
-        <SModalContainer>
+        <SCheckoutContainer>
           {!payment ? (
-            <SModalColumn>
+            <SCheckoutColumn>
               <SQRCodeWrapper>
                 <QRCodeDisplay data={qrcode} />
               </SQRCodeWrapper>
-              <SModalCallToAction>{title}</SModalCallToAction>
-              <SModalDescription>{description}</SModalDescription>
-            </SModalColumn>
+              <SCheckoutCallToAction>{title}</SCheckoutCallToAction>
+              <SCheckoutDescription>{description}</SCheckoutDescription>
+            </SCheckoutColumn>
           ) : (
             <PaymentResult payment={payment} />
           )}
-          <SModalFooter>
+          <SCheckoutFooter>
             <Summary checkout={checkout} settings={settings} />
-          </SModalFooter>
-        </SModalContainer>
+          </SCheckoutFooter>
+        </SCheckoutContainer>
       ) : (
-        <SModalContainer>
+        <SCheckoutContainer>
           <Loader />
-        </SModalContainer>
+        </SCheckoutContainer>
       )}
-    </SModal>
+    </SCheckout>
   );
 };
 

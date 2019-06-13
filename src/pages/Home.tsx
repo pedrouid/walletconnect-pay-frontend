@@ -7,7 +7,7 @@ import PageWrapper from "../components/PageWrapper";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { adminConnectWallet } from "../redux/_admin";
-import Banner from "src/components/Banner";
+import Banner from "../components/Banner";
 
 const SBanner = styled(Banner)`
   position: absolute;

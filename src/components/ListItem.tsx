@@ -4,11 +4,11 @@ import { colors, fonts, shadows, transitions } from "../styles";
 import { IMenuItem, IOrderItem, ISettings } from "../helpers/types";
 import { formatDisplayAmount, sanitizeImgSrc } from "../helpers/utilities";
 import {
-  SListItemImage,
   SListItemText,
   SListItemName,
   SListItemDescription
 } from "../components/common";
+import ImageWithFallback from "./ImageWithFallback";
 
 interface IListItemStyleProps {
   onClick?: any;
@@ -37,9 +37,13 @@ const SListItem = styled.div<IListItemStyleProps>`
   `}
 `;
 
+const SListItemImage = styled(ImageWithFallback)`
+  margin-right: 12px;
+`;
+
 const SListItemContainer = styled.div`
   width: 100%;
-  padding: 12px;
+  padding: 12px 4%;
   display: flex;
   justify-content: space-between;
 `;
@@ -137,10 +141,13 @@ const ListItem = ({
   <SListItem onClick={onClick} {...props}>
     <SListItemContainer>
       <SListItemDetails flex={3}>
-        {!!item.image && !noImage && (
-          <SListItemImage>
-            <img src={sanitizeImgSrc(item.image)} alt={item.name} />
-          </SListItemImage>
+        {!noImage && (
+          <SListItemImage
+            size={100}
+            src={sanitizeImgSrc(item.image)}
+            fallbackText={item.name}
+            alt={item.name}
+          />
         )}
         <SListItemText>
           <SListItemName>{item.name}</SListItemName>

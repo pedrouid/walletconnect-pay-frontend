@@ -2,9 +2,8 @@ import * as React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button";
+import ProfileCard from "../../components/ProfileCard";
 import { colors, shadows } from "../../styles";
-import { SField, SLabel } from "../../components/common";
-import { formatDisplayAmount } from "../../helpers/utilities";
 
 import {
   SIDEBAR_SIZE,
@@ -41,15 +40,6 @@ const SHeaderLeft = styled(SHeaderSection)`
   align-items: flex-start;
 `;
 
-const SBalanceLabel = styled(SLabel)`
-  margin-top: 0;
-`;
-
-const SBalanceAmount = styled(SField)`
-  margin: 0;
-  margin-top: 6px;
-`;
-
 const SHeaderRight = styled(SHeaderSection)`
   align-items: flex-end;
 `;
@@ -58,20 +48,20 @@ const SMenuButton = styled(Button)`
   font-size: 16px;
 `;
 
-const Header = (props: any) => (
-  <SHeader>
-    <SHeaderLeft>
-      <SBalanceLabel>{"Available Balance"}</SBalanceLabel>
-      <SBalanceAmount>
-        {formatDisplayAmount(props.balance, props.currency)}
-      </SBalanceAmount>
-    </SHeaderLeft>
-    <SHeaderRight>
-      <Link to="/order">
-        <SMenuButton>{"Go To Menu"}</SMenuButton>
-      </Link>
-    </SHeaderRight>
-  </SHeader>
-);
+const Header = (props: any) => {
+  const { profile, balance, currency } = props;
+  return (
+    <SHeader>
+      <SHeaderLeft>
+        <ProfileCard profile={profile} balance={balance} currency={currency} />
+      </SHeaderLeft>
+      <SHeaderRight>
+        <Link to="/order">
+          <SMenuButton>{"Go To Menu"}</SMenuButton>
+        </Link>
+      </SHeaderRight>
+    </SHeader>
+  );
+};
 
 export default Header;

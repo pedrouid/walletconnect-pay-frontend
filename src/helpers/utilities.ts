@@ -339,3 +339,34 @@ export function isActivePath(path: string, match: any) {
   const current = getCurrentPathname();
   return current === pathname;
 }
+
+export function stringToCapitals(str: string, max: number = 2) {
+  if (!str) {
+    return "";
+  }
+  return str
+    .split(" ")
+    .slice(0, max)
+    .map((word: string) => word.charAt(0).toUpperCase())
+    .join("");
+}
+
+export function hashToInteger(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return hash;
+}
+
+export function integerToHexColor(i: number) {
+  const c = (i & 0x00ffffff).toString(16).toUpperCase();
+
+  return "00000".substring(0, 6 - c.length) + c;
+}
+
+export function stringToHexColor(str: string) {
+  const integer = hashToInteger(str);
+  const hexColor = integerToHexColor(integer);
+  return hexColor;
+}

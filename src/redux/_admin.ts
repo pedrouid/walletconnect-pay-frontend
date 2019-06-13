@@ -5,7 +5,7 @@ import {
   getCurrentPathname
 } from "../helpers/utilities";
 import { apiGetAvailableBalance } from "../helpers/api";
-import { IProfile, ISettings, IMenuItem, IThreadPost } from "../helpers/types";
+import { IProfile, ISettings, IMenuItem } from "../helpers/types";
 import {
   openBusinessBox,
   setData,
@@ -86,15 +86,10 @@ export const adminConnectWallet = (provider: any) => async (
 
     const address = (await web3.eth.getAccounts())[0];
     const chainId = await queryChainId(web3);
-    const orderCallback = (post: IThreadPost) => {
-      if (post && post.message) {
-        dispatch(adminAddNewOrder(post.message));
-      }
-    };
     const { data, menu, orders } = await openBusinessBox(
       address,
       provider,
-      orderCallback
+      () => dispatch(adminGetAllOrders())
     );
 
     if (data) {

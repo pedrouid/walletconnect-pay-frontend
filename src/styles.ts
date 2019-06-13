@@ -24,6 +24,7 @@ export const fonts = {
   size: {
     tiny: "10px",
     small: "12px",
+    smallMedium: "14px",
     medium: "16px",
     large: "18px",
     h1: "48px",

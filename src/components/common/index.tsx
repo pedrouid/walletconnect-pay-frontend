@@ -1,19 +1,6 @@
 import styled from "styled-components";
 import { colors, fonts, transitions } from "../../styles";
 
-export const SListItemImage = styled.div`
-  width: 100px;
-  height: 100px;
-  margin-right: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  & img {
-    width: 100%;
-  }
-`;
-
 export const SListItemText = styled.div`
   width: 100%;
   display: flex;
@@ -27,7 +14,7 @@ export const SListItemName = styled.div`
 export const SListItemDescription = styled.div`
   font-size: ${fonts.size.small};
   color: rgb(${colors.grey45});
-  margin-top: 8px;
+  margin-top: 4px;
 `;
 
 export const SColumnWrapper = styled.div`
@@ -100,7 +87,7 @@ export const SColumnRow = styled.div`
   display: flex;
   justify-content: space-between;
   color: rgb(${colors.grey45});
-  margin-top: 8px;
+  margin-top: 4px;
   &:first-child {
     margin-top: 0;
   }

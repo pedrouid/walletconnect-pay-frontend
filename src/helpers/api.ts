@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 import { IGasPrices, IAssetData } from "./types";
 import { payloadId } from "@walletconnect/utils";
-import SUPPORTED_ASSETS from "src/constants/supportedAssets";
-import ASSET_PRICES from "src/constants/assetPrices";
+import SUPPORTED_ASSETS from "../constants/supportedAssets";
+import ASSET_PRICES from "../constants/assetPrices";
 import {
   convertStringToNumber,
   convertAmountFromRawNumber,

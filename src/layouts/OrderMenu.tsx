@@ -18,7 +18,7 @@ import {
   SColumnTitle,
   SGrid
 } from "../components/common";
-import { sanitizeImgSrc } from "../helpers/utilities";
+import ProfileCard from "../components/ProfileCard";
 
 const SHeader = styled.div`
   width: 100%;
@@ -27,20 +27,12 @@ const SHeader = styled.div`
   display: flex;
   align-items: center;
   padding: 0 16px;
-  height: 82px;
-`;
-
-const SBranding = styled.h1`
-  text-transform: uppercase;
-  font-size: 24px;
-  margin: 4px 0px;
-  margin-left: 10px;
-`;
-
-const SLogo = styled.img`
-  border-radius: 6px;
-  width: 40px;
-  height: 40px;
+  height: 64px;
+  & > a {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
 `;
 
 const SListItem = styled(ListItem)`
@@ -63,9 +55,8 @@ const OrderMenu = (props: any) => {
   return (
     <React.Fragment>
       <SHeader>
-        <Link style={{ display: "flex" }} to="/admin">
-          {profile.logo && <SLogo src={sanitizeImgSrc(profile.logo)} alt="" />}
-          <SBranding>{profile.name}</SBranding>
+        <Link to="/admin">
+          <ProfileCard profile={profile} />
         </Link>
       </SHeader>
       <SColumnWrapper>

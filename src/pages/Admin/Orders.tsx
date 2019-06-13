@@ -7,7 +7,7 @@ import { formatDisplayAmount, capitalize } from "../../helpers/utilities";
 import { SColumnList, SSemiBold } from "../../components/common";
 import EmptyState from "../../components/EmptyState";
 import { colors, shadows, transitions } from "../../styles";
-import { formatDate } from "src/helpers/date";
+import { formatDate } from "../../helpers/date";
 
 interface IListItemStyleProps {
   onClick?: any;

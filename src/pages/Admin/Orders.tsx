@@ -59,7 +59,7 @@ class Orders extends React.Component<any, any> {
         {orders && orders.length ? (
           <SOrderList>
             {orders.map((order: IOrderJson) => (
-              <SListItem>
+              <SListItem key={order.id}>
                 <div>{formatDate(order.timestamp, "MMM DD HH:mm")}</div>
                 <div>{order.id}</div>
                 <div>{capitalize(order.payment.status)}</div>

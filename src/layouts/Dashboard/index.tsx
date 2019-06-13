@@ -90,12 +90,16 @@ function isFixedScroll(match: any) {
 }
 
 const Dashboard = (props: any) => {
-  const { children, match, loading, balance, profile, settings } = props;
+  const { children, match, loading, loadingBalance, balance, profile } = props;
   const fixedScroll = isFixedScroll(match);
   return (
     <SWrapper>
       <Sidebar match={match} />
-      <Header balance={balance} profile={profile} settings={settings} />
+      <Header
+        loadingBalance={loadingBalance}
+        balance={balance}
+        profile={profile}
+      />
       <SContent>
         <SContentCard fixedScroll={fixedScroll} show={!loading}>
           {children}
@@ -114,9 +118,9 @@ Dashboard.propTypes = {
   children: PropTypes.node.isRequired,
   match: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
+  loadingBalance: PropTypes.bool.isRequired,
   balance: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
-  settings: PropTypes.object.isRequired,
   center: PropTypes.bool,
   maxWidth: PropTypes.number
 };

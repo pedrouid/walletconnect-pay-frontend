@@ -15,10 +15,10 @@ class Admin extends React.Component<any, any> {
   public static propTypes = {
     match: PropTypes.object.isRequired,
     loading: PropTypes.bool.isRequired,
+    loadingBalance: PropTypes.bool.isRequired,
     address: PropTypes.string.isRequired,
     balance: PropTypes.object.isRequired,
-    profile: PropTypes.object.isRequired,
-    settings: PropTypes.object.isRequired
+    profile: PropTypes.object.isRequired
   };
 
   public componentDidMount() {
@@ -28,14 +28,14 @@ class Admin extends React.Component<any, any> {
   }
 
   public render() {
-    const { match, loading, balance, profile, settings } = this.props;
+    const { match, loading, loadingBalance, balance, profile } = this.props;
     return (
       <Dashboard
         match={match}
         loading={loading}
+        loadingBalance={loadingBalance}
         balance={balance}
         profile={profile}
-        settings={settings}
       >
         <Switch>
           <Route exact path={match.url} component={Overview} />
@@ -58,8 +58,7 @@ const reduxProps = (store: any) => ({
   loading: store.admin.loading,
   address: store.admin.address,
   balance: store.admin.balance,
-  profile: store.admin.profile,
-  settings: store.admin.settings
+  profile: store.admin.profile
 });
 
 export default connect(

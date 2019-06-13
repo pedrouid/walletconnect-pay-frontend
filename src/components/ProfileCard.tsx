@@ -54,7 +54,7 @@ const SProfileBalance = styled.p<IProfileCardStyleProps>`
 `;
 
 const ProfileCard = (props: any) => {
-  const { profile, size, totalBalance, nativeCurrency } = props;
+  const { profile, size, loadingBalance, totalBalance, nativeCurrency } = props;
   const hideBalance =
     typeof totalBalance === "undefined" &&
     typeof nativeCurrency === "undefined";
@@ -73,7 +73,9 @@ const ProfileCard = (props: any) => {
         {typeof totalBalance !== "undefined" &&
           typeof nativeCurrency !== "undefined" && (
             <SProfileBalance size={size}>
-              {formatDisplayAmount(totalBalance, nativeCurrency)}
+              {!loadingBalance
+                ? formatDisplayAmount(totalBalance, nativeCurrency)
+                : "Loading balance..."}
             </SProfileBalance>
           )}
       </SProfileDetails>
@@ -84,6 +86,7 @@ const ProfileCard = (props: any) => {
 ProfileCard.propTypes = {
   profile: PropTypes.object.isRequired,
   size: PropTypes.number,
+  loadingBalance: PropTypes.bool,
   totalBalance: PropTypes.string,
   nativeCurrency: PropTypes.string
 };

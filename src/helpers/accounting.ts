@@ -11,7 +11,7 @@ import { apiGetTokenBalance, apiGetAccountBalance } from "./api";
 
 export const defaultAvailableBalance = {
   assetBalances: [],
-  total: "0"
+  total: { amount: "0", currency: "USD" }
 };
 
 export const accountingGetAvailableBalance = async (
@@ -38,16 +38,19 @@ export const accountingGetAvailableBalance = async (
               } else {
                 result = await apiGetAccountBalance(address, chainId);
               }
-              let balance = "0";
+              let balanceAmount = "0";
               if (result.balance) {
-                balance = multiply(
+                balanceAmount = multiply(
                   convertAmountFromRawNumber(result.balance, result.decimals),
                   assetPrices[assetSymbol]
                 );
               }
               const assetNativeBalance: IAssetNativeBalance = {
-                asset,
-                balance
+                asset: result,
+                balance: {
+                  amount: balanceAmount,
+                  currency: nativeCurrency
+                }
               };
               return assetNativeBalance;
             }
@@ -59,11 +62,13 @@ export const accountingGetAvailableBalance = async (
   );
   const availableBalance: IAvailableBalance = defaultAvailableBalance;
 
+  availableBalance.total.currency = nativeCurrency;
+
   balances.flat(2).forEach((assetNativeBalance: IAssetNativeBalance) => {
     availableBalance.assetBalances.push(assetNativeBalance);
-    availableBalance.total = add(
-      availableBalance.total,
-      assetNativeBalance.balance
+    availableBalance.total.amount = add(
+      availableBalance.total.amount,
+      assetNativeBalance.balance.amount
     );
   });
 

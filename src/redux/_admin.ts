@@ -332,6 +332,7 @@ export const adminClearState = () => ({ type: ADMIN_CLEAR_STATE });
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
   loading: false,
+  loadingBalance: false,
   web3: null,
   address: "",
   chainId: 1,
@@ -364,11 +365,11 @@ export default (state = INITIAL_STATE, action: any) => {
       return { ...state, loading: false };
 
     case ADMIN_GET_AVAILABLE_BALANCE_REQUEST:
-      return { ...state };
+      return { ...state, loadingBalance: true };
     case ADMIN_GET_AVAILABLE_BALANCE_SUCCESS:
-      return { ...state, balance: action.payload };
+      return { ...state, loadingBalance: false, balance: action.payload };
     case ADMIN_GET_AVAILABLE_BALANCE_FAILURE:
-      return { ...state };
+      return { ...state, loadingBalance: false };
 
     case ADMIN_GET_ALL_ORDERS_REQUEST:
       return { ...state, loading: true };

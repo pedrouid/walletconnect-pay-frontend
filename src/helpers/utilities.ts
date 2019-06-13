@@ -1,6 +1,6 @@
 import { utils } from "ethers";
 import { convertHexToNumber } from "@walletconnect/utils";
-import { IChainData } from "./types";
+import { IChainData, IPaymentMethodDisplay } from "./types";
 import { convertStringToNumber, handleSignificantDecimals } from "./bignumber";
 import SUPPORTED_CHAINS from "../constants/chains";
 import BUSINESS_TYPES from "../constants/businessTypes";
@@ -9,6 +9,7 @@ import COUNTRIES from "../constants/countries";
 import { APP_DESCRIPTION, APP_NAME } from "../constants/appMeta";
 import { removeDiacritics } from "./diacritics";
 import { isIpfsHash, getIpfsUrl } from "./ipfs";
+import { PAYMENT_METHODS_DISPLAY } from "../constants/paymentMethods";
 
 export function capitalize(string: string): string {
   return string
@@ -226,6 +227,16 @@ export function getCountryName(code: string): string {
   }
 
   return name;
+}
+
+export function getPaymentMethodDisplay(method: string): IPaymentMethodDisplay {
+  const display = PAYMENT_METHODS_DISPLAY[method.toLowerCase()];
+
+  if (!display) {
+    throw new Error("Payment method missing or not supported");
+  }
+
+  return display;
 }
 
 export function getBusinessType(type: string): string {

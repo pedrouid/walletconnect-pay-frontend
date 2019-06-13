@@ -56,10 +56,12 @@ export interface INativeCurrency {
 }
 
 export interface IPaymentMethodDisplay {
-  [name: string]: {
-    color: string;
-    imgSrc: string;
-  };
+  color: string;
+  imgSrc: string;
+}
+
+export interface IPaymentMethodDisplayMap {
+  [name: string]: IPaymentMethodDisplay;
 }
 
 export interface IPaymentMethod {
@@ -134,12 +136,17 @@ export interface IThreadPost {
   timestamp: number;
 }
 
+export interface INativeCurrencyBalance {
+  currency: string;
+  amount: string;
+}
+
 export interface IAssetNativeBalance {
   asset: IAssetData;
-  balance: string;
+  balance: INativeCurrencyBalance;
 }
 
 export interface IAvailableBalance {
   assetBalances: IAssetNativeBalance[];
-  total: string;
+  total: INativeCurrencyBalance;
 }

@@ -49,14 +49,15 @@ const SMenuButton = styled(Button)`
 `;
 
 const Header = (props: any) => {
-  const { profile, balance, settings } = props;
+  const { profile, balance, loadingBalance } = props;
   return (
     <SHeader>
       <SHeaderLeft>
         <ProfileCard
           profile={profile}
-          totalBalance={balance.total}
-          nativeCurrency={settings.paymentCurrency}
+          loadingBalance={loadingBalance}
+          totalBalance={balance.total.amount}
+          nativeCurrency={balance.total.currency}
         />
       </SHeaderLeft>
       <SHeaderRight>

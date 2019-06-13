@@ -1,11 +1,11 @@
-import { IPaymentMethod, IPaymentMethodDisplay } from "../helpers/types";
+import { IPaymentMethod, IPaymentMethodDisplayMap } from "../helpers/types";
 
 import burner from "../assets/payment-methods/burner.png";
 import xdai from "../assets/payment-methods/xdai.png";
 import dai from "../assets/payment-methods/dai.png";
 import eth from "../assets/payment-methods/eth.png";
 
-export const PAYMENT_METHODS_DISPLAY: IPaymentMethodDisplay = {
+export const PAYMENT_METHODS_DISPLAY: IPaymentMethodDisplayMap = {
   dai: {
     color: "yellow",
     imgSrc: dai

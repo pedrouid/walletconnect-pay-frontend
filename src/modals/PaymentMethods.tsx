@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { IPaymentMethod } from "../helpers/types";
 import ButtonWithImage from "../components/ButtonWithImage";
 import { fonts } from "../styles";
-import { PAYMENT_METHODS_DISPLAY } from "../constants/paymentMethods";
+import { getPaymentMethodDisplay } from "../helpers/utilities";
 
 const SColumnRowWrap = styled.div`
   width: 100%;
@@ -29,8 +29,7 @@ const PaymentMethods = (props: any) => {
     <SColumnRowWrap>
       {settings.paymentMethods.map((method: IPaymentMethod) => {
         if (method.type === "walletconnect") {
-          const display =
-            PAYMENT_METHODS_DISPLAY[method.assetSymbol.toLowerCase()];
+          const display = getPaymentMethodDisplay(method.assetSymbol);
           return (
             <SButtonWithImage
               imgSize={40}
@@ -43,7 +42,7 @@ const PaymentMethods = (props: any) => {
             </SButtonWithImage>
           );
         } else {
-          const display = PAYMENT_METHODS_DISPLAY[method.type.toLowerCase()];
+          const display = getPaymentMethodDisplay(method.type);
           return (
             <SButtonWithImage
               imgSize={40}

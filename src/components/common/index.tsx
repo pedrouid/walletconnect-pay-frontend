@@ -114,6 +114,14 @@ export const STitle = styled.h4`
   margin: 0;
 `;
 
+export const SBold = styled.div`
+  font-weight: ${fonts.weight.bold};
+`;
+
+export const SSemiBold = styled.div`
+  font-weight: ${fonts.weight.semibold};
+`;
+
 interface IGridStyleProps {
   itemMaxWidth?: number;
   itemMaxHeight?: number;

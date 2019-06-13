@@ -58,7 +58,7 @@ class Orders extends React.Component<any, any> {
       <React.Fragment>
         {orders && orders.length ? (
           <SOrderList>
-            {orders.map((order: IOrderJson) => (
+            {orders.reverse().map((order: IOrderJson) => (
               <SListItem key={order.id}>
                 <div>{formatDate(order.timestamp, "MMM DD HH:mm")}</div>
                 <div>{order.id}</div>

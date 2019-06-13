@@ -56,6 +56,7 @@ class Admin extends React.Component<any, any> {
 
 const reduxProps = (store: any) => ({
   loading: store.admin.loading,
+  loadingBalance: store.admin.loadingBalance,
   address: store.admin.address,
   balance: store.admin.balance,
   profile: store.admin.profile

@@ -41,7 +41,7 @@ const SDropdown = styled.div<IDropdownStyle>`
 const SRow = styled.div<IDropdownStyle>`
   transition: ${transitions.base};
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.5em 0.75em;
   font-family: ${({ monospace }) =>
     monospace ? `${fonts.family.RobotoMono}` : `inherit`};
   font-size: ${fonts.size.medium};

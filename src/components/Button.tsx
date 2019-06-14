@@ -60,7 +60,7 @@ const SButton = styled.button<IButtonStyleProps>`
   border-radius: ${({ borderRadius }) =>
     borderRadius ? `${borderRadius}px` : "6px"};
   margin-top: ${({ marginTop }) => (marginTop ? `${marginTop}px` : "0")};
-  font-size: ${fonts.size.large};
+  font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.semibold};
   font-style: normal;
   font-stretch: normal;

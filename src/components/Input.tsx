@@ -49,8 +49,7 @@ const SInput = styled.input<IInputStyleProps>`
   width: 100%;
   background: rgb(${colors.white});
   color: rgb(${colors.dark});
-  padding: 10px 14px;
-  padding: ${({ readOnly }) => (!readOnly ? "10px 14px" : "6px 0")};
+  padding: ${({ readOnly }) => (!readOnly ? "0.5em 0.75em" : "0.5em 0")};
   border: none;
   border-style: none;
   font-family: ${({ monospace }) =>

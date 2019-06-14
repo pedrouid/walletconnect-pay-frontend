@@ -21,7 +21,7 @@ const SSettingsSection = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px 20px;
 `;
 
 class Settings extends React.Component<any, any> {

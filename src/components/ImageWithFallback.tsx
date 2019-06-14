@@ -102,11 +102,8 @@ class ImageWithFallback extends React.Component<any, any> {
 
   public render() {
     const { src, fallbackText, alt, size, ...props } = this.props;
-    console.log("fallbackText", fallbackText); // tslint:disable-line
     const _fallbackText = fallbackText ? stringToCapitals(fallbackText) : "";
-    console.log("_fallbackText", _fallbackText); // tslint:disable-line
     const _fallbacKHexColor = stringToHexColor(_fallbackText);
-    console.log("_fallbacKHexColor", _fallbacKHexColor); // tslint:disable-line
     return (
       <SImageWithFallback
         show={src || (!src && !fallbackText)}

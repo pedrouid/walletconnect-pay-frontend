@@ -48,6 +48,16 @@ const SNavigation = styled.div`
   align-items: center;
   overflow: scroll;
   padding-bottom: 8%;
+  & > a {
+    width: 100%;
+    padding-left: 35px;
+    margin: 0.5em 0;
+  }
+  @media (hover: hover) {
+    & > a:hover {
+      opacity: 0.8;
+    }
+  }
 `;
 
 const SNavigationItem = styled.div`
@@ -112,11 +122,7 @@ const Sidebar = (props: any) => (
         const pathname = formatPathname(item.path, props.match);
         const active = isActivePath(item.path, props.match);
         return (
-          <Link
-            key={pathname}
-            style={{ width: "100%", paddingLeft: 35 }}
-            to={pathname}
-          >
+          <Link key={pathname} to={pathname}>
             <SNavigationItem>
               <SNavigationIcon
                 icon={item.icon}

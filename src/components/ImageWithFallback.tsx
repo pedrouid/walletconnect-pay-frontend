@@ -57,7 +57,7 @@ const SFallbackText = styled.div<IImageWithFallbackStyleProps>`
 class ImageWithFallback extends React.Component<any, any> {
   public static propTypes = {
     src: PropTypes.string.isRequired,
-    fallbackText: PropTypes.bool,
+    fallbackText: PropTypes.string,
     alt: PropTypes.string,
     size: PropTypes.number
   };
@@ -129,16 +129,5 @@ class ImageWithFallback extends React.Component<any, any> {
     );
   }
 }
-
-ImageWithFallback.propTypes = {
-  src: PropTypes.string.isRequired,
-  fallbackText: PropTypes.bool,
-  alt: PropTypes.string,
-  size: PropTypes.number
-};
-
-ImageWithFallback.defaultProps = {
-  size: 45
-};
 
 export default ImageWithFallback;

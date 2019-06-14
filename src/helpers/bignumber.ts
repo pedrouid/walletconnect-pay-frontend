@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
 
+export function random(): string {
+  return BigNumber.random().toString();
+}
+
 export function toFixed(value: string | number, decimals: number): string {
   return new BigNumber(`${value}`).toFixed(decimals).toString();
 }

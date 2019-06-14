@@ -57,7 +57,7 @@ const SFallbackText = styled.div<IImageWithFallbackStyleProps>`
 class ImageWithFallback extends React.Component<any, any> {
   public static propTypes = {
     src: PropTypes.string.isRequired,
-    fallbackText: PropTypes.bool,
+    fallbackText: PropTypes.string,
     alt: PropTypes.string,
     size: PropTypes.number
   };
@@ -102,8 +102,11 @@ class ImageWithFallback extends React.Component<any, any> {
 
   public render() {
     const { src, fallbackText, alt, size, ...props } = this.props;
+    console.log("fallbackText", fallbackText); // tslint:disable-line
     const _fallbackText = fallbackText ? stringToCapitals(fallbackText) : "";
+    console.log("_fallbackText", _fallbackText); // tslint:disable-line
     const _fallbacKHexColor = stringToHexColor(_fallbackText);
+    console.log("_fallbacKHexColor", _fallbacKHexColor); // tslint:disable-line
     return (
       <SImageWithFallback
         show={src || (!src && !fallbackText)}
@@ -129,16 +132,5 @@ class ImageWithFallback extends React.Component<any, any> {
     );
   }
 }
-
-ImageWithFallback.propTypes = {
-  src: PropTypes.string.isRequired,
-  fallbackText: PropTypes.bool,
-  alt: PropTypes.string,
-  size: PropTypes.number
-};
-
-ImageWithFallback.defaultProps = {
-  size: 45
-};
 
 export default ImageWithFallback;

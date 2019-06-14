@@ -65,6 +65,10 @@ export const getDataString = (func: string, arrVals: any[]): string => {
   return data;
 };
 
+export function sha256(str: string): string {
+  return utils.sha256(utils.toUtf8Bytes(str));
+}
+
 export function isHexString(value: any): boolean {
   return utils.isHexString(value);
 }
@@ -377,7 +381,8 @@ export function integerToHexColor(i: number) {
 }
 
 export function stringToHexColor(str: string) {
-  const integer = hashToInteger(str);
+  const hash = sha256(str);
+  const integer = hashToInteger(hash);
   const hexColor = integerToHexColor(integer);
   return hexColor;
 }

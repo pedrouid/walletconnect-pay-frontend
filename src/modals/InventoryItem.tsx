@@ -3,9 +3,9 @@ import styled from "styled-components";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import UploadToIpfs from "../components/UploadToIpfs";
-import { formatItemId } from "../helpers/utilities";
 import { IMenuItem } from "../helpers/types";
 import { isNaN } from "../helpers/bignumber";
+import { uuid } from "../helpers/utilities";
 
 const SSubmitWrapper = styled.div`
   width: 100%;
@@ -40,7 +40,11 @@ class InventoryItem extends React.Component<IInventoryItemProps, IMenuItem> {
     this.setState({ ...this.state, ...updatedMenuItem });
 
   public onSubmit = () => {
-    const { id, name, description, price, image } = this.state;
+    let { id } = this.state;
+    const { name, description, price, image } = this.state;
+    if (!id.trim()) {
+      id = uuid();
+    }
     this.props.onAddItem({ id, name, description, price, image });
   };
 
@@ -65,11 +69,7 @@ class InventoryItem extends React.Component<IInventoryItemProps, IMenuItem> {
           label="Name"
           placeholder="Espresso"
           value={this.state.name}
-          onChange={(e: any) => {
-            const name = e.target.value;
-            const id = formatItemId(name);
-            this.updateState({ name, id });
-          }}
+          onChange={(e: any) => this.updateState({ name: e.target.value })}
         />
 
         <Input
@@ -78,9 +78,7 @@ class InventoryItem extends React.Component<IInventoryItemProps, IMenuItem> {
           placeholder="Small cup with 1 shot"
           value={this.state.description}
           onChange={(e: any) =>
-            this.updateState({
-              description: e.target.value
-            })
+            this.updateState({ description: e.target.value })
           }
         />
 

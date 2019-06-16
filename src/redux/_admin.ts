@@ -1,10 +1,6 @@
 import Web3 from "web3";
 import merge from "lodash.merge";
-import {
-  queryChainId,
-  formatItemId,
-  getCurrentPathname
-} from "../helpers/utilities";
+import { queryChainId, getCurrentPathname, uuid } from "../helpers/utilities";
 import {
   accountingGetAvailableBalance,
   defaultAvailableBalance
@@ -260,7 +256,10 @@ export const adminUpdateProfile = (updatedProfile: Partial<IProfile>) => async (
     ...profile,
     ...updatedProfile
   };
-  profile.id = formatItemId(profile.name);
+  if (!profile.id.trim()) {
+    profile.id = uuid();
+  }
+
   dispatch({ type: ADMIN_UPDATE_PROFILE, payload: profile });
 };
 

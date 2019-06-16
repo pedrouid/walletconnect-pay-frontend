@@ -57,6 +57,7 @@ const SFallbackText = styled.div<IImageWithFallbackStyleProps>`
 class ImageWithFallback extends React.Component<any, any> {
   public static propTypes = {
     src: PropTypes.string.isRequired,
+    fallbackImage: PropTypes.string,
     fallbackText: PropTypes.string,
     alt: PropTypes.string,
     size: PropTypes.number
@@ -90,7 +91,7 @@ class ImageWithFallback extends React.Component<any, any> {
   public updateSrc = (prevProps?: any) => {
     if (this.img) {
       if (!this.props.src && !this.props.fallbackText) {
-        this.img.src = placeholder;
+        this.img.src = this.props.fallbackImage || placeholder;
       } else if (
         this.props.src &&
         (prevProps && this.props.src !== prevProps.src)

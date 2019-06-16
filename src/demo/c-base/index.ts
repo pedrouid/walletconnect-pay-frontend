@@ -13,7 +13,6 @@ import kraftmalz from "./images/kraftmalz.jpg";
 import obc_strong from "./images/obc_strong.jpg";
 import berliner from "./images/berliner.jpg";
 import laschak from "./images/laschak.jpg";
-import { formatItemId } from "../../helpers/utilities";
 import PAYMENT_METHODS from "../../constants/paymentMethods";
 
 const menu: IMenu = [
@@ -96,11 +95,9 @@ const menu: IMenu = [
   }
 ];
 
-const name = "C-Base";
-
 const profile: IProfile = {
-  id: formatItemId(name),
-  name,
+  id: "c-base",
+  name: "C-Base",
   description: "",
   logo,
   type: "bar",

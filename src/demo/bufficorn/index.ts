@@ -13,7 +13,6 @@ import chocolateMuffin from "./images/chocolate-muffin.jpg";
 import scone from "./images/scone.jpg";
 import croissant from "./images/croissant.jpg";
 import almondCroissant from "./images/almond-croissant.jpg";
-import { formatItemId } from "../../helpers/utilities";
 import PAYMENT_METHODS from "../../constants/paymentMethods";
 
 const menu: IMenu = [
@@ -96,11 +95,9 @@ const menu: IMenu = [
   }
 ];
 
-const name = "Bufficorn Café";
-
 const profile: IProfile = {
-  id: formatItemId(name),
-  name,
+  id: "bufficorn-cafe",
+  name: "Bufficorn Café",
   description: "Local roasted café in Denver",
   logo,
   type: "cafe",

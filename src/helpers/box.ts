@@ -15,11 +15,20 @@ export async function getProfile(address: string) {
   return profile;
 }
 
-export async function openBox(address: string, provider: any) {
+export function openBox(address: string, provider: any): Promise<any> {
   if (!Box) {
     throw new Error("Box library is not available in window");
   }
-  box = await Box.openBox(address, provider);
+  return new Promise(async (resolve, reject) => {
+    try {
+      box = await Box.openBox(address, provider);
+      box.onSyncDone(() => {
+        resolve(true)
+      })
+    } catch (error){
+      reject(error)
+    }
+  })
 }
 
 export async function setPublic(key: string, value: any) {

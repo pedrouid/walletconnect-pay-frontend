@@ -56,6 +56,8 @@ const ADMIN_UPDATE_SETTINGS = "admin/ADMIN_UPDATE_SETTINGS";
 
 const ADMIN_UPDATE_MENU = "admin/ADMIN_UPDATE_MENU";
 
+const ADMIN_UPDATE_SYNCING = "admin/ADMIN_UPDATE_SYNCING";
+
 const ADMIN_CLEAR_STATE = "admin/ADMIN_CLEAR_STATE";
 
 // -- Actions --------------------------------------------------------------- //
@@ -89,7 +91,8 @@ export const adminConnectWallet = (provider: any) => async (
     const { data, menu, orders } = await openBusinessBox(
       address,
       provider,
-      () => dispatch(adminGetAllOrders())
+      () => dispatch(adminGetAllOrders()),
+      () => dispatch(adminUpdateSyncing(true))
     );
 
     if (data) {
@@ -168,8 +171,8 @@ export const adminGetAvailableBalance = () => async (
 };
 
 export const adminGetAllOrders = () => async (dispatch: any, getState: any) => {
-  const { address } = getState().admin;
-  if (!address) {
+  const { address, syncing } = getState().admin;
+  if (!address && syncing) {
     return;
   }
   dispatch({ type: ADMIN_GET_ALL_ORDERS_REQUEST });
@@ -205,8 +208,8 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
 };
 
 export const adminSaveData = () => async (dispatch: any, getState: any) => {
-  const { address, profile, settings } = getState().admin;
-  if (!address) {
+  const { address, profile, settings, syncing } = getState().admin;
+  if (!address && syncing) {
     return;
   }
   dispatch({ type: ADMIN_SAVE_DATA_REQUEST });
@@ -228,8 +231,8 @@ export const adminSaveData = () => async (dispatch: any, getState: any) => {
 };
 
 export const adminSaveMenu = () => async (dispatch: any, getState: any) => {
-  const { address, menu } = getState().admin;
-  if (!address) {
+  const { address, menu, syncing } = getState().admin;
+  if (!address && syncing) {
     return;
   }
   await setMenu(menu);
@@ -326,10 +329,16 @@ export const adminRemoveMenuItem = (menuItem: IMenuItem) => async (
   dispatch(adminSaveMenu());
 };
 
+export const adminUpdateSyncing = (syncing: boolean) => ({
+  type: ADMIN_UPDATE_SYNCING,
+  payload: syncing
+});
+
 export const adminClearState = () => ({ type: ADMIN_CLEAR_STATE });
 
 // -- Reducer --------------------------------------------------------------- //
 const INITIAL_STATE = {
+  syncing: false,
   loading: false,
   loadingBalance: false,
   web3: null,
@@ -347,7 +356,7 @@ export default (state = INITIAL_STATE, action: any) => {
   logRedux(action);
   switch (action.type) {
     case ADMIN_CONNECT_REQUEST:
-      return { ...state, loading: true };
+      return { ...state, syncing: true, loading: true };
     case ADMIN_CONNECT_SUCCESS:
       return {
         ...state,

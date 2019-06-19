@@ -6,3 +6,15 @@ export function logRedux(action: any) {
     console.log("------------------------------------\n"); // tslint:disable-line
   }
 }
+
+export function logMessage(...messages: any[]) {
+  if (process.env.NODE_ENV === "development") {
+    console.log(...messages); // tslint:disable-line
+  }
+}
+
+export function assignToWindow(name: string, value: any) {
+  if (process.env.NODE_ENV === "development") {
+    window[name] = value;
+  }
+}

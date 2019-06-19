@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
-import { IGasPrices, IAssetData } from "./types";
 import { payloadId } from "@walletconnect/utils";
+import { IGasPrices, IAssetData } from "./types";
+import { logMessage } from "./dev";
 
 const api: AxiosInstance = axios.create({
   baseURL: "https://ethereum-api.xyz",
@@ -99,7 +100,7 @@ export const apiGetAssetPrice = async (symbol: string) => {
     }
   );
   // TODO: Get Live Asset Prices
-  console.log("apiGetAssetPrice response.data", response.data); // tslint:disable-line
+  logMessage("apiGetAssetPrice response.data", response.data);
 };
 
 export const apiPinFile = async (

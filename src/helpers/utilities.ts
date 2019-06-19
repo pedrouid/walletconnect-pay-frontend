@@ -1,4 +1,3 @@
-import { utils } from "ethers";
 import { convertHexToNumber } from "@walletconnect/utils";
 import { IChainData, IPaymentMethodDisplay } from "./types";
 import { convertStringToNumber, handleSignificantDecimals } from "./bignumber";
@@ -9,6 +8,7 @@ import COUNTRIES from "../constants/countries";
 import { APP_DESCRIPTION, APP_NAME } from "../constants/appMeta";
 import { removeDiacritics } from "./diacritics";
 import { isIpfsHash, getIpfsUrl } from "./ipfs";
+import { sha256 } from "./ethers";
 import { PAYMENT_METHODS_DISPLAY } from "../constants/paymentMethods";
 
 export function capitalize(string: string): string {
@@ -64,14 +64,6 @@ export const getDataString = (func: string, arrVals: any[]): string => {
   const data = func + val;
   return data;
 };
-
-export function sha256(str: string): string {
-  return utils.sha256(utils.toUtf8Bytes(str));
-}
-
-export function isHexString(value: any): boolean {
-  return utils.isHexString(value);
-}
 
 export function sanitizeHex(hex: string): string {
   hex = removeHexPrefix(hex);

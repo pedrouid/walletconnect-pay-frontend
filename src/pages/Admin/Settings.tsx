@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import ProfileForm from "../../components/ProfileForm";
 import SettingsForm from "../../components/SettingsForm";
+import EmptyState from "../../components/EmptyState";
 import {
   adminUpdateProfile,
   adminUpdateSettings,
@@ -26,36 +27,46 @@ const SSettingsSection = styled.div`
 
 class Settings extends React.Component<any, any> {
   public static propTypes = {
+    loading: PropTypes.bool.isRequired,
+    address: PropTypes.string.isRequired,
     profile: PropTypes.object.isRequired,
     settings: PropTypes.object.isRequired
   };
 
   public render() {
-    const { profile, settings } = this.props;
+    const { loading, address, profile, settings } = this.props;
     return (
-      <SSettingsWrapper>
-        <SSettingsSection>
-          <ProfileForm
-            title={`Profile`}
-            profile={profile}
-            onInputChange={this.props.adminUpdateProfile}
-            onInputSubmit={this.props.adminSaveData}
-          />
-        </SSettingsSection>
-        <SSettingsSection>
-          <SettingsForm
-            settings={settings}
-            onInputChange={this.props.adminUpdateSettings}
-            onInputSubmit={this.props.adminSaveData}
-            onNotification={this.props.notificationShow}
-          />
-        </SSettingsSection>
-      </SSettingsWrapper>
+      <React.Fragment>
+        {address ? (
+          <SSettingsWrapper>
+            <SSettingsSection>
+              <ProfileForm
+                title={`Profile`}
+                profile={profile}
+                onInputChange={this.props.adminUpdateProfile}
+                onInputSubmit={this.props.adminSaveData}
+              />
+            </SSettingsSection>
+            <SSettingsSection>
+              <SettingsForm
+                settings={settings}
+                onInputChange={this.props.adminUpdateSettings}
+                onInputSubmit={this.props.adminSaveData}
+                onNotification={this.props.notificationShow}
+              />
+            </SSettingsSection>
+          </SSettingsWrapper>
+        ) : (
+          <EmptyState loading={loading} message={`No Settings Data`} />
+        )}
+      </React.Fragment>
     );
   }
 }
 
 const reduxProps = (store: any) => ({
+  loading: store.admin.loading,
+  address: store.admin.address,
   profile: store.admin.profile,
   settings: store.admin.settings
 });

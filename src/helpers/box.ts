@@ -1,4 +1,5 @@
 import { SPACE_ID } from "../constants/space";
+import { logMessage } from "./dev";
 
 const Box =
   typeof window !== "undefined" && typeof window.Box !== "undefined"
@@ -15,20 +16,19 @@ export async function getProfile(address: string) {
   return profile;
 }
 
-export function openBox(address: string, provider: any): Promise<any> {
+export async function openBox(
+  address: string,
+  provider: any,
+  syncCallback: any
+): Promise<any> {
   if (!Box) {
     throw new Error("Box library is not available in window");
   }
-  return new Promise(async (resolve, reject) => {
-    try {
-      box = await Box.openBox(address, provider);
-      box.onSyncDone(() => {
-        resolve(true)
-      })
-    } catch (error){
-      reject(error)
-    }
-  })
+  box = await Box.openBox(address, provider);
+  box.onSyncDone(() => {
+    logMessage("SYNC DONE");
+    syncCallback();
+  });
 }
 
 export async function setPublic(key: string, value: any) {
@@ -191,5 +191,8 @@ export async function subscribeToThread(callback: any) {
   if (!thread) {
     throw new Error("Thread is not open yet");
   }
-  thread.onUpdate(callback);
+  thread.onUpdate(() => {
+    logMessage("THREAD UPDATE");
+    callback();
+  });
 }

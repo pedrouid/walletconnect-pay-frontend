@@ -19,7 +19,7 @@ import { DEFAULT_PAYMENT_METHOD } from "../constants/paymentMethods";
 
 import demo from "../demo";
 import { openOrderThread } from "./order";
-import { logMessage } from "./dev";
+import { logMsg } from "./dev";
 
 export function getDemoBusiness(bussinessName?: string) {
   let result = demo[Object.keys(demo)[0]];
@@ -98,17 +98,17 @@ export async function openBusinessBox(
   syncCallback: any
 ): Promise<{ data: IData | null; menu: IMenu | null; orders: IOrderJson[] }> {
   await openBox(address, provider, syncCallback);
-  logMessage("BOX IS OPEN");
+  logMsg("BOX IS OPEN");
 
   await openSpace();
-  logMessage("SPACE IS OPEN");
+  logMsg("SPACE IS OPEN");
 
   const data = await getData();
-  logMessage("GOT DATA");
+  logMsg("GOT DATA");
   const menu = await getMenu();
-  logMessage("GOT MENU");
+  logMsg("GOT MENU");
   const orders = await openOrderThread(address);
-  logMessage("GOT ORDERS");
+  logMsg("GOT ORDERS");
 
   subscribeToThread(orderCallback);
 

@@ -1,6 +1,6 @@
 import WalletConnect from "@walletconnect/browser";
 import { IJsonRpcRequest } from "@walletconnect/types";
-import { logMessage } from "./dev";
+import { logMsg } from "./dev";
 
 let connector: any = null;
 
@@ -20,14 +20,14 @@ export async function subscribeToEvents() {
     if (error) {
       throw error;
     }
-    logMessage("session_update", payload);
+    logMsg("session_update", payload);
   });
 
   connector.on("disconnect", (error: Error, payload: IJsonRpcRequest) => {
     if (error) {
       throw error;
     }
-    logMessage("disconnect", payload);
+    logMsg("disconnect", payload);
   });
 }
 
@@ -39,8 +39,8 @@ export function killSession() {
 }
 
 export async function sendTransaction(tx: any) {
-  logMessage("sendTransaction tx", tx);
+  logMsg("sendTransaction tx", tx);
   const result = await connector.sendTransaction(tx);
-  logMessage("sendTransaction result", result);
+  logMsg("sendTransaction result", result);
   return result;
 }

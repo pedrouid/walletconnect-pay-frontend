@@ -1,5 +1,5 @@
 import { SPACE_ID } from "../constants/space";
-import { logMessage } from "./dev";
+import { logMsg } from "./dev";
 
 const Box =
   typeof window !== "undefined" && typeof window.Box !== "undefined"
@@ -26,7 +26,7 @@ export async function openBox(
   }
   box = await Box.openBox(address, provider);
   box.onSyncDone(() => {
-    logMessage("SYNC DONE");
+    logMsg("SYNC DONE");
     syncCallback();
   });
 }
@@ -192,7 +192,7 @@ export async function subscribeToThread(callback: any) {
     throw new Error("Thread is not open yet");
   }
   thread.onUpdate(() => {
-    logMessage("THREAD UPDATE");
+    logMsg("THREAD UPDATE");
     callback();
   });
 }

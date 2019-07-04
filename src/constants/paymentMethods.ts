@@ -19,7 +19,7 @@ export const PAYMENT_METHODS_DISPLAY: IPaymentMethodDisplayMap = {
     imgSrc: burner
   },
   xdai: {
-    color: "yellowTwo",
+    color: "green35",
     imgSrc: xdai
   }
 };

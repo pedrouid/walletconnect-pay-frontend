@@ -26,7 +26,7 @@
     "tweetnacl": "^1.0.1",
     "tweetnacl-util": "^0.15.0",
     "web3": "^1.0.0-beta.55",
-    "web3connect": "^1.0.0-beta.7"
+    "web3connect": "^1.0.0-beta.13"
   },
   "scripts": {
     "clean:build": "rm -rf build",

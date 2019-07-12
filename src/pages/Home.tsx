@@ -29,7 +29,7 @@ class Home extends React.Component<any, any> {
         <SBanner />
         <Card shadow margin={20}>
           <h4>{`Business Login`}</h4>
-          <Web3Connect
+          <Web3Connect.Button
             onConnect={this.onConnect}
             onClose={() => {
               // do nothing

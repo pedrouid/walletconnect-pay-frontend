@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import merge from "lodash.merge";
+import { push } from "connected-react-router";
 import { queryChainId, getCurrentPathname, uuid } from "../helpers/utilities";
 import {
   accountingGetAvailableBalance,
@@ -114,7 +115,7 @@ export const adminConnectWallet = (provider: any) => async (
 
       const current = getCurrentPathname();
       if (["/", "/signup"].includes(current)) {
-        window.browserHistory.push("/admin");
+        dispatch(push("/admin"));
       }
       if (["/order"].includes(current)) {
         dispatch(orderLoadMenu());
@@ -133,7 +134,7 @@ export const adminConnectWallet = (provider: any) => async (
           orders
         }
       });
-      window.browserHistory.push("/signup");
+      dispatch(push("/signup"));
     }
   } catch (error) {
     console.error(error); // tslint:disable-line
@@ -199,7 +200,7 @@ export const adminSubmitSignUp = () => async (dispatch: any, getState: any) => {
       payload: { profile, settings }
     });
 
-    window.browserHistory.push("/admin");
+    dispatch(push("/admin"));
   } catch (error) {
     console.error(error); // tslint:disable-line
     dispatch(notificationShow(error.message, true));

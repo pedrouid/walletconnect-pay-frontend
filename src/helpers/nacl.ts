@@ -1,10 +1,26 @@
 import nacl from "tweetnacl";
 import naclUtil from "tweetnacl-util";
+import { payloadId } from "../helpers/utilities";
 import { sha256, entropyToMnemonic, mnemonicToSeed, fromSeed } from "./ethers";
 
 const RANDOM_BYTES = 24;
 const BASE_PATH = "m/7696500'/0'/0'";
 const ETH_PATH = "m/44'/60'/0'/0";
+
+export function safeEthSend(provider: any, request: any): Promise<any> {
+  const send = Boolean(provider.sendAsync) ? provider.sendAsync : provider.send;
+  return new Promise((resolve, reject) => {
+    send(request, (err: any, result: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (result.error) {
+        reject(result.error);
+      }
+      resolve(result.result);
+    });
+  });
+}
 
 export function openBoxConsent(
   address: string,
@@ -14,26 +30,15 @@ export function openBoxConsent(
   const msg = "0x" + Buffer.from(text, "utf8").toString("hex");
   const params = [msg, address];
   const method = "personal_sign";
-  return new Promise((resolve, reject) => {
-    provider.sendAsync(
-      {
-        jsonrpc: "2.0",
-        id: 0,
-        method,
-        params,
-        address
-      },
-      (err: any, result: any) => {
-        if (err) {
-          return reject(err);
-        }
-        if (result.error) {
-          return reject(result.error);
-        }
-        return resolve(result.result);
-      }
-    );
-  });
+  const request = {
+    jsonrpc: "2.0",
+    id: payloadId(),
+    method,
+    params,
+    address
+  };
+  console.log("[openBoxConsent] request", request); // tslint:disable-line
+  return safeEthSend(provider, request);
 }
 
 export async function generateSeed(address: string, provider: any) {

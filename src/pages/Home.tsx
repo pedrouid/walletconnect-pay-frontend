@@ -1,9 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import Web3Connect from "web3connect";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
+import Web3ConnectButton from "../components/Web3ConnectButton";
+
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { adminConnectWallet } from "../redux/_admin";
@@ -29,12 +30,7 @@ class Home extends React.Component<any, any> {
         <SBanner />
         <Card shadow margin={20}>
           <h4>{`Business Login`}</h4>
-          <Web3Connect.Button
-            onConnect={this.onConnect}
-            onClose={() => {
-              // do nothing
-            }}
-          />
+          <Web3ConnectButton onConnect={this.onConnect} />
         </Card>
         <Card shadow margin={20}>
           <h4>{`Order Menu`}</h4>

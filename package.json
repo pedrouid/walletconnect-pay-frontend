@@ -6,8 +6,8 @@
   "author": "WalletConnect Pay <walletconnectpay@gmail.com>",
   "license": "GPL-3.0",
   "dependencies": {
-    "@walletconnect/browser": "^1.0.0-beta.25",
-    "@walletconnect/utils": "^1.0.0-beta.29",
+    "@walletconnect/browser": "^1.0.0-beta.30",
+    "@walletconnect/utils": "^1.0.0-beta.30",
     "axios": "^0.19.0",
     "bignumber.js": "^8.1.1",
     "browser-image-resizer": "^2.0.1",
@@ -29,7 +29,7 @@
     "tweetnacl": "^1.0.1",
     "tweetnacl-util": "^0.15.0",
     "web3": "^1.0.0-beta.55",
-    "web3connect": "^1.0.0-beta.14"
+    "web3connect": "^1.0.0-beta.15"
   },
   "scripts": {
     "clean:build": "rm -rf build",

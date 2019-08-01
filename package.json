@@ -6,8 +6,8 @@
   "author": "WalletConnect Pay <walletconnectpay@gmail.com>",
   "license": "GPL-3.0",
   "dependencies": {
-    "@walletconnect/browser": "^1.0.0-beta.30",
-    "@walletconnect/utils": "^1.0.0-beta.30",
+    "@walletconnect/browser": "^1.0.0-beta.32",
+    "@walletconnect/utils": "^1.0.0-beta.32",
     "axios": "^0.19.0",
     "bignumber.js": "^8.1.1",
     "browser-image-resizer": "^2.0.1",

@@ -35,7 +35,7 @@ class SignUp extends React.Component<any, ISignUpProps> {
 
   public render() {
     return (
-      <PageWrapper>
+      <PageWrapper topLayer>
         <Card shadow margin={20}>
           <ProfileForm
             title={`Sign Up`}

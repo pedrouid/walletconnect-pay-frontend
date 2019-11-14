@@ -38,15 +38,16 @@ const SNotification = styled.div<INotificationStyleProps>`
   }
 `;
 
-interface INotificationProps extends INotificationStyleProps {
-  message: string;
+class Notification extends React.Component<any, any> {
+  public render() {
+    const { show, error, message } = this.props;
+    return (
+      <SNotification show={show} error={error}>
+        {message}
+      </SNotification>
+    );
+  }
 }
-
-const Notification = (props: INotificationProps) => (
-  <SNotification show={props.show} error={props.error}>
-    {props.message}
-  </SNotification>
-);
 
 const reduxProps = (store: any) => ({
   error: store.notification.error,
